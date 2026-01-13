@@ -1,0 +1,8 @@
+deepface
+tf-keras
+opencv-python
+tensorflow
+pyinstaller
+pillow
+numpy
+PySide6
