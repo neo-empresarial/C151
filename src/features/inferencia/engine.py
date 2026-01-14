@@ -7,24 +7,21 @@ import datetime
 import numpy as np
 from deepface import DeepFace
 from scipy.spatial.distance import cosine
-from PySide6.QtCore import QObject, Signal, QThread
 
-class RecognitionWorker(QObject):
-    finished = Signal()
-    results_ready = Signal(object, list)
-    model_loaded = Signal()
-    
+class InferenceEngine:
     def __init__(self, db_manager, model_name="Facenet", detector_backend="opencv"):
-        super().__init__()
         self.db_manager = db_manager
         self.model_name = model_name
         self.detector_backend = detector_backend
         self.running = False
+        self.thread = None
         self.lock = threading.Lock()
-        self.latest_frame = None
         
-        # Cache for embeddings
+        self.latest_frame = None
+        self.latest_results = []
+        
         self.known_embeddings = []
+        self.is_loaded = False
 
     def load_model(self):
         print("Carregando modelos do DeepFace e Embeddings...")
@@ -35,18 +32,32 @@ class RecognitionWorker(QObject):
              # Load embeddings from SQLite
              self.known_embeddings = self.db_manager.get_all_embeddings()
              print(f"Carregado {len(self.known_embeddings)} usuários conhecidos.")
+             self.is_loaded = True
              
         except Exception as e:
             print(f"Error loading model: {e}")
-        
-        self.model_loaded.emit()
+
+    def start(self):
+        if self.running:
+            return
+        self.running = True
+        self.thread = threading.Thread(target=self._process_loop, daemon=True)
+        self.thread.start()
+
+    def stop(self):
+        self.running = False
+        if self.thread:
+            self.thread.join(timeout=1.0)
 
     def update_frame(self, frame):
         with self.lock:
             self.latest_frame = frame.copy()
 
-    def process(self):
-        self.running = True
+    def get_results(self):
+        with self.lock:
+            return self.latest_results
+
+    def _process_loop(self):
         self.load_model()
 
         while self.running:
@@ -61,19 +72,12 @@ class RecognitionWorker(QObject):
 
             try:
                 # 1. Detect and Represent Faces
-                # DeepFace.represent returns list of dicts: [{embedding, facial_area: {x,y,w,h}}]
-                # We handle multiple faces
-                
-                # Note: enforce_detection=False allows returning something even if detection fails slightly,
-                # but usually returns empty list or raises error if really no face.
-                # We use try-except to handle no face.
-                
                 face_objs = []
                 try:
                     face_objs = DeepFace.represent(
                         img_path=frame,
                         model_name=self.model_name,
-                        detector_backend=self.detector_backend,
+                        detector_backend=self.detector_backend, # opencv is fast
                         enforce_detection=True,
                         align=True
                     )
@@ -89,9 +93,10 @@ class RecognitionWorker(QObject):
                     x, y, w, h = area["x"], area["y"], area["w"], area["h"]
                     
                     found_match = False
-                    best_score = 0.40 # Cosine distance threshold (lower is better). Facenet usually 0.40
+                    best_score = 0.40 # Cosine distance threshold
                     best_name = "Desconhecido"
                     best_id = None
+                    best_access = "Visitante"
                     
                     # 2. Compare against known embeddings
                     for known in self.known_embeddings:
@@ -102,48 +107,27 @@ class RecognitionWorker(QObject):
                             best_score = score
                             best_name = known["name"]
                             best_id = known["id"]
+                            best_access = known.get("access_level", "Visitante")
                             found_match = True
+                            print(f"DEBUG: RECOGNIZED USER -> {best_name}")
+                    
+                    if not found_match:
+                         print("DEBUG: New Face Detected (Unknown)")
                     
                     results.append({
                         "box": (x, y, w, h),
                         "name": best_name if found_match else "Desconhecido",
                         "id": best_id,
+                        "access_level": best_access,
                         "known": found_match,
-                        "confidence": (1 - best_score) # Pseudo confidence
+                        "confidence": (1 - best_score) 
                     })
-
-                self.results_ready.emit(frame, results)
+                
+                with self.lock:
+                    self.latest_results = results
 
             except Exception as e:
                 # print(f"Inference error: {e}")
                 pass
             
             time.sleep(0.05)
-        
-        self.finished.emit()
-
-    def stop(self):
-        self.running = False
-
-class InferenceController(QObject):
-    def __init__(self, db_manager):
-        super().__init__()
-        self.worker = RecognitionWorker(db_manager)
-        self.thread = QThread()
-        self.worker.moveToThread(self.thread)
-        
-        self.thread.started.connect(self.worker.process)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-
-    def start(self):
-        self.thread.start()
-
-    def stop(self):
-        self.worker.stop()
-        self.thread.quit()
-        self.thread.wait()
-
-    def update_frame(self, frame):
-        self.worker.update_frame(frame)

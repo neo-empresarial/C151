@@ -2,12 +2,13 @@
 __pycache__/
 *.pyc
 venv/
+!venv/pyvenv.cfg
 .env
 
 # Build / Distribution
 build/
 dist/
-*.spec
+
 
 # DeepFace / TensorFlow
 .deepface/

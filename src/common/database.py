@@ -25,7 +25,9 @@ class DatabaseManager:
                 name TEXT NOT NULL,
                 created_at TEXT,
                 embedding BLOB,
-                image_blob BLOB
+                image_blob BLOB,
+                pin TEXT,
+                access_level TEXT DEFAULT 'Visitante'
             )
         ''')
         
@@ -37,24 +39,28 @@ class DatabaseManager:
             cursor.execute("ALTER TABLE users ADD COLUMN embedding BLOB")
         if 'image_blob' not in columns:
             cursor.execute("ALTER TABLE users ADD COLUMN image_blob BLOB")
+        if 'pin' not in columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN pin TEXT")
+        if 'access_level' not in columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN access_level TEXT DEFAULT 'Visitante'")
             
         conn.commit()
         conn.close()
 
     def get_users(self):
-        """Retrieve all users key-value pairs (id, name)."""
+        """Retrieve all users key-value pairs (id, name, access_level)."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name FROM users ORDER BY name")
+        cursor.execute("SELECT id, name, access_level, pin FROM users ORDER BY name")
         rows = cursor.fetchall()
         conn.close()
-        return [{"id": row[0], "name": row[1]} for row in rows]
+        return [{"id": row[0], "name": row[1], "access_level": row[2], "pin": row[3]} for row in rows]
 
     def get_all_embeddings(self):
         """Retrieve all user embeddings for in-memory recognition."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, embedding FROM users WHERE embedding IS NOT NULL")
+        cursor.execute("SELECT id, name, embedding, access_level FROM users WHERE embedding IS NOT NULL")
         rows = cursor.fetchall()
         conn.close()
         
@@ -65,7 +71,8 @@ class DatabaseManager:
                 results.append({
                     "id": row[0],
                     "name": row[1],
-                    "embedding": embedding
+                    "embedding": embedding,
+                    "access_level": row[3]
                 })
             except:
                 pass
@@ -75,11 +82,11 @@ class DatabaseManager:
         """Find a user by name."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, embedding FROM users WHERE name = ?", (name,))
+        cursor.execute("SELECT id, name, embedding, access_level FROM users WHERE name = ?", (name,))
         row = cursor.fetchone()
         conn.close()
         if row:
-            return {"id": row[0], "name": row[1]}
+            return {"id": row[0], "name": row[1], "access_level": row[3]}
         return None
 
     def get_user_image(self, user_id):
@@ -93,7 +100,7 @@ class DatabaseManager:
             return row[0]
         return None
 
-    def create_user(self, name, frame, embedding=None):
+    def create_user(self, name, frame, embedding=None, pin=None, access_level="Visitante"):
         """Create a new user with generated ID, save metadata, image blob, and embedding to SQLite."""
         if not name:
             return False, "O nome não pode ser vazio."
@@ -110,13 +117,16 @@ class DatabaseManager:
             embedding_blob = pickle.dumps(embedding) if embedding is not None else None
             
             # Encode image to BLOB
-            _, img_encoded = cv2.imencode('.jpg', frame)
-            image_blob = img_encoded.tobytes()
+            if frame is not None:
+                _, img_encoded = cv2.imencode('.jpg', frame)
+                image_blob = img_encoded.tobytes()
+            else:
+                image_blob = None
 
             conn = sqlite3.connect(self.sqlite_file)
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO users (id, name, created_at, embedding, image_blob) VALUES (?, ?, ?, ?, ?)", 
-                           (user_id, name, timestamp, embedding_blob, image_blob))
+            cursor.execute("INSERT INTO users (id, name, created_at, embedding, image_blob, pin, access_level) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+                           (user_id, name, timestamp, embedding_blob, image_blob, pin, access_level))
             conn.commit()
             conn.close()
             
@@ -125,9 +135,9 @@ class DatabaseManager:
         except Exception as e:
             return False, str(e)
 
-    def update_user(self, user_id, new_name, frame=None, embedding=None):
-        """Update user data (name and optionally photo/embedding) using ID."""
-        if not new_name:
+    def update_user(self, user_id, new_name, frame=None, embedding=None, pin=None, access_level=None):
+        """Update user data (name, photo/embedding, pin, access_level) using ID."""
+        if new_name is not None and not new_name:
             return False, "Nome não pode ser vazio."
             
         try:
@@ -135,26 +145,44 @@ class DatabaseManager:
             cursor = conn.cursor()
             
             # Check if new name exists for OTHER user
-            cursor.execute("SELECT id FROM users WHERE name = ? AND id != ?", (new_name, user_id))
-            if cursor.fetchone():
-                conn.close()
-                return False, f"Já existe outro usuário com o nome '{new_name}'."
+            if new_name:
+                cursor.execute("SELECT id FROM users WHERE name = ? AND id != ?", (new_name, user_id))
+                if cursor.fetchone():
+                    conn.close()
+                    return False, f"Já existe outro usuário com o nome '{new_name}'."
 
+            updates = []
+            params = []
+            
+            if new_name:
+                updates.append("name = ?")
+                params.append(new_name)
+            
             if frame is not None:
-                # Update Photo & Name & Embedding
                 embedding_blob = pickle.dumps(embedding) if embedding is not None else None
                 _, img_encoded = cv2.imencode('.jpg', frame)
                 image_blob = img_encoded.tobytes()
                 
-                cursor.execute("""
-                    UPDATE users 
-                    SET name = ?, image_blob = ?, embedding = ? 
-                    WHERE id = ?
-                """, (new_name, image_blob, embedding_blob, user_id))
-            else:
-                # Update Name Only
-                cursor.execute("UPDATE users SET name = ? WHERE id = ?", (new_name, user_id))
+                updates.append("image_blob = ?")
+                updates.append("embedding = ?")
+                params.extend([image_blob, embedding_blob])
             
+            if pin is not None:
+                updates.append("pin = ?")
+                params.append(pin)
+                
+            if access_level is not None:
+                updates.append("access_level = ?")
+                params.append(access_level)
+
+            if not updates:
+                conn.close()
+                return True, "Nada para atualizar."
+
+            params.append(user_id)
+            sql = f"UPDATE users SET {', '.join(updates)} WHERE id = ?"
+            
+            cursor.execute(sql, params)
             conn.commit()
             conn.close()
             
@@ -162,25 +190,40 @@ class DatabaseManager:
         except Exception as e:
             return False, str(e)
 
-    def delete_user(self, name):
+    def delete_user(self, user_id):
         """Delete user from DB."""
-        # Check logic: do we still delete from filesystem? 
-        # Plan said specific "Database Only". So we focus on DB.
-        # But for cleanup we might check FS.
-        
-        # 1. DB Delete
         try:
             conn = sqlite3.connect(self.sqlite_file)
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM users WHERE name = ?", (name,))
+            cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
             conn.commit()
             conn.close()
-            
-            # 2. Legacy Cleanup (if exists)
-            user_dir = os.path.join(self.db_folder, name)
-            if os.path.exists(user_dir):
-                shutil.rmtree(user_dir)
-
             return True, "Usuário removido."
         except Exception as e:
             return False, str(e)
+            
+    def validate_pin(self, user_id, pin):
+        """Validate if the provided PIN matches the user's PIN."""
+        try:
+            conn = sqlite3.connect(self.sqlite_file)
+            cursor = conn.cursor()
+            cursor.execute("SELECT pin FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            conn.close()
+            
+            if row and row[0] == pin:
+                 return True
+            return False
+        except:
+            return False
+
+    def get_user_by_pin(self, pin):
+        """Find a user by PIN (if using PIN only login)."""
+        conn = sqlite3.connect(self.sqlite_file)
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name, access_level FROM users WHERE pin = ?", (pin,))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return {"id": row[0], "name": row[1], "access_level": row[2]}
+        return None

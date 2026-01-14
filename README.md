@@ -1,67 +1,72 @@
-# DeepFace Industrial Access Control
 
-A robust Face Recognition application designed for industrial access control scenarios, built with **DeepFace**, **PySide6**, and **OpenCV**.
+# DeepFace NiceGUI Access Control
+
+A local Desktop Face Recognition application built with **Python**, **NiceGUI** (Web-based UI), and **DeepFace**.
+The application mimics a Windows 11 style interface and provides secure access control via Face Recognition or PIN.
 
 ## Features
 
--   **Industrial Interface**: LabVIEW-inspired UI with "Flash" visual feedback and bold controls.
--   **User Management**:
-    -   Register new users with photo capture.
-    -   Store metadata in SQLite and images in standard filesystem structure.
-    -   Edit or delete existing users.
--   **Real-time Inference**:
-    -   Live face recognition using DeepFace.
-    -   Multi-threaded architecture for responsive UI.
-    -   "Exit on Detect" mode for automated access.
-    -   Visual feedback with Bounding Boxes and IDs.
+- **Face Recognition**: Real-time detection and identification using DeepFace (Facenet model).
+- **Windows 11 UI**: Clean, modern interface with "Mica" style background and responsive cards.
+- **Dual Authentication**: 
+  - **Biometric**: Automatic face login.
+  - **PIN Fallback**: Manual entry for failed conditions.
+- **Role-Based Access**:
+  - **Admin**: Full access to User Dashboard (Add/Delete users).
+  - **User/Visitante**: Access only to authorized areas (Login confirmation).
+- **Modular Architecture**: Built with maintainability in mind (Service-Controller-View pattern).
 
 ## Installation
 
-1.  **Clone the repository**:
+1.  **Clone/Download** the repository.
+2.  **Create a Virtual Environment** (Optional but recommended):
     ```bash
-    git clone <repository_url>
-    cd deepface-tests
+    python3 -m venv venv
+    source venv/bin/activate
     ```
-
-2.  **Create a Virtual Environment** (Recommended):
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # Linux/Mac
-    # venv\Scripts\activate   # Windows
-    ```
-
 3.  **Install Dependencies**:
     ```bash
     pip install -r requirements.txt
+    pip install nicegui deepface opencv-python
     ```
+    *(Note: `requirements.txt` might need updating depending on your env)*
 
 ## Usage
 
-### Launcher
-Run the main entry point to open the Launcher:
+Simply run the startup script:
+
 ```bash
-python main.py
+./run_app.sh
 ```
 
-### Modes
+Or manually:
 
-1.  **Management (Gerenciamento)**:
-    -   Add new users by capturing a photo from the webcam.
-    -   Manage existing users (Search, Edit, Delete).
+```bash
+source venv/bin/activate
+python3 main.py
+```
 
-2.  **Recognition (Inferencia)**:
-    -   Starts the camera and loads AI models.
-    -   Displays bounding boxes for recognized users.
-
-### CLI Arguments
-
--   `--exit-on-detect`: Automatically closes the application as soon as a known user is identified.
-    ```bash
-    python main.py --exit-on-detect
-    ```
+### First Run
+If the database (`users.db`) is empty, the app will redirect you to the **Setup Page**.
+1. Enter the Admin Name and PIN.
+2. Position yourself in front of the camera.
+3. Click **"Criar Sistema"**.
 
 ## Project Structure
 
--   `src/common`: Shared utilities (Database, Styles, Camera).
--   `src/features/cadastro`: Registration feature logic and UI.
--   `src/features/inferencia`: Recognition engine and UI.
+```
+src/
+  common/       # Shared resources
+    config.py   # App constants
+    database.py # SQLite CRUD
+    state.py    # Global AppState
+    theme.py    # UI Styles
+  features/     # Core Logic
+    inferencia/ # DeepFace Engine
+  pages/        # UI Pages
+    login.py    # Landing Page
+    dashboard.py# Admin Panel
+    setup.py    # First-run Setup
+services.py     # Dependency Injection (Singletons)
+main.py         # Application Entry Point
+```

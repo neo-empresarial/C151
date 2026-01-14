@@ -1,20 +1,17 @@
 
 import cv2
-from PySide6.QtCore import QObject, Signal, QTimer, Qt
-from PySide6.QtGui import QImage, QPixmap
+import time
+import threading
 
-class CameraManager(QObject):
-    frame_captured = Signal(object) # Emit the raw frame (numpy array)
-    frame_pixmap = Signal(object)   # Emit the QPixmap for display
-    error_occurred = Signal(str)
-
+class CameraManager:
     def __init__(self, camera_index=0):
-        super().__init__()
         self.camera_index = camera_index
         self.cap = None
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_frame)
         self.running = False
+        self.thread = None
+        self.lock = threading.Lock()
+        self.latest_frame = None
+        self.ret = False
 
     def start(self):
         if self.running:
@@ -29,46 +26,44 @@ class CameraManager(QObject):
                 else:
                     self.cap.release()
                     self.cap = None
-                    import time
                     time.sleep(0.5)
 
             if not self.cap or not self.cap.isOpened():
-                self.error_occurred.emit("Não foi possível acessar a câmera após 3 tentativas.")
-                return
+                raise Exception("Não foi possível acessar a câmera após 3 tentativas.")
             
             self.running = True
-            self.timer.start(30) # 30ms ~ 33 FPS
+            self.thread = threading.Thread(target=self._capture_loop, daemon=True)
+            self.thread.start()
+            print("Camera started in background thread.")
         except Exception as e:
-            self.error_occurred.emit(str(e))
+            print(f"Camera Error: {e}")
+            self.running = False
 
     def stop(self):
         self.running = False
-        self.timer.stop()
+        if self.thread:
+            self.thread.join(timeout=1.0)
         if self.cap:
             self.cap.release()
             self.cap = None
-            # Small delay to ensure OS releases resource
-            import time
-            time.sleep(0.2)
 
-    def update_frame(self):
-        if not self.running or not self.cap:
-            return
+    def _capture_loop(self):
+        print("Debug: Camera Capture Loop Started")
+        while self.running and self.cap:
+            ret, frame = self.cap.read()
+            if ret:
+                # print("Debug: Frame Captured")
+                frame = cv2.flip(frame, 1) # Mirror
+                with self.lock:
+                    self.latest_frame = frame
+                    self.ret = True
+            else:
+                with self.lock:
+                    self.ret = False
+            time.sleep(0.01) # Avoid 100% CPU
 
-        ret, frame = self.cap.read()
-        if ret:
-            # Mirror frame
-            frame = cv2.flip(frame, 1)
-            
-            # Emit raw frame
-            self.frame_captured.emit(frame)
-            
-            # Convert to QPixmap
-            rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            h, w, ch = rgb_image.shape
-            bytes_per_line = ch * w
-            qt_image = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-            pixmap = QPixmap.fromImage(qt_image)
-            self.frame_pixmap.emit(pixmap)
-        else:
-            self.error_occurred.emit("Falha na captura do frame.")
+    def read(self):
+        with self.lock:
+            if self.ret and self.latest_frame is not None:
+                return True, self.latest_frame.copy()
+            return False, None
