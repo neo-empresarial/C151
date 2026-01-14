@@ -1,72 +1,49 @@
+# DeepFace Recognition Access Control
 
-# DeepFace NiceGUI Access Control
+Sistema visual de controle de acesso baseado em reconhecimento facial utilizando DeepFace, OpenCV e NiceGUI.
 
-A local Desktop Face Recognition application built with **Python**, **NiceGUI** (Web-based UI), and **DeepFace**.
-The application mimics a Windows 11 style interface and provides secure access control via Face Recognition or PIN.
+## Funcionalidades
 
-## Features
+- **Reconhecimento Facial em Tempo Real**: Identificação de usuários cadastrados via webcam.
+- **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
+- **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
+- **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
+- **Modo Nativo**: Executável desktop (Linux) sem necessidade de navegador externo.
 
-- **Face Recognition**: Real-time detection and identification using DeepFace (Facenet model).
-- **Windows 11 UI**: Clean, modern interface with "Mica" style background and responsive cards.
-- **Dual Authentication**: 
-  - **Biometric**: Automatic face login.
-  - **PIN Fallback**: Manual entry for failed conditions.
-- **Role-Based Access**:
-  - **Admin**: Full access to User Dashboard (Add/Delete users).
-  - **User/Visitante**: Access only to authorized areas (Login confirmation).
-- **Modular Architecture**: Built with maintainability in mind (Service-Controller-View pattern).
+## Como Usar
 
-## Installation
+1. **Configuração**: Na primeira execução, se não houver usuários, você será direcionado para `/setup`. Crie o Admin.
+2. **Login/Reconhecimento**: A tela inicial mostra o feed da câmera.
+    - Se o rosto for reconhecido, o acesso é liberado (ou admin logado).
+    - Se falhar, use o "Entrar com PIN".
+3. **Dashboard (Admin)**:
+    - **Adicionar Usuário**: Clique em "Adicionar Usuário", preencha os dados e capture a foto. É obrigatório **Confirmar** a foto.
+    - **Editar Usuário**: Altere nome/PIN ou clique em "Alterar Foto" para atualizar a biometria.
+    - **Remover**: Exclui o usuário permanentemente.
 
-1.  **Clone/Download** the repository.
-2.  **Create a Virtual Environment** (Optional but recommended):
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-3.  **Install Dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    pip install nicegui deepface opencv-python
-    ```
-    *(Note: `requirements.txt` might need updating depending on your env)*
+## Instalação e Build
 
-## Usage
-
-Simply run the startup script:
-
+### Dependências
 ```bash
-./run_app.sh
+sudo apt install libgirepository1.0-dev libcairo2-dev python3-dev
+pip install -r requirements.txt
 ```
 
-Or manually:
-
+### Rodar Localmente
 ```bash
-source venv/bin/activate
-python3 main.py
+python main.py
 ```
 
-### First Run
-If the database (`users.db`) is empty, the app will redirect you to the **Setup Page**.
-1. Enter the Admin Name and PIN.
-2. Position yourself in front of the camera.
-3. Click **"Criar Sistema"**.
-
-## Project Structure
-
+### Gerar Executável
+Execute o script de build:
+```bash
+./build.sh
 ```
-src/
-  common/       # Shared resources
-    config.py   # App constants
-    database.py # SQLite CRUD
-    state.py    # Global AppState
-    theme.py    # UI Styles
-  features/     # Core Logic
-    inferencia/ # DeepFace Engine
-  pages/        # UI Pages
-    login.py    # Landing Page
-    dashboard.py# Admin Panel
-    setup.py    # First-run Setup
-services.py     # Dependency Injection (Singletons)
-main.py         # Application Entry Point
-```
+O executável será gerado em `dist/DeepFaceRec/DeepFaceRec`.
+
+## Estrutura do Projeto
+
+- `src/`: Código fonte da aplicação
+- `src/pages/`: Interfaces (Login, Dashboard, Setup)
+- `src/common/`: Utilitários (Câmera, Banco de Dados, Config)
+- `src/features/`: Lógica de negócios (Auth, Inferência)

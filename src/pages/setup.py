@@ -4,7 +4,7 @@ import cv2
 from nicegui import ui
 from deepface import DeepFace
 
-from src.services import camera_manager, db_manager, engine
+from src.services.services import camera_manager, db_manager, engine
 
 def setup_page():
     # First Run Setup
@@ -17,7 +17,10 @@ def setup_page():
             pin_input = ui.input('PIN do Admin').classes('w-full mb-6')
             
             ui.label('Posicione-se para foto:').classes('font-bold mb-2')
-            cam_view = ui.interactive_image().classes('w-full h-[300px] bg-black rounded mb-6')
+            with ui.element('div').classes('relative w-full h-[300px] mb-6 bg-black rounded overflow-hidden'):
+                cam_view = ui.interactive_image().classes('w-full h-full object-cover')
+                # Face Mask Overlay
+                ui.element('div').classes('absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[180px] h-[260px] border-2 border-white/50 rounded-[50%] pointer-events-none shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]')
             
             # State for capture
             capture_state = {

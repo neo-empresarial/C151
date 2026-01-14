@@ -4,7 +4,7 @@ import cv2
 import time
 from nicegui import ui
 
-from src.services import camera_manager, db_manager, engine
+from src.services.services import camera_manager, db_manager, engine
 from src.common.state import state
 
 def login_page():
@@ -40,6 +40,9 @@ def login_page():
                 
                 # Using interactive image for better performance
                 video_image = ui.interactive_image().classes('w-full h-full object-cover')
+                
+                # Face Mask Overlay
+                ui.element('div').classes('absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[220px] h-[320px] border-2 border-white/50 rounded-[50%] pointer-events-none shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]')
                 
                 # Feedback Overlay
                 feedback_label = ui.label('Inicializando...').classes('absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-6 py-2 rounded-full text-lg font-medium backdrop-blur-sm z-10')

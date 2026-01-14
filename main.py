@@ -5,7 +5,7 @@ from nicegui import ui, app
 sys.path.append(".") 
 
 from src.common.theme import load_theme
-from src.services import start_services, stop_services
+from src.services.services import start_services, stop_services
 
 # Import Pages
 from src.pages.login import login_page
