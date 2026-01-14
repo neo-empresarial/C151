@@ -1,8 +1,6 @@
-
 import base64
 import cv2
 from nicegui import ui, run
-from deepface import DeepFace
 
 from src.services.services import camera_manager, db_manager, engine
 from src.common.state import state
@@ -50,7 +48,7 @@ def dashboard_page():
         ui.label('Editar Usuário').classes('text-xl font-bold mb-4')
         
         edit_name = ui.input('Nome').classes('w-full')
-        edit_pin = ui.input('PIN').classes('w-full')
+        edit_pin = ui.input('PIN', password=True, password_toggle_button=True).classes('w-full')
         edit_access = ui.select(['Admin', 'Funcionario', 'Visitante'], label='Acesso').classes('w-full')
         
         current_edit_id = [None] 
@@ -69,8 +67,10 @@ def dashboard_page():
 
             with ui.row().classes('w-full justify-center mt-2'):
                 e_capture_btn = ui.button('Capturar', icon='camera_alt', on_click=lambda: edit_capture()).classes('w11-btn')
-                with ui.row().classes('gap-2 hidden') as e_confirm_row:
-                     ui.button('Refazer', icon='refresh', color='warning', on_click=lambda: edit_reset())
+                with ui.row().classes('gap-2') as e_confirm_row:
+                     ui.button('Tentar Novamente', icon='refresh', color='warning', on_click=lambda: edit_reset())
+                     ui.button('Confirmar Foto', icon='check', color='positive', on_click=lambda: edit_confirm())
+                e_confirm_row.visible = False
 
         def toggle_camera():
             if camera_container.visible:
@@ -78,6 +78,11 @@ def dashboard_page():
                 edit_cam_timer.deactivate()
                 update_photo_btn.text = 'Alterar Foto'
                 update_photo_btn.props('icon=face')
+                edit_capture_state['paused'] = False
+                edit_capture_state['confirmed'] = False
+                edit_capture_state['frame'] = None
+                e_capture_btn.visible = True
+                e_confirm_row.visible = False
             else:
                 camera_container.visible = True
                 edit_cam_timer.activate()
@@ -109,10 +114,13 @@ def dashboard_page():
         def edit_capture():
             if edit_capture_state['frame'] is not None:
                 edit_capture_state['paused'] = True
-                edit_capture_state['confirmed'] = True
+                edit_capture_state['confirmed'] = False
                 e_capture_btn.visible = False
                 e_confirm_row.visible = True
-                ui.notify('Foto capturada!', type='positive')
+
+        def edit_confirm():
+            edit_capture_state['confirmed'] = True
+            ui.notify('Foto confirmada', type='positive')
 
         async def save_edit():
             if not edit_name.value or not edit_pin.value:
@@ -124,15 +132,16 @@ def dashboard_page():
                 'access_level': edit_access.value
             }
 
+            if edit_capture_state['frame'] is not None and not edit_capture_state['confirmed']:
+                ui.notify('Confirme a nova foto antes de salvar!', type='warning')
+                return
+
             if edit_capture_state['confirmed'] and edit_capture_state['frame'] is not None:
                 try:
                      ui.notify('Atualizando biometria...', type='info')
                      embedding_objs = await run.io_bound(
-                        DeepFace.represent,
-                        img_path=edit_capture_state['frame'],
-                        model_name="Facenet",
-                        detector_backend="opencv",
-                        enforce_detection=True
+                        engine.generate_embedding,
+                        edit_capture_state['frame']
                     )
                      updates['embedding'] = embedding_objs[0]['embedding']
                      updates['frame'] = edit_capture_state['frame']
@@ -166,6 +175,17 @@ def dashboard_page():
         else:
              current_user_img.set_source('')
 
+        edit_capture_state['frame'] = None
+        edit_capture_state['confirmed'] = False
+        edit_capture_state['paused'] = False
+        
+        camera_container.visible = False
+        e_capture_btn.visible = True
+        e_confirm_row.visible = False
+        update_photo_btn.text = 'Alterar Foto'
+        update_photo_btn.props('icon=face')
+        edit_cam_timer.deactivate()
+
         edit_dialog.open()
 
     add_user_dialog = ui.dialog().props('maximized')
@@ -175,7 +195,7 @@ def dashboard_page():
         with ui.row().classes('w-full max-w-4xl gap-8'):
             with ui.column().classes('flex-1 gap-4'):
                 name_input = ui.input('Nome Completo').classes('w-full')
-                pin_setup = ui.input('PIN (Numérico)').classes('w-full')
+                pin_setup = ui.input('PIN (Numérico)', password=True, password_toggle_button=True).classes('w-full')
                 access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label='Nível de Acesso').classes('w-full')
             
             with ui.column().classes('flex-1 h-[400px] bg-black rounded-lg overflow-hidden relative justify-center items-center'):
@@ -249,11 +269,8 @@ def dashboard_page():
             
             try:
                 embedding_objs = await run.io_bound(
-                    DeepFace.represent,
-                    img_path=final_frame,
-                    model_name="Facenet",
-                    detector_backend="opencv",
-                    enforce_detection=True
+                    engine.generate_embedding,
+                    final_frame
                 )
                 
                 if not embedding_objs:
