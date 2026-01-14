@@ -26,4 +26,16 @@ This project uses the following major open-source libraries:
 - **License**: BSD 3-Clause License
 - **Source**: https://github.com/r0x0r/pywebview
 
+## NumPy
+- **License**: BSD 3-Clause License
+- **Source**: https://github.com/numpy/numpy
+
+## Pandas
+- **License**: BSD 3-Clause License
+- **Source**: https://github.com/pandas-dev/pandas
+
+## FastAPI
+- **License**: MIT License
+- **Source**: https://github.com/tiangolo/fastapi
+
 ---
