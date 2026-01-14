@@ -4,14 +4,14 @@
 rm -rf build dist *.spec
 
 # Run PyInstaller
-# --onefile: Create a single executable file
+# --onedir: Create a directory containing the executable (Faster start, no extraction errors)
 # --windowed: Do not show a console window (GUI mode)
 # --name: Name of the executable
 # --add-data: Include the database folder (On Linux use : as separator, Windows use ;)
 # --hidden-import: Explicitly import hidden dependencies
 # --collect-all: Collect all data for deepface to ensure internal config files are present
 
-./venv/bin/pyinstaller --noconfirm --onefile --windowed --name "DeepFaceRec" \
+./venv/bin/pyinstaller --noconfirm --onedir --windowed --name "DeepFaceRec" \
     --add-data "database:database" \
     --add-data "src:src" \
     --hidden-import "deepface" \
@@ -33,4 +33,4 @@ rm -rf build dist *.spec
     --collect-all "PySide6" \
     main.py
 
-echo "Build complete. Executable is in dist/DeepFaceRec"
+echo "Build complete. Executable is at dist/DeepFaceRec/DeepFaceRec"
