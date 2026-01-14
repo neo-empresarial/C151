@@ -109,13 +109,26 @@ class InferenceEngine:
                     if not found_match:
                          print("DEBUG: New Face Detected (Unknown)")
                     
+                    # ROI Calculation
+                    h_frame, w_frame, _ = frame.shape
+                    cx_frame, cy_frame = w_frame // 2, h_frame // 2
+                    
+                    cx_face = x + w // 2
+                    cy_face = y + h // 2
+                    
+                    roi_threshold_x = w_frame * 0.15 # 15% deviation allowed
+                    roi_threshold_y = h_frame * 0.20 
+                    
+                    in_roi = (abs(cx_face - cx_frame) < roi_threshold_x) and (abs(cy_face - cy_frame) < roi_threshold_y)
+                    
                     results.append({
                         "box": (x, y, w, h),
                         "name": best_name if found_match else "Desconhecido",
                         "id": best_id,
                         "access_level": best_access,
                         "known": found_match,
-                        "confidence": (1 - best_score) 
+                        "confidence": (1 - best_score),
+                        "in_roi": in_roi
                     })
                 
                 with self.lock:

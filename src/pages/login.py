@@ -68,8 +68,17 @@ def login_page():
             ui.button('0', on_click=lambda: pin_input.set_value(pin_input.value + '0')).classes('w11-btn text-lg h-12 bg-gray-50')
             ui.button('OK', on_click=verify_pin).classes('w11-btn text-lg h-12 bg-blue-600 text-white col-span-3')
 
+    # State tracking for logic
+    logic_state = {
+        'consecutive_hits': 0,
+        'last_user_id': None,
+        'in_cooldown': False
+    }
+
     async def loop():
-        if state.current_user:
+        if state.current_user or logic_state['in_cooldown']:
+            # Still update frame source if feasible, or just return to freeze?
+            # Freezing might be better for "Result" display
             pass
             
         ret, frame = camera_manager.read()
@@ -77,6 +86,15 @@ def login_page():
         if not ret:
             feedback_label.text = "Câmera desconectada"
             feedback_label.classes(remove='bg-green-600', add='bg-red-600')
+            return
+
+        if logic_state['in_cooldown']:
+            # Just show the frame but don't process
+            # Or maybe we want to freeze the "Success" frame? 
+            # Let's keep showing live feed? User said "restart" after little time.
+            # Showing live feed is fine.
+            _, buffer = cv2.imencode('.jpg', frame)
+            video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
             return
 
         engine.update_frame(frame)
@@ -87,30 +105,102 @@ def login_page():
         detected_known = False
         user_found = None
         
+        # Check if we have at least one valid face in ROI
+        valid_face_found = False
+
         for res in results:
             x, y, w, h = res["box"]
             known = res["known"]
             name = res.get("name", "Desconhecido")
+            in_roi = res.get("in_roi", False)
             
-            color = (0, 255, 0) if known else (100, 100, 100)
+            # Visuals
+            color = (100, 100, 100) # Default gray
+            if in_roi:
+                if known:
+                    color = (0, 255, 0) # Green
+                else:
+                    color = (0, 0, 255) # Red for unknown in ROI
+            else:
+                color = (0, 255, 255) # Yellow for "Move to center"
             
             cv2.rectangle(display_frame, (x, y), (x+w, y+h), color, 2)
-            cv2.putText(display_frame, name, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
             
-            if known:
-                detected_known = True
-                user_found = res
-
-        if not state.current_user:
-            if detected_known:
-                feedback_label.text = f"Identificando..."
-                feedback_label.classes(remove='bg-black/60', add='bg-blue-600')
+            if not in_roi:
+                 cv2.putText(display_frame, "Centralize", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
             else:
-                feedback_label.text = "Aguardando rosto..."
-                feedback_label.classes(remove='bg-blue-600', add='bg-black/60')
+                 cv2.putText(display_frame, name, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
 
-        if detected_known and not state.current_user and user_found:
-             on_access_granted(user_found)
+            if in_roi:
+                if known:
+                    # Logic for consecutive checks
+                    if res['id'] == logic_state['last_user_id']:
+                        logic_state['consecutive_hits'] += 1
+                    else:
+                        logic_state['consecutive_hits'] = 1
+                        logic_state['last_user_id'] = res['id']
+                    
+                    if logic_state['consecutive_hits'] >= 3:
+                        detected_known = True
+                        user_found = res
+                    
+                    valid_face_found = True
+                else:
+                    # Unknown in ROI
+                    logic_state['consecutive_hits'] = 0
+                    logic_state['last_user_id'] = None
+                    valid_face_found = True # Found a face, just not known
+            
+        if not valid_face_found:
+             # Reset if no face in ROI seen
+             logic_state['consecutive_hits'] = 0
+             logic_state['last_user_id'] = None
+
+        # Feedback Label Logic
+        if logic_state['in_cooldown']:
+             pass # Handled above
+        elif detected_known and user_found:
+             # TRIGGER ACCESS
+             logic_state['in_cooldown'] = True
+             feedback_label.text = "ACESSO PERMITIDO"
+             feedback_label.classes(remove='bg-black/60 bg-blue-600', add='bg-green-600')
+             
+             # Grant Access logic (update state, etc)
+             # But we want to show the message for a bit.
+             
+             def cooldown_reset():
+                 on_access_granted(user_found) # This notifies and sets state.current_user
+                 # But we specifically want the "Wait" behavior logic here.
+                 # Actually on_access_granted sets state.current_user which stops this loop effectively?
+                 # No, loop checks state.current_user. 
+                 
+                 # Let's slightly modify flow: 
+                 # 1. Show "ACESSO PERMITIDO" on screen.
+                 # 2. Wait 2 seconds.
+                 # 3. Call on_access_granted to officially log in / notify.
+                 
+                 logic_state['in_cooldown'] = False
+                 logic_state['consecutive_hits'] = 0
+                 
+             ui.timer(2.0, cooldown_reset, once=True)
+
+        else:
+            # Normal Status Feedback
+            if not results:
+                feedback_label.text = "Aguardando rosto..."
+                feedback_label.classes(remove='bg-blue-600 bg-yellow-600 bg-red-600 bg-green-600', add='bg-black/60')
+            else:
+                # We have faces, check if any is in ROI
+                if valid_face_found:
+                     if logic_state['consecutive_hits'] > 0:
+                         feedback_label.text = f"Identificando... {logic_state['consecutive_hits']}/3"
+                         feedback_label.classes(remove='bg-black/60', add='bg-blue-600')
+                     else:
+                         feedback_label.text = "Rosto Desconhecido"
+                         feedback_label.classes(remove='bg-black/60', add='bg-red-600')
+                else:
+                     feedback_label.text = "Centralize o Rosto"
+                     feedback_label.classes(remove='bg-black/60 bg-red-600', add='bg-yellow-600')
 
         _, buffer = cv2.imencode('.jpg', display_frame)
         video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
