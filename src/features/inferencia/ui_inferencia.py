@@ -8,7 +8,6 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QImage, QPixmap, QPainter, QColor, QPen, QFont, QPainterPath
 from PySide6.QtCore import QTimer, Qt, Slot, Signal, QSize, QRectF
 
-from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager
 from src.common.database import DatabaseManager
 from src.features.inferencia.engine import InferenceController
@@ -54,20 +53,16 @@ class RecognitionWindow(QWidget):
         self.exit_on_detect = exit_on_detect
         self.db_manager = DatabaseManager()
         
-        # Setup UI
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         
-        # Video Layer
         self.video_label = QLabel()
         self.video_label.setAlignment(Qt.AlignCenter)
         self.video_label.setStyleSheet("background-color: black;")
         layout.addWidget(self.video_label)
         
-        # Overlays
         self.loading_overlay = LoadingOverlay(self)
         
-        # Bottom Status (Floating)
         self.lbl_status = QLabel("Inicializando...", self)
         self.lbl_status.setStyleSheet("""
             QLabel {
@@ -82,7 +77,6 @@ class RecognitionWindow(QWidget):
         self.lbl_status.resize(300, 40)
         self.lbl_status.move(20, 20) # Top Left
 
-        # Exit Button (Floating)
         self.btn_exit = QPushButton("✕", self)
         self.btn_exit.setFixedSize(40, 40)
         self.btn_exit.setStyleSheet("""
@@ -100,7 +94,6 @@ class RecognitionWindow(QWidget):
         """)
         self.btn_exit.clicked.connect(self.close)
         
-        # Logic
         self.camera_manager = CameraManager()
         self.camera_manager.frame_captured.connect(self.on_camera_frame)
         self.camera_manager.error_occurred.connect(self.on_error)
@@ -125,7 +118,6 @@ class RecognitionWindow(QWidget):
         self.controller.update_frame(frame)
 
     def on_ai_results(self, frame, results):
-        # We draw minimalist lines
         draw_frame = frame.copy()
         
         detected_known = False
@@ -136,25 +128,20 @@ class RecognitionWindow(QWidget):
             name = res["name"]
             known = res["known"]
             
-            # Colors
-            color = (0, 255, 0) if known else (0, 0, 255) # Green / Red (Classic)
+            color = (0, 255, 0) if known else (0, 0, 255) 
             
-            # Simple Box
             cv2.rectangle(draw_frame, (x, y), (x+w, y+h), color, 2)
             
-            # Text Background
             cv2.rectangle(draw_frame, (x, y-30), (x+w, y), color, cv2.FILLED)
             
             if known:
                 detected_known = True
                 names.append(name)
-                # Text below
                 text = f"{name}"
                 cv2.putText(draw_frame, text, (x + 5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,0), 2)
             else:
                  cv2.putText(draw_frame, "Desconhecido", (x + 5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
 
-        # Convert
         rgb_image = cv2.cvtColor(draw_frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
         bytes_per_line = ch * w

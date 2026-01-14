@@ -13,5 +13,4 @@ class AppState:
         self.current_user = None
         self.is_admin = False
 
-# Global state instance
 state = AppState()

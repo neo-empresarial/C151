@@ -1,6 +1,4 @@
-
 from nicegui import ui
-
 
 def load_theme():
     ui.add_head_html('''

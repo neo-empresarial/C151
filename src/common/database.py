@@ -11,11 +11,9 @@ class DatabaseManager:
     def __init__(self, sqlite_file="users.db"):
         self.sqlite_file = sqlite_file
         
-        # Initialize SQLite
         self.init_db()
 
     def init_db(self):
-        """Initialize the SQLite database with the users table."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
 
@@ -31,7 +29,6 @@ class DatabaseManager:
             )
         ''')
         
-        # Check if columns exist (migration for existing db)
         cursor.execute("PRAGMA table_info(users)")
         columns = [info[1] for info in cursor.fetchall()]
         
@@ -48,7 +45,6 @@ class DatabaseManager:
         conn.close()
 
     def get_users(self):
-        """Retrieve all users key-value pairs (id, name, access_level)."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
         cursor.execute("SELECT id, name, access_level, pin FROM users ORDER BY name")
@@ -79,7 +75,6 @@ class DatabaseManager:
         return results
 
     def get_user_by_name(self, name):
-        """Find a user by name."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
         cursor.execute("SELECT id, name, embedding, access_level FROM users WHERE name = ?", (name,))
@@ -90,7 +85,6 @@ class DatabaseManager:
         return None
 
     def get_user_image(self, user_id):
-        """Retrieve the image blob for a specific user ID."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
         cursor.execute("SELECT image_blob FROM users WHERE id = ?", (user_id,))
@@ -113,10 +107,8 @@ class DatabaseManager:
         timestamp = datetime.datetime.now().isoformat()
         
         try:
-            # Serialize embedding
             embedding_blob = pickle.dumps(embedding) if embedding is not None else None
             
-            # Encode image to BLOB
             if frame is not None:
                 _, img_encoded = cv2.imencode('.jpg', frame)
                 image_blob = img_encoded.tobytes()
@@ -135,9 +127,8 @@ class DatabaseManager:
         except Exception as e:
             return False, str(e)
 
-    def update_user(self, user_id, new_name, frame=None, embedding=None, pin=None, access_level=None):
-        """Update user data (name, photo/embedding, pin, access_level) using ID."""
-        if new_name is not None and not new_name:
+    def update_user(self, user_id, name, frame=None, embedding=None, pin=None, access_level=None):
+        if name is not None and not name:
             return False, "Nome não pode ser vazio."
             
         try:
@@ -145,18 +136,18 @@ class DatabaseManager:
             cursor = conn.cursor()
             
             # Check if new name exists for OTHER user
-            if new_name:
-                cursor.execute("SELECT id FROM users WHERE name = ? AND id != ?", (new_name, user_id))
+            if name:
+                cursor.execute("SELECT id FROM users WHERE name = ? AND id != ?", (name, user_id))
                 if cursor.fetchone():
                     conn.close()
-                    return False, f"Já existe outro usuário com o nome '{new_name}'."
+                    return False, f"Já existe outro usuário com o nome '{name}'."
 
             updates = []
             params = []
             
-            if new_name:
+            if name:
                 updates.append("name = ?")
-                params.append(new_name)
+                params.append(name)
             
             if frame is not None:
                 embedding_blob = pickle.dumps(embedding) if embedding is not None else None
@@ -191,7 +182,6 @@ class DatabaseManager:
             return False, str(e)
 
     def delete_user(self, user_id):
-        """Delete user from DB."""
         try:
             conn = sqlite3.connect(self.sqlite_file)
             cursor = conn.cursor()
@@ -203,7 +193,6 @@ class DatabaseManager:
             return False, str(e)
             
     def validate_pin(self, user_id, pin):
-        """Validate if the provided PIN matches the user's PIN."""
         try:
             conn = sqlite3.connect(self.sqlite_file)
             cursor = conn.cursor()
@@ -218,7 +207,6 @@ class DatabaseManager:
             return False
 
     def get_user_by_pin(self, pin):
-        """Find a user by PIN (if using PIN only login)."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
         cursor.execute("SELECT id, name, access_level FROM users WHERE pin = ?", (pin,))

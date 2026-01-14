@@ -1,17 +1,14 @@
 
-# Windows 11-like Styles
 
-# Colors - Light Mode
-BG_COLOR = "#f9f9f9"      # Mica-like light background
-PANEL_COLOR = "#ffffff"   # Clean white panels
-TEXT_COLOR = "#1a1a1a"    # Soft black
-ACCENT_COLOR = "#0067c0"  # Windows 11 Blue
+BG_COLOR = "#f9f9f9"      
+PANEL_COLOR = "#ffffff"   
+TEXT_COLOR = "#1a1a1a"    
+ACCENT_COLOR = "#0067c0"  
 SUCCESS_COLOR = "#107c10"
 DANGER_COLOR = "#c42b1c"
 BORDER_COLOR = "#e5e5e5"
-SIDEBAR_COLOR = "#f3f3f3" # Slightly darker for sidebar
+SIDEBAR_COLOR = "#f3f3f3" 
 
-# Fonts
 MAIN_FONT = "Segoe UI Variable Display, Segoe UI, sans-serif"
 FONT_SIZE_NORMAL = "14px"
 FONT_SIZE_HEADER = "20px"

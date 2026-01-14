@@ -26,10 +26,8 @@ class InferenceEngine:
     def load_model(self):
         print("Carregando modelos do DeepFace e Embeddings...")
         try:
-             # Ensure model is built/downloaded
              DeepFace.build_model(self.model_name)
              
-             # Load embeddings from SQLite
              self.known_embeddings = self.db_manager.get_all_embeddings()
              print(f"Carregado {len(self.known_embeddings)} usuários conhecidos.")
              self.is_loaded = True
@@ -71,7 +69,6 @@ class InferenceEngine:
                 continue
 
             try:
-                # 1. Detect and Represent Faces
                 face_objs = []
                 try:
                     face_objs = DeepFace.represent(
@@ -82,7 +79,6 @@ class InferenceEngine:
                         align=True
                     )
                 except:
-                    # No face detected
                     pass
 
                 results = []
@@ -98,7 +94,6 @@ class InferenceEngine:
                     best_id = None
                     best_access = "Visitante"
                     
-                    # 2. Compare against known embeddings
                     for known in self.known_embeddings:
                         known_emb = known["embedding"]
                         score = cosine(target_embedding, known_emb)
@@ -127,7 +122,6 @@ class InferenceEngine:
                     self.latest_results = results
 
             except Exception as e:
-                # print(f"Inference error: {e}")
                 pass
             
             time.sleep(0.05)

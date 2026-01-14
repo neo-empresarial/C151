@@ -18,7 +18,6 @@ class CameraManager:
             return
         
         try:
-            # Retry logic
             for attempt in range(3):
                 self.cap = cv2.VideoCapture(self.camera_index)
                 if self.cap.isOpened():
@@ -52,15 +51,14 @@ class CameraManager:
         while self.running and self.cap:
             ret, frame = self.cap.read()
             if ret:
-                # print("Debug: Frame Captured")
-                frame = cv2.flip(frame, 1) # Mirror
+                frame = cv2.flip(frame, 1)
                 with self.lock:
                     self.latest_frame = frame
                     self.ret = True
             else:
                 with self.lock:
                     self.ret = False
-            time.sleep(0.01) # Avoid 100% CPU
+            time.sleep(0.01)
 
     def read(self):
         with self.lock:

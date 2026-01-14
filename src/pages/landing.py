@@ -1,4 +1,3 @@
-
 from nicegui import ui
 
 def landing_page():
@@ -6,13 +5,11 @@ def landing_page():
         ui.label('DeepFace Access Control').classes('text-4xl font-bold text-gray-800 mb-8')
         
         with ui.row().classes('gap-8'):
-            # Recognition Button
             with ui.card().classes('w11-card w-64 h-64 items-center justify-center cursor-pointer hover:bg-blue-50 transition-colors') \
                 .on('click', lambda: ui.navigate.to('/recognition')):
                 ui.icon('face', size='64px').classes('text-blue-600 mb-4')
                 ui.label('Reconhecimento Facial').classes('text-xl font-semibold text-center')
             
-            # Management Button
             with ui.card().classes('w11-card w-64 h-64 items-center justify-center cursor-pointer hover:bg-green-50 transition-colors') \
                 .on('click', lambda: ui.navigate.to('/dashboard')):
                 ui.icon('admin_panel_settings', size='64px').classes('text-green-600 mb-4')

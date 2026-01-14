@@ -65,8 +65,7 @@ def dashboard_page():
             with ui.row().classes('w-full justify-center mt-2'):
                 e_capture_btn = ui.button('Capturar', icon='camera_alt', on_click=lambda: edit_capture()).classes('w11-btn')
                 with ui.row().classes('gap-2 hidden') as e_confirm_row:
-                     ui.button('Retirar', icon='refresh', color='warning', on_click=lambda: edit_reset())
-                     ui.button('Confirmar', icon='check', color='positive', on_click=lambda: edit_confirm())
+                     ui.button('Refazer', icon='refresh', color='warning', on_click=lambda: edit_reset())
 
         def toggle_camera():
             if camera_container.visible:
@@ -105,12 +104,10 @@ def dashboard_page():
         def edit_capture():
             if edit_capture_state['frame'] is not None:
                 edit_capture_state['paused'] = True
+                edit_capture_state['confirmed'] = True
                 e_capture_btn.visible = False
                 e_confirm_row.visible = True
-
-        def edit_confirm():
-            edit_capture_state['confirmed'] = True
-            ui.notify('Nova foto confirmada!', type='positive')
+                ui.notify('Foto capturada!', type='positive')
 
         def save_edit():
             if not edit_name.value or not edit_pin.value:

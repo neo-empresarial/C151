@@ -13,7 +13,7 @@ from PySide6.QtGui import QPixmap, QColor, QFont, QImage
 from PySide6.QtCore import Qt, QTimer, Property, QPropertyAnimation, QEasingCurve, QSize, Signal, QObject
 
 from src.common.database import DatabaseManager
-from src.common.styles import STYLESHEET, SIDEBAR_COLOR, ACCENT_COLOR, DANGER_COLOR, PANEL_COLOR
+from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager
 
 class FlashOverlay(QWidget):
@@ -48,8 +48,6 @@ class EmbeddingWorker(QObject):
 
     def process(self):
         try:
-            # Generate embedding
-            # deepface represent returns a list of dicts
             embedding_objs = DeepFace.represent(
                 img_path=self.frame,
                 model_name=self.model_name,
@@ -62,7 +60,6 @@ class EmbeddingWorker(QObject):
                 self.finished.emit(False, "Nenhum rosto detectado para gerar embedding.", None)
                 return
 
-            # Take the first face
             embedding = embedding_objs[0]["embedding"]
             self.finished.emit(True, "Sucesso", embedding)
             
@@ -91,7 +88,6 @@ class UserFormDialog(QDialog):
             self.load_existing_image()
             self.btn_capture.setText("📷 Alterar Foto")
         else:
-            # Always start camera for new users
             QTimer.singleShot(100, self.start_camera)
 
     def init_ui(self):
@@ -100,7 +96,6 @@ class UserFormDialog(QDialog):
 
         body_layout = QHBoxLayout()
         
-        # Left: Camera
         cam_container = QWidget()
         cam_layout = QVBoxLayout(cam_container)
         cam_layout.setContentsMargins(0,0,0,0)
@@ -129,7 +124,6 @@ class UserFormDialog(QDialog):
         
         body_layout.addWidget(cam_container)
         
-        # Right: Form
         form_container = QWidget()
         form_layout = QVBoxLayout(form_container)
         form_layout.setAlignment(Qt.AlignTop)
@@ -176,7 +170,6 @@ class UserFormDialog(QDialog):
         main_layout.addLayout(btn_layout)
 
     def on_input_change(self):
-        # Enable save if name changed
         if self.edit_mode and self.name_input.text().strip() != self.user_data['name']:
             self.btn_save.setEnabled(True)
 
@@ -190,9 +183,6 @@ class UserFormDialog(QDialog):
             nparr = np.frombuffer(blob, np.uint8)
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             if img is not None:
-                # Keep as "captured frame" initially so we can save even if no new photo taken
-                # But requirement says "Edit Photo" -> implies changing it. 
-                # However, for display purposes:
                 rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 h, w, ch = rgb_image.shape
                 bytes_per_line = ch * w
@@ -204,28 +194,21 @@ class UserFormDialog(QDialog):
                     self.video_label.setPixmap(scaled)
 
     def start_camera(self):
-        # Force cleanup existing camera
         if self.camera_manager:
             self.camera_manager.stop()
             self.camera_manager.deleteLater()
             self.camera_manager = None
         
-        # If editing, show current image first
         self.load_existing_image()
             
         self.camera_manager = CameraManager()
         self.camera_manager.frame_pixmap.connect(self.update_video_label)
         self.camera_manager.frame_captured.connect(self.update_captured_frame)
         
-        # Only overwrite text if error occurs and we DON'T have an image? 
-        # Or just show error text.
         self.camera_manager.error_occurred.connect(self.on_camera_error)
         self.camera_manager.start()
 
     def on_camera_error(self, err_msg):
-        # If we have an image loaded (Edit Mode), maybe don't overwrite it with text?
-        # But user needs to know camera failed.
-        # We can append error to status or popup.
         self.lbl_status.setText(f"Erro Câmera: {err_msg}")
         if not self.edit_mode:
             self.video_label.setText(err_msg)
@@ -233,7 +216,6 @@ class UserFormDialog(QDialog):
     def stop_camera(self):
          if self.camera_manager:
             self.camera_manager.stop()
-            # Don't delete immediately if relying on callbacks, but good practice to release cap
 
     def update_video_label(self, pixmap):
         if self.video_label:
@@ -247,18 +229,15 @@ class UserFormDialog(QDialog):
         text = self.btn_capture.text()
         
         if "Alterar Foto" in text:
-            # Start Camera
             self.start_camera()
             self.btn_capture.setText("📸 Capturar Foto")
             self.lbl_status.setText("")
             return
 
         if "Capturar" in text:
-            # CAPTURE
             if not hasattr(self, 'current_live_frame') or self.current_live_frame is None:
                 return
             
-            # Freeze UI updates from camera
             if self.camera_manager:
                 self.camera_manager.frame_pixmap.disconnect(self.update_video_label)
                 
@@ -272,7 +251,6 @@ class UserFormDialog(QDialog):
             self.name_input.setFocus()
             
         else:
-            # RESET/RETAKE
             if self.camera_manager:
                 self.camera_manager.frame_pixmap.connect(self.update_video_label)
                 
@@ -280,7 +258,6 @@ class UserFormDialog(QDialog):
             self.lbl_status.setText("")
             self.btn_capture.setText("📸 Capturar Foto")
             
-            # Disable save unless in edit mode with name change
             if self.edit_mode:
                 if self.name_input.text().strip() == self.user_data['name']:
                     self.btn_save.setEnabled(False)
@@ -293,9 +270,7 @@ class UserFormDialog(QDialog):
              QMessageBox.warning(self, "Aviso", "Por favor, digite o nome do usuário.")
              return
         
-        # If edit mode and no new photo, but name changed
         if self.edit_mode and self.captured_frame is None:
-            # Just update name
             success, msg = self.db_manager.update_user(self.user_data['id'], name, None, None)
             if success:
                 QMessageBox.information(self, "Sucesso", msg)
@@ -308,12 +283,10 @@ class UserFormDialog(QDialog):
              QMessageBox.warning(self, "Aviso", "Por favor, capture uma foto.")
              return
 
-        # Show Progress
         self.progress = QProgressDialog("Gerando assinatura facial...", None, 0, 0, self)
         self.progress.setWindowModality(Qt.WindowModal)
         self.progress.show()
 
-        # Run embedding in background to avoid freeze
         self.worker = EmbeddingWorker(self.captured_frame)
         self.worker_thread = threading.Thread(target=self.worker.process)
         self.worker.finished.connect(self.finish_save)
@@ -375,7 +348,6 @@ class ManagementWindow(QWidget):
         layout.addLayout(header)
         
         self.list_widget = QListWidget()
-        # Fix for scrolling / sizing? QListWidget handles it, but item widgets need fixed height usually.
         self.list_widget.setVerticalScrollMode(QListWidget.ScrollPerPixel)
         layout.addWidget(self.list_widget)
         
@@ -393,7 +365,6 @@ class ManagementWindow(QWidget):
             item = QListWidgetItem()
             widget = self.create_user_widget(user)
             
-            # Important: Set hint size to match widget size + padding
             item.setSizeHint(QSize(widget.sizeHint().width(), 80))
             
             self.list_widget.addItem(item)

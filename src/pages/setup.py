@@ -7,7 +7,6 @@ from deepface import DeepFace
 from src.services.services import camera_manager, db_manager, engine
 
 def setup_page():
-    # First Run Setup
     with ui.column().classes('w-full h-screen items-center justify-center bg-gray-50'):
         with ui.card().classes('w11-card w-[500px] p-8'):
             ui.label('Configuração Inicial').classes('text-2xl font-bold mb-2')
@@ -19,10 +18,8 @@ def setup_page():
             ui.label('Posicione-se para foto:').classes('font-bold mb-2')
             with ui.element('div').classes('relative w-full h-[300px] mb-6 bg-black rounded overflow-hidden'):
                 cam_view = ui.interactive_image().classes('w-full h-full object-cover')
-                # Face Mask Overlay
                 ui.element('div').classes('absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[180px] h-[260px] border-2 border-white/50 rounded-[50%] pointer-events-none shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]')
             
-            # State for capture
             capture_state = {
                 'frame': None,
                 'confirmed': False,
@@ -57,7 +54,6 @@ def setup_page():
                 capture_state['confirmed'] = True
                 ui.notify('Foto confirmada!', type='positive')
 
-            # Buttons for capture logic
             with ui.row().classes('w-full justify-center mb-4'):
                 capture_btn = ui.button('Capturar Foto', icon='camera_alt', on_click=capture_photo).classes('w-full w11-btn')
                 
