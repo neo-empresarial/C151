@@ -4,14 +4,6 @@ import sys
 import os
 import threading
 from deepface import DeepFace
-from PySide6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, 
-    QLineEdit, QListWidget, QMessageBox, QDialog, 
-    QListWidgetItem, QFrame, QGraphicsOpacityEffect, QProgressDialog
-)
-from PySide6.QtGui import QPixmap, QColor, QFont, QImage
-from PySide6.QtCore import Qt, QTimer, Property, QPropertyAnimation, QEasingCurve, QSize, Signal, QObject
-
 from src.common.database import DatabaseManager
 from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager

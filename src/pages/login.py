@@ -13,10 +13,15 @@ def login_page():
         return
     state.current_user = None
     state.is_admin = False
-    with ui.column().classes('w-full h-screen items-center justify-center bg-gray-100 p-4'):
+    with ui.column().classes('w-full h-screen items-center justify-center bg-gray-100 p-4 relative'):
+        
+        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 text-gray-500 text-sm')
+
         with ui.card().classes('w11-card w-full max-w-[1000px] h-[700px] p-0 flex flex-col overflow-hidden shadow-lg'):
             with ui.row().classes('w-full h-[60px] bg-white border-b border-gray-200 items-center px-6 justify-between shrink-0'):
-                ui.label('Reconhecimento Facial').classes('text-xl font-semibold text-gray-800')
+                with ui.row().classes('items-center gap-4'):
+                     ui.image('src/public/images/certi/logo-certi.png').classes('h-12 w-auto object-contain')
+                     ui.label('Reconhecimento Facial').classes('text-xl font-semibold text-gray-800')
                 with ui.row().classes('gap-2'):
                     ui.button(icon='home', on_click=lambda: ui.navigate.to('/')).props('flat round dense')
             with ui.column().classes('w-full h-[500px] bg-black items-center justify-center relative overflow-hidden'):
@@ -29,10 +34,10 @@ def login_page():
     def go_dashboard():
         ui.navigate.to('/dashboard')
 
-    def on_access_granted(user):
+    def finalize_access(user):
         state.current_user = user
         feedback_label.text = f"Bem-vindo, {user['name']}!"
-        feedback_label.classes(remove='bg-black/60', add='bg-green-600')
+        feedback_label.classes(remove='bg-black/60 bg-green-600', add='bg-green-600')
         
         if user.get('access_level') == 'Admin':
             state.is_admin = True
@@ -47,6 +52,24 @@ def login_page():
         feedback_label.text = "Aguardando rosto..."
         feedback_label.classes(remove='bg-green-600', add='bg-black/60')
 
+    logic_state = {
+        'consecutive_hits': 0,
+        'last_user_id': None,
+        'in_cooldown': False
+    }
+
+    def trigger_access(user):
+        logic_state['in_cooldown'] = True
+        feedback_label.text = "ACESSO PERMITIDO"
+        feedback_label.classes(remove='bg-black/60 bg-blue-600 bg-red-600 bg-yellow-600', add='bg-green-600')
+        
+        def on_timeout():
+            finalize_access(user)
+            logic_state['in_cooldown'] = False
+            logic_state['consecutive_hits'] = 0
+            
+        ui.timer(2.0, on_timeout, once=True)
+
     pin_dialog = ui.dialog()
     with pin_dialog, ui.card().classes('w11-card w-[320px] items-center p-6'):
         ui.label('Digite o PIN').classes('text-xl font-semibold mb-6')
@@ -56,7 +79,7 @@ def login_page():
             user = db_manager.get_user_by_pin(pin_input.value)
             if user:
                 pin_dialog.close()
-                on_access_granted(user)
+                trigger_access(user)
             else:
                 ui.notify('PIN Inválido', type='negative')
                 pin_input.value = ''
@@ -68,17 +91,8 @@ def login_page():
             ui.button('0', on_click=lambda: pin_input.set_value(pin_input.value + '0')).classes('w11-btn text-lg h-12 bg-gray-50')
             ui.button('OK', on_click=verify_pin).classes('w11-btn text-lg h-12 bg-blue-600 text-white col-span-3')
 
-    # State tracking for logic
-    logic_state = {
-        'consecutive_hits': 0,
-        'last_user_id': None,
-        'in_cooldown': False
-    }
-
     async def loop():
         if state.current_user or logic_state['in_cooldown']:
-            # Still update frame source if feasible, or just return to freeze?
-            # Freezing might be better for "Result" display
             pass
             
         ret, frame = camera_manager.read()
@@ -89,10 +103,6 @@ def login_page():
             return
 
         if logic_state['in_cooldown']:
-            # Just show the frame but don't process
-            # Or maybe we want to freeze the "Success" frame? 
-            # Let's keep showing live feed? User said "restart" after little time.
-            # Showing live feed is fine.
             _, buffer = cv2.imencode('.jpg', frame)
             video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
             return
@@ -105,7 +115,6 @@ def login_page():
         detected_known = False
         user_found = None
         
-        # Check if we have at least one valid face in ROI
         valid_face_found = False
 
         for res in results:
@@ -114,15 +123,14 @@ def login_page():
             name = res.get("name", "Desconhecido")
             in_roi = res.get("in_roi", False)
             
-            # Visuals
-            color = (100, 100, 100) # Default gray
+            color = (100, 100, 100)
             if in_roi:
                 if known:
-                    color = (0, 255, 0) # Green
+                    color = (0, 255, 0)
                 else:
-                    color = (0, 0, 255) # Red for unknown in ROI
+                    color = (0, 0, 255)
             else:
-                color = (0, 255, 255) # Yellow for "Move to center"
+                color = (0, 255, 255)
             
             cv2.rectangle(display_frame, (x, y), (x+w, y+h), color, 2)
             
@@ -133,7 +141,6 @@ def login_page():
 
             if in_roi:
                 if known:
-                    # Logic for consecutive checks
                     if res['id'] == logic_state['last_user_id']:
                         logic_state['consecutive_hits'] += 1
                     else:
@@ -146,51 +153,24 @@ def login_page():
                     
                     valid_face_found = True
                 else:
-                    # Unknown in ROI
                     logic_state['consecutive_hits'] = 0
                     logic_state['last_user_id'] = None
-                    valid_face_found = True # Found a face, just not known
+                    valid_face_found = True
             
         if not valid_face_found:
-             # Reset if no face in ROI seen
              logic_state['consecutive_hits'] = 0
              logic_state['last_user_id'] = None
 
-        # Feedback Label Logic
         if logic_state['in_cooldown']:
-             pass # Handled above
+             pass
         elif detected_known and user_found:
-             # TRIGGER ACCESS
-             logic_state['in_cooldown'] = True
-             feedback_label.text = "ACESSO PERMITIDO"
-             feedback_label.classes(remove='bg-black/60 bg-blue-600', add='bg-green-600')
-             
-             # Grant Access logic (update state, etc)
-             # But we want to show the message for a bit.
-             
-             def cooldown_reset():
-                 on_access_granted(user_found) # This notifies and sets state.current_user
-                 # But we specifically want the "Wait" behavior logic here.
-                 # Actually on_access_granted sets state.current_user which stops this loop effectively?
-                 # No, loop checks state.current_user. 
-                 
-                 # Let's slightly modify flow: 
-                 # 1. Show "ACESSO PERMITIDO" on screen.
-                 # 2. Wait 2 seconds.
-                 # 3. Call on_access_granted to officially log in / notify.
-                 
-                 logic_state['in_cooldown'] = False
-                 logic_state['consecutive_hits'] = 0
-                 
-             ui.timer(2.0, cooldown_reset, once=True)
+             trigger_access(user_found)
 
         else:
-            # Normal Status Feedback
             if not results:
                 feedback_label.text = "Aguardando rosto..."
                 feedback_label.classes(remove='bg-blue-600 bg-yellow-600 bg-red-600 bg-green-600', add='bg-black/60')
             else:
-                # We have faces, check if any is in ROI
                 if valid_face_found:
                      if logic_state['consecutive_hits'] > 0:
                          feedback_label.text = f"Identificando... {logic_state['consecutive_hits']}/3"

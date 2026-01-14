@@ -1,5 +1,15 @@
 import sys
+import os
 from nicegui import ui, app
+
+if getattr(sys, 'frozen', False):
+    os.chdir(os.path.dirname(sys.executable))
+    
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
+    static_src_path = os.path.join(base_path, 'src')
+else:
+    static_src_path = 'src'
+
 sys.path.append(".") 
 from src.common.theme import load_theme
 from src.services.services import start_services, stop_services
@@ -12,6 +22,8 @@ app.on_startup(start_services)
 app.on_shutdown(stop_services)
 
 load_theme()
+
+app.add_static_files('/src', static_src_path)
 
 @ui.page('/')
 def index():

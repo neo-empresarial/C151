@@ -1,14 +1,16 @@
+#!/bin/bash
+set -e
 
-
-# Backup existing database in dist if it exists
 if [ -f "dist/DeepFaceRec/users.db" ]; then
     echo "Backing up existing users.db from dist..."
     cp dist/DeepFaceRec/users.db users.db.backup
+elif [ -f "dist/users.db" ]; then
+    cp dist/users.db users.db.backup
 fi
 
 rm -rf build dist *.spec
 
-./venv/bin/pyinstaller --noconfirm --onedir --windowed --name "DeepFaceRec" \
+./venv/bin/pyinstaller --noconfirm --onefile --windowed --name "DeepFaceRec" \
     --add-data "users.db:." \
     --add-data "src:src" \
     --hidden-import "deepface" \
@@ -18,15 +20,16 @@ rm -rf build dist *.spec
     --hidden-import "PIL" \
     --hidden-import "numpy" \
     --hidden-import "pandas" \
+    --hidden-import "webview" \
     --collect-all "deepface" \
     --collect-all "tensorflow" \
     --collect-all "cv2" \
     main.py
 
-# Restore database if backup exists
 if [ -f "users.db.backup" ]; then
     echo "Restoring users.db to dist..."
-    mv users.db.backup dist/DeepFaceRec/users.db
+    if [ ! -d "dist" ]; then mkdir dist; fi
+    mv users.db.backup dist/users.db
 fi
 
-echo "Build complete. Executable is at dist/DeepFaceRec/DeepFaceRec"
+echo "Build complete. Executable is at dist/DeepFaceRec"

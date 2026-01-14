@@ -1,16 +1,21 @@
 
 import base64
 import cv2
-from nicegui import ui
+from nicegui import ui, run
 from deepface import DeepFace
 
 from src.services.services import camera_manager, db_manager, engine
 from src.common.state import state
 
 def dashboard_page():
-    with ui.column().classes('w-full h-screen bg-gray-100 p-8'):
+    with ui.column().classes('w-full h-screen bg-gray-100 p-8 relative'):
+        
+        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 text-gray-400 text-xs')
+
         with ui.row().classes('w-full justify-between items-center mb-6'):
-            ui.label('Painel Administrativo').classes('text-2xl font-bold text-gray-800')
+            with ui.row().classes('items-center gap-4'):
+                ui.image('src/public/images/certi/logo-certi.png').classes('h-12 w-auto object-contain')
+                ui.label('Painel Administrativo').classes('text-2xl font-bold text-gray-800')
             ui.button('Sair', on_click=lambda: ui.navigate.to('/')).classes('w11-btn bg-red-600 text-white')
 
         users_card = ui.card().classes('w11-card w-full p-4')
@@ -109,7 +114,7 @@ def dashboard_page():
                 e_confirm_row.visible = True
                 ui.notify('Foto capturada!', type='positive')
 
-        def save_edit():
+        async def save_edit():
             if not edit_name.value or not edit_pin.value:
                 ui.notify('Preencha tudo', type='negative'); return
             
@@ -122,7 +127,8 @@ def dashboard_page():
             if edit_capture_state['confirmed'] and edit_capture_state['frame'] is not None:
                 try:
                      ui.notify('Atualizando biometria...', type='info')
-                     embedding_objs = DeepFace.represent(
+                     embedding_objs = await run.io_bound(
+                        DeepFace.represent,
                         img_path=edit_capture_state['frame'],
                         model_name="Facenet",
                         detector_backend="opencv",
@@ -137,7 +143,7 @@ def dashboard_page():
             db_manager.update_user(current_edit_id[0], **updates)
             
             if 'embedding' in updates:
-                engine.load_model()
+                await run.io_bound(engine.load_model)
                 
             ui.notify('Usuário atualizado')
             edit_dialog.close()
@@ -242,7 +248,8 @@ def dashboard_page():
             final_frame = capture_state['frame']
             
             try:
-                embedding_objs = DeepFace.represent(
+                embedding_objs = await run.io_bound(
+                    DeepFace.represent,
                     img_path=final_frame,
                     model_name="Facenet",
                     detector_backend="opencv",
@@ -265,7 +272,7 @@ def dashboard_page():
                 
                 if success:
                     ui.notify(f'Usuário {name_input.value} criado!')
-                    engine.load_model()
+                    await run.io_bound(engine.load_model)
                     add_user_dialog.close()
                     ui.navigate.reload()
                 else:

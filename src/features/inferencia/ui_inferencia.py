@@ -1,13 +1,6 @@
 
 import cv2
 import sys
-from PySide6.QtWidgets import (
-    QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QFrame,
-    QProgressBar, QGraphicsOpacityEffect
-)
-from PySide6.QtGui import QImage, QPixmap, QPainter, QColor, QPen, QFont, QPainterPath
-from PySide6.QtCore import QTimer, Qt, Slot, Signal, QSize, QRectF
-
 from src.common.camera import CameraManager
 from src.common.database import DatabaseManager
 from src.features.inferencia.engine import InferenceController
@@ -15,7 +8,7 @@ from src.features.inferencia.engine import InferenceController
 class LoadingOverlay(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setStyleSheet("background-color: #f9f9f9;") # Light clean background
+        self.setStyleSheet("background-color: #f9f9f9;")
         
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
