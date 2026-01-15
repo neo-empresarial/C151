@@ -11,6 +11,7 @@ fi
 rm -rf build dist *.spec
 
 ./venv/bin/pyinstaller --noconfirm --onefile --windowed --name "DeepFaceRec" \
+    --splash "src/public/images/certi/logo-certi.png" \
     --add-data "users.db:." \
     --add-data "src:src" \
     --hidden-import "deepface" \

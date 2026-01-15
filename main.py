@@ -21,6 +21,16 @@ from src.pages.landing import landing_page
 app.on_startup(start_services)
 app.on_shutdown(stop_services)
 
+def close_splash():
+    try:
+        import pyi_splash
+        pyi_splash.update_text('UI Loaded...')
+        pyi_splash.close()
+    except:
+        pass
+
+app.on_startup(close_splash)
+
 load_theme()
 
 app.add_static_files('/src', static_src_path)
