@@ -17,9 +17,6 @@ weights/
 # Project Data (Heavy/Private)
 database/
 Logs/
-*.jpg
-*.png
-*.csv
 
 # IDEs
 .vscode/
