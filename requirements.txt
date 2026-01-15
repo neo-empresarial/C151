@@ -73,3 +73,4 @@ Pygments==2.19.2
 pyinstaller==6.18.0
 pyinstaller-hooks-contrib==2025.11
 PyGObject==3.46.0
+pystray==0.19.5
