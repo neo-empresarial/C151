@@ -1,46 +1,80 @@
-
+import cv2
 import threading
 import time
+import numpy as np
+import faiss
 from deepface import DeepFace
-from scipy.spatial.distance import cosine
+from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD
 
 class InferenceEngine:
-    def __init__(self, db_manager, model_name="Facenet", detector_backend="opencv"):
+    def __init__(self, db_manager):
         self.db_manager = db_manager
-        self.model_name = model_name
-        self.detector_backend = detector_backend
+        self.model_name = MODEL_NAME
+        self.detector_backend = DETECTOR_BACKEND
+        self.threshold = VERIFICATION_THRESHOLD
         self.running = False
+        self.paused = False
+        self.last_recognition_time = 0
+        self.last_result_time = 0
         self.thread = None
         self.lock = threading.Lock()
         self.df_lock = threading.Lock()
-        
         self.latest_frame = None
         self.latest_results = []
-        
         self.known_embeddings = []
+        self.known_ids = []
+        self.faiss_index = None
         self.is_loaded = False
 
     def load_model(self):
-        print("Carregando modelos do DeepFace e Embeddings...")
         try:
             with self.df_lock:
-                 DeepFace.build_model(self.model_name)
-                 
-                 self.known_embeddings = self.db_manager.get_all_embeddings()
-                 print(f"Carregado {len(self.known_embeddings)} usuários conhecidos.")
-                 self.is_loaded = True
-             
+                DeepFace.build_model(self.model_name)
+                users = self.db_manager.get_all_embeddings()
+                self.known_embeddings = []
+                self.known_ids = []
+                
+                if users:
+                    embeddings = [u["embedding"] for u in users]
+                    self.known_ids = [u for u in users]
+                    
+                    params = np.array(embeddings).astype('float32')
+                    faiss.normalize_L2(params)
+                    
+                    dimension = params.shape[1]
+                    self.faiss_index = faiss.IndexFlatIP(dimension)
+                    self.faiss_index.add(params)
+                    
+                if self.faiss_index:
+                    print(f"DEBUG: Index rebuilt with {self.faiss_index.ntotal} vectors.")
+                    
+                self.is_loaded = True
         except Exception as e:
-            print(f"Error loading model: {e}")
+            print(f"ERROR: Failed to load model/index: {e}")
+            import traceback
+            traceback.print_exc()
 
     def generate_embedding(self, frame):
+        print("DEBUG: generate_embedding called. Requesting df_lock...")
         with self.df_lock:
-            return DeepFace.represent(
-                img_path=frame,
-                model_name=self.model_name,
-                detector_backend=self.detector_backend,
-                enforce_detection=True
-            )
+            print("DEBUG: df_lock acquired. Starting DeepFace.represent...")
+            start_time = time.time()
+            try:
+                result = DeepFace.represent(
+                    img_path=frame,
+                    model_name=self.model_name,
+                    detector_backend=self.detector_backend,
+                    enforce_detection=True,
+                    align=True,
+                    anti_spoofing=True
+                )
+                print(f"DEBUG: DeepFace.represent finished in {time.time() - start_time:.2f}s")
+                return result
+            except Exception as e:
+                print(f"ERROR: DeepFace.represent failed: {e}")
+                raise e
+            finally:
+                print("DEBUG: Releasing df_lock.")
 
     def start(self):
         if self.running:
@@ -60,13 +94,20 @@ class InferenceEngine:
 
     def get_results(self):
         with self.lock:
+            # Avoid ghost results: if data is older than 1s, return empty
+            if (time.time() - self.last_result_time) > 1.0:
+                return []
             return self.latest_results
 
     def _process_loop(self):
-        # Initial load (safe to call, uses lock)
         self.load_model()
 
         while self.running:
+            if self.paused:
+                # print("DEBUG: Engine paused. Sleeping...") # Commented out to avoid spam
+                time.sleep(0.1)
+                continue
+
             frame = None
             with self.lock:
                 if self.latest_frame is not None:
@@ -77,22 +118,40 @@ class InferenceEngine:
                 continue
 
             try:
+                # Rate limit to prevent CPU starvation
+                current_time = time.time()
+                if (current_time - self.last_recognition_time) < 0.5:
+                    time.sleep(0.1)
+                    continue
+
                 face_objs = []
                 try:
                     with self.df_lock:
+                        # Snapshot knowledge base
+                        current_index = self.faiss_index
+                        current_known_ids = self.known_ids
+                        
+                        # Optimization: Resize frame for faster processing
+                        h_orig, w_orig = frame.shape[:2]
+                        target_w = 640
+                        scale_factor = 1.0
+                        
+                        process_frame = frame
+                        if w_orig > target_w:
+                            scale_factor = target_w / w_orig
+                            new_h = int(h_orig * scale_factor)
+                            process_frame = cv2.resize(frame, (target_w, new_h))
+                        
                         face_objs = DeepFace.represent(
-                            img_path=frame,
+                            img_path=process_frame,
                             model_name=self.model_name,
                             detector_backend=self.detector_backend,
                             enforce_detection=True,
-                            align=True
+                            align=True,
+                            anti_spoofing=True
                         )
-                except Exception as e:
-                    # Silent or debug log for "Face not found" etc?
-                    # Face not found raises exception usually with enforce_detection=True
-                    # But we can print it if it is something else.
-                    # Commonly "Face could not be detected"
-                    # print(f"DEBUG: Represent Error: {e}")
+                        self.last_recognition_time = time.time()
+                except Exception:
                     pass
 
                 results = []
@@ -100,39 +159,42 @@ class InferenceEngine:
                 for face in face_objs:
                     target_embedding = face["embedding"]
                     area = face["facial_area"]
-                    x, y, w, h = area["x"], area["y"], area["w"], area["h"]
+                    # Scale coordinates back to original frame size
+                    x = int(area["x"] / scale_factor)
+                    y = int(area["y"] / scale_factor)
+                    w = int(area["w"] / scale_factor)
+                    h = int(area["h"] / scale_factor)
                     
                     found_match = False
-                    best_score = 0.40 
                     best_name = "Desconhecido"
                     best_id = None
                     best_access = "Visitante"
-                    
-                    for known in self.known_embeddings:
-                        known_emb = known["embedding"]
-                        score = cosine(target_embedding, known_emb)
+                    confidence = 0.0
+
+                    if current_index and current_index.ntotal > 0:
+                        query = np.array([target_embedding]).astype('float32')
+                        faiss.normalize_L2(query)
                         
-                        if score < best_score:
-                            best_score = score
-                            best_name = known["name"]
-                            best_id = known["id"]
-                            best_access = known.get("access_level", "Visitante")
-                            found_match = True
-                            print(f"DEBUG: RECOGNIZED USER -> {best_name}")
-                    
-                    if not found_match:
-                         # print("DEBUG: New Face Detected (Unknown)")
-                         pass
-                    
+                        D, I = current_index.search(query, 1)
+                        
+                        score = D[0][0] 
+                        if score > (1 - self.threshold):
+                            idx = I[0][0]
+                            # Safety check for index bounds
+                            if idx < len(current_known_ids):
+                                user_data = current_known_ids[idx]
+                                best_name = user_data["name"]
+                                best_id = user_data["id"]
+                                best_access = user_data.get("access_level", "Visitante")
+                                found_match = True
+                                confidence = float(score)
+
                     h_frame, w_frame, _ = frame.shape
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
-                    
                     cx_face = x + w // 2
                     cy_face = y + h // 2
-                    
                     roi_threshold_x = w_frame * 0.15
                     roi_threshold_y = h_frame * 0.20 
-                    
                     in_roi = (abs(cx_face - cx_frame) < roi_threshold_x) and (abs(cy_face - cy_frame) < roi_threshold_y)
                     
                     results.append({
@@ -141,14 +203,15 @@ class InferenceEngine:
                         "id": best_id,
                         "access_level": best_access,
                         "known": found_match,
-                        "confidence": (1 - best_score),
+                        "confidence": confidence,
                         "in_roi": in_roi
                     })
                 
                 with self.lock:
                     self.latest_results = results
+                    self.last_result_time = time.time()
 
-            except Exception as e:
-                print(f"Engine Loop Error: {e}")
+            except Exception:
+                pass
             
             time.sleep(0.05)

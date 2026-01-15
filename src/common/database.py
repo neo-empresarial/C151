@@ -1,11 +1,8 @@
-import os
 import sqlite3
-import shutil
 import uuid
 import datetime
 import cv2
 import pickle
-import numpy as np
 
 class DatabaseManager:
     def __init__(self, sqlite_file="users.db"):
@@ -53,7 +50,6 @@ class DatabaseManager:
         return [{"id": row[0], "name": row[1], "access_level": row[2], "pin": row[3]} for row in rows]
 
     def get_all_embeddings(self):
-        """Retrieve all user embeddings for in-memory recognition."""
         conn = sqlite3.connect(self.sqlite_file)
         cursor = conn.cursor()
         cursor.execute("SELECT id, name, embedding, access_level FROM users WHERE embedding IS NOT NULL")
@@ -95,7 +91,6 @@ class DatabaseManager:
         return None
 
     def create_user(self, name, frame, embedding=None, pin=None, access_level="Visitante"):
-        """Create a new user with generated ID, save metadata, image blob, and embedding to SQLite."""
         if not name:
             return False, "O nome não pode ser vazio."
         
@@ -135,7 +130,6 @@ class DatabaseManager:
             conn = sqlite3.connect(self.sqlite_file)
             cursor = conn.cursor()
             
-            # Check if new name exists for OTHER user
             if name:
                 cursor.execute("SELECT id FROM users WHERE name = ? AND id != ?", (name, user_id))
                 if cursor.fetchone():

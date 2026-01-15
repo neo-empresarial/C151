@@ -16,3 +16,8 @@ THEME_COLORS = {
     'success': '#107c10',
     'error': '#c42b1c'
 }
+
+MODEL_NAME = 'ArcFace'
+DETECTOR_BACKEND = 'mtcnn'
+DISTANCE_METRIC = 'cosine'
+VERIFICATION_THRESHOLD = 0.28

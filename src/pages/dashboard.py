@@ -1,5 +1,6 @@
 import base64
 import cv2
+import time
 from nicegui import ui, run
 
 from src.services.services import camera_manager, db_manager, engine
@@ -136,27 +137,40 @@ def dashboard_page():
                 ui.notify('Confirme a nova foto antes de salvar!', type='warning')
                 return
 
-            if edit_capture_state['confirmed'] and edit_capture_state['frame'] is not None:
-                try:
-                     ui.notify('Atualizando biometria...', type='info')
+            n = None
+            engine.paused = True 
+            await run.io_bound(lambda: time.sleep(0.5)) 
+            try:
+                if edit_capture_state['confirmed'] and edit_capture_state['frame'] is not None:
+                     n = ui.notify('Atualizando biometria...', type='ongoing', timeout=0)
+                     
                      embedding_objs = await run.io_bound(
                         engine.generate_embedding,
                         edit_capture_state['frame']
                     )
                      updates['embedding'] = embedding_objs[0]['embedding']
                      updates['frame'] = edit_capture_state['frame']
-                except Exception as e:
-                    ui.notify(f'Erro na foto: {e}', type='negative')
-                    return
 
-            db_manager.update_user(current_edit_id[0], **updates)
-            
-            if 'embedding' in updates:
-                await run.io_bound(engine.load_model)
+                success, msg = db_manager.update_user(current_edit_id[0], **updates)
                 
-            ui.notify('Usuário atualizado')
-            edit_dialog.close()
-            ui.navigate.reload()
+                if not success:
+                     ui.notify(f'Erro ao atualizar: {msg}', type='negative')
+                     return
+                
+                if 'embedding' in updates:
+                    await run.io_bound(engine.load_model)
+                    
+                ui.notify('Usuário atualizado')
+                edit_dialog.close()
+                ui.navigate.reload()
+
+            except Exception as e:
+                ui.notify(f'Erro: {e}', type='negative')
+            finally:
+                engine.paused = False
+                if n: 
+                    try: n.dismiss() 
+                    except: pass
 
         with ui.row().classes('w-full justify-end mt-4 gap-2'):
             ui.button('Cancelar', on_click=edit_dialog.close).props('flat')
@@ -263,11 +277,15 @@ def dashboard_page():
                 ui.notify('Você deve capturar e CONFIRMAR a foto.', type='warning')
                 return
             
-            ui.notify('Processando Face... Aguarde.', type='info')
-            
-            final_frame = capture_state['frame']
-            
+            n = None
+            engine.paused = True
+            await run.io_bound(lambda: time.sleep(0.5)) # allow loop to yield
+
             try:
+                n = ui.notify('Processando Face... Isso pode levar 10-20s. Aguarde.', type='ongoing', timeout=0)
+                
+                final_frame = capture_state['frame']
+                
                 embedding_objs = await run.io_bound(
                     engine.generate_embedding,
                     final_frame
@@ -297,6 +315,11 @@ def dashboard_page():
                     
             except Exception as e:
                 ui.notify(f'Erro ao processar face: {str(e)}', type='negative')
+            finally:
+                engine.paused = False
+                if n:
+                    try: n.dismiss() 
+                    except: pass
 
         with ui.row().classes('mt-8 gap-4'):
             ui.button('Cancelar', on_click=add_user_dialog.close).props('flat')
