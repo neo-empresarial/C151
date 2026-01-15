@@ -38,4 +38,12 @@ This project uses the following major open-source libraries:
 - **License**: MIT License
 - **Source**: https://github.com/tiangolo/fastapi
 
+## Pystray
+- **License**: MIT License
+- **Source**: https://github.com/moses-palmer/pystray
+
+## Pillow (PIL Fork)
+- **License**: HPND License (Historic Permission Notice and Disclaimer)
+- **Source**: https://github.com/python-pillow/Pillow
+
 ---

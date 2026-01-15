@@ -40,15 +40,15 @@ def setup_page():
             def capture_photo():
                 if capture_state['frame'] is not None:
                     capture_state['paused'] = True
-                    capture_btn.visible = False
-                    confirm_row.visible = True
+                    capture_btn.set_visibility(False)
+                    confirm_row.set_visibility(True)
                     ui.notify('Foto capturada. Confirme se ficou boa.', type='info')
 
             def retake_photo():
                 capture_state['paused'] = False
                 capture_state['confirmed'] = False
-                capture_btn.visible = True
-                confirm_row.visible = False
+                capture_btn.set_visibility(True)
+                confirm_row.set_visibility(False)
 
             def confirm_photo():
                 capture_state['confirmed'] = True
@@ -57,9 +57,11 @@ def setup_page():
             with ui.row().classes('w-full justify-center mb-4'):
                 capture_btn = ui.button('Capturar Foto', icon='camera_alt', on_click=capture_photo).classes('w-full w11-btn')
                 
-                with ui.row().classes('w-full gap-2 hidden') as confirm_row:
-                    ui.button('Tentar Novamente', icon='refresh', color='warning', on_click=retake_photo).classes('flex-1')
-                    ui.button('Confirmar', icon='check', color='positive', on_click=confirm_photo).classes('flex-1')
+            with ui.row().classes('w-full gap-2') as confirm_row:
+                ui.button('Tentar Novamente', icon='refresh', on_click=retake_photo).classes('flex-1 w11-btn')
+                ui.button('Confirmar', icon='check', on_click=confirm_photo).classes('flex-1 w11-btn bg-green-600 text-white')
+            
+            confirm_row.set_visibility(False)
 
             async def create_admin():
                 if not name_input.value or not pin_input.value:

@@ -19,7 +19,13 @@ class CameraManager:
         
         try:
             for attempt in range(3):
-                self.cap = cv2.VideoCapture(self.camera_index)
+                # Enforce V4L2 for robust Linux support
+                self.cap = cv2.VideoCapture(self.camera_index, cv2.CAP_V4L2)
+                
+                # Set Standard Resolution (640x480) to avoid high-res timeout
+                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                
                 if self.cap.isOpened():
                     break
                 else:

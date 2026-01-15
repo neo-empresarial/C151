@@ -33,89 +33,76 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## 🔒 Serviço Secreto de Biometria (API Local)
+## 🔒 Serviço de Background (DeepFaceService)
 
-O projeto inclui um "Serviço de Background" (`src/background_service.py`) que roda oculto no System Tray e expõe uma API Local para que **outros aplicativos** consultem a identidade do operador atual.
+O sistema agora conta com um componente dedicado: **DeepFaceService**. Este é um serviço, execução em System Tray, independente da interface gráfica principal.
 
-### Como Iniciar
-```bash
-python src/background_service.py
-```
-*O app iniciará minimizado. Um ícone aparecerá na bandeja do sistema.*
+### Funcionalidades do Serviço
+1.  **Monitoramento Contínuo**: Roda em background, acessando a câmera diretamente.
+2.  **API Local (Porta 8080)**: Oferece endpoints para verificação de identidade.
+3.  **System Tray**: Ícone na bandeja do sistema para controle básico (Sair).
+4.  **Segurança Ativa**:
+    - **Bloqueio Visual**: Se um usuário não identificado ou sem permissão for detectado, o serviço pode acionar um bloqueio visual de tela cheia ("ACESSO NEGADO") até que um Administrador seja reconhecido.
+    - **Integração**: Outros aplicativos podem simplesmente consultar a API para saber quem está na frente do PC.
 
-### 📡 Integração (Como chamar de outro App)
-Qualquer linguagem capaz de fazer requisições HTTP pode consultar o serviço.
-
+### API - Integração
 **Endpoint:** `GET http://localhost:8080/verificar_operador`
 
-#### Exemplo de Resposta (JSON):
+**Resposta (JSON):**
 ```json
 {
   "status": "sucesso",
-  "usuario": "Bernardo",
-  "id": "1234-5678",
+  "usuario": "NomeDoUsuario",
+  "id": "uuid-do-usuario",
   "funcao": "Admin",
   "confianca": 0.98
 }
 ```
-*Se ninguém for detectado:* `{"status": "nenhum_usuario", "usuario": null}`
 
-### Exemplos de Código
+### Como Executar
+O serviço pode ser rodado de duas formas:
 
-#### Python (Requests)
-```python
-import requests
-
-try:
-    resp = requests.get("http://localhost:8080/verificar_operador")
-    dados = resp.json()
-    
-    if dados['usuario']:
-        print(f"Usuário Identificado: {dados['usuario']} ({dados['funcao']})")
-    else:
-        print("Nenhum usuário na frente da câmera.")
-except:
-    print("Erro: O serviço de biometria não está rodando.")
-```
-
-#### C# (.NET)
-```csharp
-using System.Net.Http;
-using System.Threading.Tasks;
-
-public async Task VerificarBiometria()
-{
-    using (HttpClient client = new HttpClient())
-    {
-        try 
-        {
-            string resposta = await client.GetStringAsync("http://localhost:8080/verificar_operador");
-            // Parse o JSON aqui (ex: Newtonsoft.Json ou System.Text.Json)
-            Console.WriteLine(resposta);
-        }
-        catch 
-        {
-            Console.WriteLine("Serviço indisponível");
-        }
-    }
-}
-```
-
-#### cURL (Terminal)
+**1. Via Python (Desenvolvimento):**
 ```bash
-curl http://localhost:8080/verificar_operador
+# Requer o ambiente virtual ativado
+./venv/bin/python3 src/background_service.py
 ```
 
-### 🚨 Recurso "Access Denied"
-O serviço possui monitoramento ativo. Se um usuário **NÃO-ADMIN** for detectado, o serviço abre automaticamente uma tela cheia de "ACESSO NEGADO" piscante, bloqueando a visão até que um Administrador seja reconhecido pela câmera.
+**2. Via Executável Standalone (Produção):**
+Após o build, execute o arquivo gerado:
+```bash
+./dist/DeepFaceService/DeepFaceService
+```
+*Recomendado configurar este executável para iniciar com o sistema operacional.*
 
+> [!WARNING]
+> **Atenção com Caminhos/Diretórios**: 
+> Se o executável falhar com erro `ModuleNotFoundError: No module named 'encodings'`, é porque o caminho onde o app está salvo contém caracteres especiais (ex: "Área de trabalho").
+> **Solução**: Mova a pasta `dist/DeepFaceService` para um local simples, como `C:\DeepFaceRec` ou `/home/usuario/DeepFaceRec`.
 
-### Gerar Executável
-Execute o script de build:
+---
+
+## 🛠️ Build e Distribuição
+
+O projeto possui dois scripts de build separados para gerar executáveis independentes.
+
+### 1. Aplicação Principal (Interface de Gestão)
+Gera o `DeepFaceRec`, utilizado para cadastrar usuários e gerenciar o banco de dados.
 ```bash
 ./build.sh
+# Saída: dist/DeepFaceRec
 ```
-O executável será gerado em `dist/DeepFaceRec/DeepFaceRec`.
+
+### 2. Serviço de Background (DeepFaceService)
+Gera o `DeepFaceService`, o serviço silencioso que deve rodar sempre.
+```bash
+./build_service.sh
+# Saída: dist/DeepFaceService
+```
+
+### Notas de Deploy
+- O arquivo `users.db` é compartilhado. Se os executáveis estiverem na mesma pasta, eles compartilharão o banco de dados.
+- O `DeepFaceService` deve ser iniciado **antes** de qualquer aplicação que dependa da autenticação facial.
 
 ## Estrutura do Projeto
 
