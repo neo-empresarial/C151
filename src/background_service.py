@@ -72,6 +72,8 @@ def face_processing_loop():
             
             # Get latest results
             results = engine.get_results()
+            if results:
+                print(f"DEBUG RESULTS: {results}", flush=True)
             
             # Logic for Access Denied
             found_admin = False
@@ -91,8 +93,7 @@ def face_processing_loop():
                          print("ALERTA: Acesso Negado Detectado!", flush=True)
                          access_state["denied"] = True
                          access_state["user"] = results[0]["name"]
-                         # Trigger UI Show
-                         ui.run_javascript('window.show_access_denied();')
+                         
                          # Force Open Browser to SPAM screen
                          try:
                              import webbrowser
@@ -105,8 +106,6 @@ def face_processing_loop():
                         print("Admin detectado. Acesso liberado.", flush=True)
                         access_state["denied"] = False
                         access_state["user"] = None
-                        # Hide UI
-                        ui.run_javascript('window.hide_access_denied();')
                 else:
                     # No one detected -> calm down? 
                     # Or keep alarm valid until admin clears it?
@@ -128,6 +127,7 @@ def face_processing_loop():
 @app.get('/verificar_operador')
 def api_verificar():
     results = engine.get_results()
+    print(f"DEBUG: API Verification Called. Results count: {len(results) if results else 0}", flush=True)
     if results:
         # Return best match
         # If multiple, logic might need adjustment. Returning first for now.
