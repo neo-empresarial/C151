@@ -17,26 +17,39 @@ class CameraManager:
         if self.running:
             return
         
-        try:
-            for attempt in range(3):
-                self.cap = cv2.VideoCapture(self.camera_index)
-                if self.cap.isOpened():
-                    break
+        # Try to find a working camera by scanning indices 0-9
+        camera_found = False
+        for index in range(10):
+            try:
+                print(f"Scanning for camera at index {index}...")
+                cap = cv2.VideoCapture(index)
+                if cap.isOpened():
+                    # Try to read a frame to confirm it actually works
+                    ret, _ = cap.read()
+                    if ret:
+                        self.camera_index = index
+                        self.cap = cap
+                        camera_found = True
+                        print(f"Camera found and working at index {index}")
+                        break
+                    else:
+                        cap.release()
                 else:
-                    self.cap.release()
-                    self.cap = None
-                    time.sleep(0.5)
-
-            if not self.cap or not self.cap.isOpened():
-                raise Exception("Não foi possível acessar a câmera após 3 tentativas.")
-            
-            self.running = True
-            self.thread = threading.Thread(target=self._capture_loop, daemon=True)
-            self.thread.start()
-            print("Camera started in background thread.")
-        except Exception as e:
-            print(f"Camera Error: {e}")
+                    cap.release()
+            except Exception:
+                pass
+        
+        if not camera_found:
+            print("Warning: No working camera found after scanning indices 0-9.")
+            # We don't raise an exception here to allow the app to start without a camera
+            # The capture loop will just not run or will handle the None cap
             self.running = False
+            return
+
+        self.running = True
+        self.thread = threading.Thread(target=self._capture_loop, daemon=True)
+        self.thread.start()
+        print(f"Camera started on index {self.camera_index} in background thread.")
 
     def stop(self):
         self.running = False

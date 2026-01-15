@@ -12,5 +12,12 @@ def start_services():
     engine.start()
 
 def stop_services():
-    camera_manager.stop()
-    engine.stop()
+    try:
+        camera_manager.stop()
+    except Exception as e:
+        print(f"Error stopping camera: {e}")
+        
+    try:
+        engine.stop()
+    except Exception as e:
+        print(f"Error stopping engine: {e}")
