@@ -110,13 +110,32 @@ Process.Start("C:\\DeepFaceRec\\DeepFaceService.exe");
 ./DeepFaceService &
 ```
 
-## 🔒 Segurança Ativa
-- O sistema bloqueia a tela inteira se uma pessoa não autorizada for detectada por **5 frames seguidos**.
-- Para desbloquear:
-    1. Um Administrador deve olhar para a câmera.
-    2. OU digitar o **PIN de Administrador** na tela de bloqueio.
+## 🔒 Segurança Ativa e Comportamento Oculto
+
+O `DeepFaceService` opera de forma **totalmente oculta**.
+1.  **Startup Silencioso**: Ao iniciar, **nenhuma janela** é exibida. O processo roda em background.
+2.  **Monitoramento**: Ele verifica silenciosamente quem está na frente da câmera.
+3.  **Proteção de Admin**: Se um **Administrador** (ex: "BRB") for detectado, o contador de segurança é **zerado**. O sistema entende que está tudo seguro.
+4.  **Bloqueio de Intruso**: Se uma pessoa **Desconhecida** ou **Sem Acesso** for detectada por **5 frames seguidos** (aprox. 5-10s), o sistema exibe uma **Tela Vermelha de ACESSO NEGADO** em tela cheia (modo quiosque), bloqueando o uso do PC.
+
+### Desbloqueio
+Para remover a tela de alerta:
+1.  Um **Administrador** deve olhar para a câmera.
+2.  OU digitar o **PIN de Administrador** na tela de bloqueio.
 
 ---
+
+## ⚠️ Solução de Problemas
+
+### Erro: `can't open camera by index`
+Se ao rodar o serviço você ver erros como `[WARN:0@...] can't open camera by index`, significa que **outra instância do programa já está rodando** e "segurando" a câmera.
+
+**Solução**:
+Execute o comando abaixo no terminal para matar todos os processos antigos:
+```bash
+pkill -f DeepFaceService
+```
+Em seguida, tente rodar novamente.
 
 ## 🛠️ Build e Distribuição
 

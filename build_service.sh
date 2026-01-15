@@ -3,7 +3,7 @@ set -e
 
 rm -rf build_service dist/DeepFaceService *.spec
 
-./venv/bin/pyinstaller --noconfirm --onefile --windowed --name "DeepFaceService" \
+./venv/bin/pyinstaller --noconfirm --onefile --noconsole --name "DeepFaceService" \
     --exclude-module "nvidia" \
     --exclude-module "tensorrt" \
     --add-data "src:src" \
@@ -20,6 +20,6 @@ rm -rf build_service dist/DeepFaceService *.spec
     --collect-all "cv2" \
     --collect-all "nicegui" \
     --collect-all "webview" \
-    src/background_service.py
+    background_service.py
 
 echo "Build complete. Executable is at dist/DeepFaceService"
