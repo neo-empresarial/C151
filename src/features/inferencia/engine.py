@@ -118,12 +118,17 @@ class InferenceEngine:
                             best_id = known["id"]
                             best_access = known.get("access_level", "Visitante")
                             found_match = True
-                            print(f"DEBUG: RECOGNIZED USER -> {best_name}")
+                            # print(f"DEBUG: RECOGNIZED USER -> {best_name}")
                     
                     if not found_match:
                          # print("DEBUG: New Face Detected (Unknown)")
                          pass
                     
+                    if found_match:
+                         print(f"DEBUG: RECOGNIZED USER -> {best_name}", flush=True)
+                    else:
+                         print(f"DEBUG: UNAUTHORIZED USER -> Desconhecido", flush=True)
+
                     h_frame, w_frame, _ = frame.shape
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
                     

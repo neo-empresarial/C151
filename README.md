@@ -82,6 +82,42 @@ Após o build, execute o arquivo gerado:
 
 ---
 
+## 🔄 Integração com Outros Softwares
+
+O `DeepFaceService` foi desenhado para rodar como um **processo em background**.
+Você deve iniciá-lo assim que o computador ligar ou quando seu sistema principal abrir.
+
+**Exemplos de como chamar o executável:**
+
+### Python (subprocess)
+```python
+import subprocess
+
+# Inicia o serviço sem bloquear o script principal
+subprocess.Popen(["C:/DeepFaceRec/DeepFaceService.exe"])
+```
+
+### C# (.NET)
+```csharp
+using System.Diagnostics;
+
+Process.Start("C:\\DeepFaceRec\\DeepFaceService.exe");
+```
+
+### Shell / Bash (Linux)
+```bash
+# O '&' no final libera o terminal
+./DeepFaceService &
+```
+
+## 🔒 Segurança Ativa
+- O sistema bloqueia a tela inteira se uma pessoa não autorizada for detectada por **5 frames seguidos**.
+- Para desbloquear:
+    1. Um Administrador deve olhar para a câmera.
+    2. OU digitar o **PIN de Administrador** na tela de bloqueio.
+
+---
+
 ## 🛠️ Build e Distribuição
 
 O projeto possui dois scripts de build separados para gerar executáveis independentes.

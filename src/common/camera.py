@@ -1,73 +1,30 @@
-
 import cv2
-import time
 import threading
+import time
 
 class CameraManager:
-    def __init__(self, camera_index=0):
-        self.camera_index = camera_index
+    def __init__(self, index=0):
+        self.index = index
         self.cap = None
         self.running = False
-        self.thread = None
         self.lock = threading.Lock()
-        self.latest_frame = None
-        self.ret = False
 
     def start(self):
-        if self.running:
-            return
-        
-        try:
-            for attempt in range(3):
-                # Enforce V4L2 for robust Linux support
-                self.cap = cv2.VideoCapture(self.camera_index, cv2.CAP_V4L2)
-                
-                # Set Standard Resolution (640x480) to avoid high-res timeout
-                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-                
-                if self.cap.isOpened():
-                    break
-                else:
-                    self.cap.release()
-                    self.cap = None
-                    time.sleep(0.5)
-
-            if not self.cap or not self.cap.isOpened():
-                raise Exception("Não foi possível acessar a câmera após 3 tentativas.")
-            
+        with self.lock:
+            if self.running:
+                return
+            self.cap = cv2.VideoCapture(self.index)
             self.running = True
-            self.thread = threading.Thread(target=self._capture_loop, daemon=True)
-            self.thread.start()
-            print("Camera started in background thread.")
-        except Exception as e:
-            print(f"Camera Error: {e}")
-            self.running = False
 
     def stop(self):
-        self.running = False
-        if self.thread:
-            self.thread.join(timeout=1.0)
-        if self.cap:
-            self.cap.release()
-            self.cap = None
-
-    def _capture_loop(self):
-        print("Debug: Camera Capture Loop Started")
-        while self.running and self.cap:
-            ret, frame = self.cap.read()
-            if ret:
-                frame = cv2.flip(frame, 1)
-                with self.lock:
-                    self.latest_frame = frame
-                    self.ret = True
-            else:
-                with self.lock:
-                    self.ret = False
-            time.sleep(0.01)
+        with self.lock:
+            self.running = False
+            if self.cap:
+                self.cap.release()
+                self.cap = None
 
     def read(self):
         with self.lock:
-            if self.ret and self.latest_frame is not None:
-                return True, self.latest_frame.copy()
+            if self.cap and self.cap.isOpened():
+                return self.cap.read()
             return False, None

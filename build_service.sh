@@ -3,10 +3,9 @@ set -e
 
 rm -rf build_service dist/DeepFaceService *.spec
 
-./venv/bin/pyinstaller --noconfirm --onedir --windowed --name "DeepFaceService" \
+./venv/bin/pyinstaller --noconfirm --onefile --windowed --name "DeepFaceService" \
     --exclude-module "nvidia" \
     --exclude-module "tensorrt" \
-    --add-data "users.db:." \
     --add-data "src:src" \
     --hidden-import "deepface" \
     --hidden-import "encodings" \
@@ -17,9 +16,10 @@ rm -rf build_service dist/DeepFaceService *.spec
     --hidden-import "pandas" \
     --hidden-import "pystray" \
     --hidden-import "cairo" \
-    --collect-all "deepface" \
     --collect-all "pystray" \
     --collect-all "cv2" \
+    --collect-all "nicegui" \
+    --collect-all "webview" \
     src/background_service.py
 
 echo "Build complete. Executable is at dist/DeepFaceService"
