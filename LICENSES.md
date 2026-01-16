@@ -38,4 +38,6 @@ This project uses the following major open-source libraries:
 - **License**: MIT License
 - **Source**: https://github.com/tiangolo/fastapi
 
----
+## PyInstaller
+- **License**: BSD 3-Clause License
+- **Source**: https://github.com/pyinstaller/pyinstaller
