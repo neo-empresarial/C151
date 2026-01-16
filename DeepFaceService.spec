@@ -1,12 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('users.db', '.'), ('src', 'src')]
+datas = [('src', 'src')]
 binaries = []
-hiddenimports = ['deepface', 'nicegui', 'scipy', 'webview', 'tensorflow', 'tf_keras', 'cv2', 'PIL', 'numpy', 'pandas', 'webview']
-tmp_ret = collect_all('deepface')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('tensorflow')
+hiddenimports = ['deepface', 'encodings', 'tensorflow', 'tf_keras', 'PIL', 'numpy', 'pandas', 'pystray', 'cairo']
+tmp_ret = collect_all('pystray')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 tmp_ret = collect_all('cv2')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
@@ -17,7 +15,7 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['main.py'],
+    ['background_service.py'],
     pathex=[],
     binaries=binaries,
     datas=datas,
@@ -25,7 +23,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['nvidia', 'tensorrt'],
     noarchive=False,
     optimize=0,
 )
@@ -37,7 +35,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='DeepFaceRec_Debug',
+    name='DeepFaceService',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

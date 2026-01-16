@@ -8,7 +8,6 @@ Sistema visual de controle de acesso baseado em reconhecimento facial utilizando
 - **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
 - **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
 - **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
-- **Modo Nativo**: Executável desktop (Linux) sem necessidade de navegador externo.
 
 ## Como Usar
 
@@ -34,12 +33,131 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Gerar Executável
-Execute o script de build:
+## 🔒 Serviço de Background (DeepFaceService)
+
+O sistema agora conta com um componente dedicado: **DeepFaceService**. Este é um serviço, execução em System Tray, independente da interface gráfica principal.
+
+### Funcionalidades do Serviço
+1.  **Monitoramento Contínuo**: Roda em background, acessando a câmera diretamente.
+2.  **API Local (Porta 8080)**: Oferece endpoints para verificação de identidade.
+3.  **System Tray**: Ícone na bandeja do sistema para controle básico (Sair).
+4.  **Segurança Ativa**:
+    - **Bloqueio Visual**: Se um usuário não identificado ou sem permissão for detectado, o serviço pode acionar um bloqueio visual de tela cheia ("ACESSO NEGADO") até que um Administrador seja reconhecido.
+    - **Integração**: Outros aplicativos podem simplesmente consultar a API para saber quem está na frente do PC.
+
+### API - Integração
+**Endpoint:** `GET http://localhost:8080/verificar_operador`
+
+**Resposta (JSON):**
+```json
+{
+  "status": "sucesso",
+  "usuario": "NomeDoUsuario",
+  "id": "uuid-do-usuario",
+  "funcao": "Admin",
+  "confianca": 0.98
+}
+```
+
+### Como Executar
+O serviço pode ser rodado de duas formas:
+
+**1. Via Python (Desenvolvimento):**
+```bash
+# Requer o ambiente virtual ativado
+./venv/bin/python3 src/background_service.py
+```
+
+**2. Via Executável Standalone (Produção):**
+Após o build, execute o arquivo gerado:
+```bash
+./dist/DeepFaceService/DeepFaceService
+```
+*Recomendado configurar este executável para iniciar com o sistema operacional.*
+
+> [!WARNING]
+> **Atenção com Caminhos/Diretórios**: 
+> Se o executável falhar com erro `ModuleNotFoundError: No module named 'encodings'`, é porque o caminho onde o app está salvo contém caracteres especiais (ex: "Área de trabalho").
+> **Solução**: Mova a pasta `dist/DeepFaceService` para um local simples, como `C:\DeepFaceRec` ou `/home/usuario/DeepFaceRec`.
+
+---
+
+## 🔄 Integração com Outros Softwares
+
+O `DeepFaceService` foi desenhado para rodar como um **processo em background**.
+Você deve iniciá-lo assim que o computador ligar ou quando seu sistema principal abrir.
+
+**Exemplos de como chamar o executável:**
+
+### Python (subprocess)
+```python
+import subprocess
+
+# Inicia o serviço sem bloquear o script principal
+subprocess.Popen(["C:/DeepFaceRec/DeepFaceService.exe"])
+```
+
+### C# (.NET)
+```csharp
+using System.Diagnostics;
+
+Process.Start("C:\\DeepFaceRec\\DeepFaceService.exe");
+```
+
+### Shell / Bash (Linux)
+```bash
+# O '&' no final libera o terminal
+./DeepFaceService &
+```
+
+## 🔒 Segurança Ativa e Comportamento Oculto
+
+O `DeepFaceService` opera de forma **totalmente oculta**.
+1.  **Startup Silencioso**: Ao iniciar, **nenhuma janela** é exibida. O processo roda em background.
+2.  **Monitoramento**: Ele verifica silenciosamente quem está na frente da câmera.
+3.  **Proteção de Admin**: Se um **Administrador** (ex: "BRB") for detectado, o contador de segurança é **zerado**. O sistema entende que está tudo seguro.
+4.  **Bloqueio de Intruso**: Se uma pessoa **Desconhecida** ou **Sem Acesso** for detectada por **5 frames seguidos** (aprox. 5-10s), o sistema exibe uma **Tela Vermelha de ACESSO NEGADO** em tela cheia (modo quiosque), bloqueando o uso do PC.
+
+### Desbloqueio
+Para remover a tela de alerta:
+1.  Um **Administrador** deve olhar para a câmera.
+2.  OU digitar o **PIN de Administrador** na tela de bloqueio.
+
+---
+
+## ⚠️ Solução de Problemas
+
+### Erro: `can't open camera by index`
+Se ao rodar o serviço você ver erros como `[WARN:0@...] can't open camera by index`, significa que **outra instância do programa já está rodando** e "segurando" a câmera.
+
+**Solução**:
+Execute o comando abaixo no terminal para matar todos os processos antigos:
+```bash
+pkill -f DeepFaceService
+```
+Em seguida, tente rodar novamente.
+
+## 🛠️ Build e Distribuição
+
+O projeto possui dois scripts de build separados para gerar executáveis independentes.
+
+### 1. Aplicação Principal (Interface de Gestão)
+Gera o `DeepFaceRec`, utilizado para cadastrar usuários e gerenciar o banco de dados.
 ```bash
 ./build.sh
+# Saída: dist/DeepFaceRec
 ```
-O executável será gerado em `dist/DeepFaceRec/DeepFaceRec`.
+
+### 2. Serviço de Background (DeepFaceService)
+Gera o `DeepFaceService`, o serviço silencioso que deve rodar sempre.
+```bash
+./build_service.sh
+# Saída: dist/DeepFaceService
+```
+
+### Notas de Deploy
+- O arquivo `users.db` é compartilhado. Se os executáveis estiverem na mesma pasta, eles compartilharão o banco de dados.
+- O `DeepFaceService` deve ser iniciado **antes** de qualquer aplicação que dependa da autenticação facial.
 
 ## Estrutura do Projeto
 

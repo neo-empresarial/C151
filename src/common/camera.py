@@ -1,67 +1,84 @@
-
 import cv2
-import time
 import threading
+import time
 
 class CameraManager:
-    def __init__(self, camera_index=0):
-        self.camera_index = camera_index
+    def __init__(self, index=0):
+        self.index = index
         self.cap = None
         self.running = False
-        self.thread = None
         self.lock = threading.Lock()
-        self.latest_frame = None
-        self.ret = False
 
     def start(self):
-        if self.running:
-            return
-        
-        try:
-            for attempt in range(3):
-                self.cap = cv2.VideoCapture(self.camera_index)
-                if self.cap.isOpened():
-                    break
-                else:
-                    self.cap.release()
-                    self.cap = None
-                    time.sleep(0.5)
-
-            if not self.cap or not self.cap.isOpened():
-                raise Exception("Não foi possível acessar a câmera após 3 tentativas.")
+        with self.lock:
+            if self.running:
+                return
             
-            self.running = True
-            self.thread = threading.Thread(target=self._capture_loop, daemon=True)
-            self.thread.start()
-            print("Camera started in background thread.")
-        except Exception as e:
-            print(f"Camera Error: {e}")
-            self.running = False
+            # Try the configured index first
+            if self.index is not None:
+                print(f"DEBUG: Tentando abrir a câmera no index {self.index}...", flush=True)
+                self.cap = cv2.VideoCapture(self.index, cv2.CAP_DSHOW)
+                if not self.cap.isOpened():
+                     self.cap = cv2.VideoCapture(self.index)
+                
+                if self.is_working():
+                    self.running = True
+                    print(f"DEBUG: Câmera {self.index} iniciada com sucesso.", flush=True)
+                    return
+                else:
+                    print(f"DEBUG: Falha na câmera {self.index}. Iniciando busca automática...", flush=True)
+                    if self.cap:
+                        self.cap.release()
+
+            # Auto search
+            new_index = self.find_working_camera()
+            if new_index is not None:
+                self.index = new_index
+                self.cap = cv2.VideoCapture(self.index, cv2.CAP_DSHOW)
+                if not self.cap.isOpened():
+                    self.cap = cv2.VideoCapture(self.index)
+                self.running = True
+                print(f"DEBUG: Câmera encontrada e iniciada no index {self.index}.", flush=True)
+            else:
+                print("DEBUG: Nenhuma câmera funcional encontrada nos primeiros 10 índices.", flush=True)
+                # Initialize with 0 anyway to avoid crashes, even if it doesn't work
+                self.index = 0
+                self.cap = cv2.VideoCapture(0) 
+                self.running = True
+
+    def is_working(self):
+        if self.cap and self.cap.isOpened():
+            ret, frame = self.cap.read()
+            return ret and frame is not None
+        return False
+
+    def find_working_camera(self, max_check=10):
+        print("DEBUG: Buscando câmera disponível...", flush=True)
+        for i in range(max_check):
+            # Skip the current index if we already tried it
+            # if self.index is not None and i == self.index: continue
+            
+            temp_cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+            if not temp_cap.isOpened():
+                temp_cap = cv2.VideoCapture(i)
+            
+            if temp_cap.isOpened():
+                ret, frame = temp_cap.read()
+                temp_cap.release()
+                if ret and frame is not None:
+                    print(f"DEBUG: Câmera funcional encontrada no index {i}", flush=True)
+                    return i
+        return None
 
     def stop(self):
-        self.running = False
-        if self.thread:
-            self.thread.join(timeout=1.0)
-        if self.cap:
-            self.cap.release()
-            self.cap = None
-
-    def _capture_loop(self):
-        print("Debug: Camera Capture Loop Started")
-        while self.running and self.cap:
-            ret, frame = self.cap.read()
-            if ret:
-                frame = cv2.flip(frame, 1)
-                with self.lock:
-                    self.latest_frame = frame
-                    self.ret = True
-            else:
-                with self.lock:
-                    self.ret = False
-            time.sleep(0.01)
+        with self.lock:
+            self.running = False
+            if self.cap:
+                self.cap.release()
+                self.cap = None
 
     def read(self):
         with self.lock:
-            if self.ret and self.latest_frame is not None:
-                return True, self.latest_frame.copy()
+            if self.cap and self.cap.isOpened():
+                return self.cap.read()
             return False, None

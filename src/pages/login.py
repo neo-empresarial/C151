@@ -103,7 +103,8 @@ def login_page():
             return
 
         if logic_state['in_cooldown']:
-            _, buffer = cv2.imencode('.jpg', frame)
+            flipped_frame = cv2.flip(frame, 1)
+            _, buffer = cv2.imencode('.jpg', flipped_frame)
             video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
             return
 
@@ -182,7 +183,8 @@ def login_page():
                      feedback_label.text = "Centralize o Rosto"
                      feedback_label.classes(remove='bg-black/60 bg-red-600', add='bg-yellow-600')
 
-        _, buffer = cv2.imencode('.jpg', display_frame)
+        flipped_frame = cv2.flip(display_frame, 1)
+        _, buffer = cv2.imencode('.jpg', flipped_frame)
         video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
 
     ui.timer(0.05, loop)

@@ -74,3 +74,4 @@ pyinstaller==6.18.0
 pyinstaller-hooks-contrib==2025.11
 pywebview==6.1
 scipy==1.17.0
+pystray==0.19.5
