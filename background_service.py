@@ -40,7 +40,6 @@ def face_processing_loop():
             if ret:
                 engine.update_frame(frame)
             else:
-                # Opcional: imprimir periodicamente se continuar falhando?
                 pass
             
             results = engine.get_results()

@@ -2,22 +2,18 @@ import sys
 import os
 from nicegui import ui, app
 
-# Show loading screen first
 if getattr(sys, 'frozen', False):
     from src.common.loading_screen import show_loading, update_loading, close_loading
     loading = show_loading()
     update_loading("Inicializando aplicação...")
 
 if getattr(sys, 'frozen', False):
-    # Get executable directory (sys.executable is already absolute in frozen mode)
     exe_dir = os.path.dirname(sys.executable)
     os.chdir(exe_dir)
     
-    # Use _MEIPASS for bundled files, exe_dir for users.db
     base_path = getattr(sys, '_MEIPASS', exe_dir)
     static_src_path = os.path.join(base_path, 'src')
     
-    # Check for users.db in same folder as executable
     if os.path.exists('users.db'):
         print("Database found in executable directory")
     else:
@@ -55,7 +51,6 @@ def close_splash():
                 pyi_splash.update_text('UI Loaded...')
                 pyi_splash.close()
         except (ImportError, KeyError, Exception) as e:
-            # Splash screen might not be enabled or configured
             pass
 
 app.on_startup(close_splash)
@@ -87,11 +82,10 @@ def dashboard():
 def setup():
     setup_page()
 
-# Close loading screen before starting UI
 if getattr(sys, 'frozen', False):
     update_loading("Abrindo interface...")
     import time
-    time.sleep(0.3)  # Brief delay to show final message
+    time.sleep(0.3) 
     close_loading()
 
 ui.run(title='DeepFace Access Control', favicon='🛡️', port=8080, reload=False, native=True)
