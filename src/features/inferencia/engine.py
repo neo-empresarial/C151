@@ -66,7 +66,7 @@ class InferenceEngine:
                     detector_backend=self.detector_backend,
                     enforce_detection=True,
                     align=True,
-                    anti_spoofing=True
+                    anti_spoofing=False
                 )
                 print(f"DEBUG: DeepFace.represent finished in {time.time() - start_time:.2f}s")
                 return result
@@ -142,17 +142,19 @@ class InferenceEngine:
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
                         
+                        print(f"DEBUG: Attempting face detection with model={self.model_name}, detector={self.detector_backend}")
                         face_objs = DeepFace.represent(
                             img_path=process_frame,
                             model_name=self.model_name,
                             detector_backend=self.detector_backend,
                             enforce_detection=True,
                             align=True,
-                            anti_spoofing=True
+                            anti_spoofing=False
                         )
+                        print(f"DEBUG: {len(face_objs)} face(s) detected")
                         self.last_recognition_time = time.time()
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"DEBUG: Face detection error: {e}")
 
                 results = []
                 
@@ -175,9 +177,11 @@ class InferenceEngine:
                         query = np.array([target_embedding]).astype('float32')
                         faiss.normalize_L2(query)
                         
+                        print(f"DEBUG: Query shape: {query.shape}, Index dimension: {current_index.d}")
                         D, I = current_index.search(query, 1)
                         
                         score = D[0][0] 
+                        print(f"DEBUG: Face detected. Similarity score: {score:.4f}, Threshold: {(1 - self.threshold):.4f}")
                         if score > (1 - self.threshold):
                             idx = I[0][0]
                             # Safety check for index bounds
@@ -188,6 +192,9 @@ class InferenceEngine:
                                 best_access = user_data.get("access_level", "Visitante")
                                 found_match = True
                                 confidence = float(score)
+                                print(f"DEBUG: MATCH FOUND! User: {best_name}, Confidence: {confidence:.4f}")
+                        else:
+                            print(f"DEBUG: No match - score {score:.4f} not greater than threshold {(1 - self.threshold):.4f}")
 
                     h_frame, w_frame, _ = frame.shape
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
@@ -211,7 +218,9 @@ class InferenceEngine:
                     self.latest_results = results
                     self.last_result_time = time.time()
 
-            except Exception:
-                pass
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                print(f"Engine Loop Error: {e}")
             
             time.sleep(0.05)

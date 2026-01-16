@@ -77,3 +77,6 @@ pywebview
 tf-keras
 torch
 torchvision
+pywebview==6.1
+scipy==1.17.0
+pystray==0.19.5

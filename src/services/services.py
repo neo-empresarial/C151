@@ -3,7 +3,16 @@ from src.common.database import DatabaseManager
 from src.common.camera import CameraManager
 from src.features.inferencia.engine import InferenceEngine
 
-db_manager = DatabaseManager()
+import sys
+import os
+
+if getattr(sys, 'frozen', False):
+    base_dir = os.path.dirname(sys.executable)
+    db_path = os.path.join(base_dir, "users.db")
+else:
+    db_path = "users.db"
+
+db_manager = DatabaseManager(db_path)
 camera_manager = CameraManager(CAMERA_INDEX)
 engine = InferenceEngine(db_manager)
 

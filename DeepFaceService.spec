@@ -1,19 +1,25 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('users.db', '.'), ('src', 'src')]
+datas = [('src', 'src')]
 binaries = []
-hiddenimports = ['deepface', 'tensorflow', 'tf_keras', 'cv2', 'PIL', 'numpy', 'pandas', 'webview']
-tmp_ret = collect_all('deepface')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('tensorflow')
+hiddenimports = ['deepface', 'encodings', 'tensorflow', 'tf_keras', 'PIL', 'numpy', 'pandas', 'pystray', 'cairo']
+tmp_ret = collect_all('pystray')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 tmp_ret = collect_all('cv2')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('nicegui')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('webview')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+# Explicitly force MTCNN inclusion including assets
+datas.append(('c:\\Users\\brb\\Desktop\\C151 - Copy\\C151\\venv\\Lib\\site-packages\\mtcnn', 'mtcnn'))
+tmp_ret = collect_all('deepface')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['main.py'],
+    ['background_service.py'],
     pathex=[],
     binaries=binaries,
     datas=datas,
@@ -21,7 +27,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['nvidia', 'tensorrt'],
     noarchive=False,
     optimize=0,
 )
@@ -33,14 +39,14 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='DeepFaceRec',
+    name='DeepFaceService',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
