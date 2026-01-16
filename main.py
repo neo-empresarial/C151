@@ -1,6 +1,7 @@
 import sys
 import os
 from nicegui import ui, app
+import socket
 
 if getattr(sys, 'frozen', False):
     os.chdir(os.path.dirname(sys.executable))
@@ -51,4 +52,17 @@ def dashboard():
 def setup():
     setup_page()
 
-ui.run(title='DeepFace Access Control', favicon='🛡️', port=8080, reload=False, native=True)
+
+def find_free_port(start_port=8080, max_tries=100):
+    for port in range(start_port, start_port + max_tries):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('127.0.0.1', port))
+                return port
+            except OSError:
+                continue
+    raise OSError("No free ports found")
+
+port = find_free_port()
+print(f"Starting UI on port {port}")
+ui.run(title='DeepFace Access Control', favicon='🛡️', port=port, reload=False, native=True)

@@ -66,7 +66,7 @@ class InferenceEngine:
                     detector_backend=self.detector_backend,
                     enforce_detection=True,
                     align=True,
-                    anti_spoofing=False
+                    anti_spoofing=True
                 )
                 print(f"DEBUG: DeepFace.represent finished in {time.time() - start_time:.2f}s")
                 return result
@@ -148,7 +148,7 @@ class InferenceEngine:
                             detector_backend=self.detector_backend,
                             enforce_detection=True,
                             align=True,
-                            anti_spoofing=False
+                            anti_spoofing=True
                         )
                         self.last_recognition_time = time.time()
                 except Exception:
