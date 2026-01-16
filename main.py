@@ -44,14 +44,7 @@ app.on_startup(startup_wrapper)
 app.on_shutdown(stop_services)
 
 def close_splash():
-    if getattr(sys, 'frozen', False):
-        try:
-            import pyi_splash
-            if pyi_splash.is_alive():
-                pyi_splash.update_text('UI Loaded...')
-                pyi_splash.close()
-        except (ImportError, KeyError, Exception) as e:
-            pass
+    pass
 
 app.on_startup(close_splash)
 

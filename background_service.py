@@ -2,6 +2,7 @@ import threading
 import time
 import asyncio
 from nicegui import ui, app
+from src.common.utils import find_free_port
 from src.services.services import camera_manager, engine, db_manager
 from src.services.access_control import AccessController
 from src.services.alert_manager import AlertManager
@@ -69,9 +70,11 @@ def main():
     app.on_startup(window_loop)
 
     try:
+        port = find_free_port()
+        print(f"Starting Background Service UI on port {port}")
         ui.run(
             title="Serviço de Biometria",
-            port=8080,
+            port=port,
             show=False,
             reload=False,
             native=True,

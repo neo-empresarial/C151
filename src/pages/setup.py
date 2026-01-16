@@ -32,7 +32,8 @@ def setup_page():
                 ret, frame = camera_manager.read()
                 if ret:
                     capture_state['frame'] = frame.copy()
-                    _, buffer = cv2.imencode('.jpg', frame)
+                    flipped_frame = cv2.flip(frame, 1)
+                    _, buffer = cv2.imencode('.jpg', flipped_frame)
                     cam_view.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
             
             cam_timer = ui.timer(0.05, cam_loop)
