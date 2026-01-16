@@ -80,6 +80,7 @@ class InferenceEngine:
                 face_objs = []
                 try:
                     with self.df_lock:
+                        # print("DEBUG: Attempting detection...")
                         face_objs = DeepFace.represent(
                             img_path=frame,
                             model_name=self.model_name,
@@ -92,7 +93,8 @@ class InferenceEngine:
                     # Face not found raises exception usually with enforce_detection=True
                     # But we can print it if it is something else.
                     # Commonly "Face could not be detected"
-                    # print(f"DEBUG: Represent Error: {e}")
+                    if "Face could not be detected" not in str(e):
+                        print(f"DEBUG: Represent Error: {e}")
                     pass
 
                 results = []
@@ -154,6 +156,8 @@ class InferenceEngine:
                     self.latest_results = results
 
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 print(f"Engine Loop Error: {e}")
             
             time.sleep(0.05)

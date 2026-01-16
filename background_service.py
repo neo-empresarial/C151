@@ -12,22 +12,42 @@ alert_manager = AlertManager()
 layout = UILayout(access_controller, db_manager)
 
 def face_processing_loop():
+    print("DEBUG: Loop de processamento iniciado.", flush=True)
     try:
         engine.start()
+        print("DEBUG: Engine iniciada.", flush=True)
         camera_manager.start()
-    except Exception:
+        if camera_manager.cap is None or not camera_manager.cap.isOpened():
+             print("DEBUG: AVISO - Falha ao abrir a câmera no reset inicial.", flush=True)
+        else:
+             print("DEBUG: Câmera iniciada com sucesso.", flush=True)
+
+    except Exception as e:
+        print(f"DEBUG: Erro na inicialização: {e}", flush=True)
         pass
     
+    first_pass = True
     while True:
         try:
             ret, frame = camera_manager.read()
+            if first_pass:
+                 if ret:
+                      print("DEBUG: PRIMEIRO FRAME LIDO COM SUCESSO!", flush=True)
+                 else:
+                      print("DEBUG: FALHA AO LER PRIMEIRO FRAME - Verifique a camera", flush=True)
+                 first_pass = False
+
             if ret:
                 engine.update_frame(frame)
+            else:
+                # Opcional: imprimir periodicamente se continuar falhando?
+                pass
             
             results = engine.get_results()
             access_controller.process_result(results)
 
-        except Exception:
+        except Exception as e:
+            print(f"DEBUG: Erro no loop: {e}", flush=True)
             pass
         
         time.sleep(0.5)
@@ -49,14 +69,19 @@ def main():
 
     app.on_startup(window_loop)
 
-    ui.run(
-        title="Serviço de Biometria",
-        port=8080,
-        show=False,
-        reload=False,
-        native=True,
-        window_size=(800, 600)
-    )
+    try:
+        ui.run(
+            title="Serviço de Biometria",
+            port=8080,
+            show=False,
+            reload=False,
+            native=True,
+            window_size=(800, 600)
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"FATAL ERROR in main: {e}")
 
 if __name__ in {"__main__", "__mp_main__"}:
     main()

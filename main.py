@@ -51,10 +51,12 @@ def close_splash():
     if getattr(sys, 'frozen', False):
         try:
             import pyi_splash
-            pyi_splash.update_text('UI Loaded...')
-            pyi_splash.close()
-        except Exception as e:
-            print(f"Splash screen error: {e}", file=sys.stderr)
+            if pyi_splash.is_alive():
+                pyi_splash.update_text('UI Loaded...')
+                pyi_splash.close()
+        except (ImportError, KeyError, Exception) as e:
+            # Splash screen might not be enabled or configured
+            pass
 
 app.on_startup(close_splash)
 

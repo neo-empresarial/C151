@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
 if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
-if (Test-Path "*.spec") { Remove-Item -Force "*.spec" }
+if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.spec" }
 
 
 .\venv\Scripts\pyinstaller --noconfirm --onefile --console --name "DeepFaceRec_Debug" `
@@ -22,6 +22,8 @@ if (Test-Path "*.spec") { Remove-Item -Force "*.spec" }
     --collect-all "deepface" `
     --collect-all "tensorflow" `
     --collect-all "cv2" `
+    --collect-all "nicegui" `
+    --collect-all "webview" `
     main.py
 
 Write-Host "Debug build complete. Executable is at dist/DeepFaceRec_Debug.exe"
