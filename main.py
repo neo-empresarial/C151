@@ -29,10 +29,10 @@ if getattr(sys, 'frozen', False):
 
 from src.common.theme import load_theme
 from src.services.services import start_services, stop_services
-from src.pages.login import login_page
-from src.pages.dashboard import dashboard_page
-from src.pages.setup import setup_page
-from src.pages.landing import landing_page
+from src.pages.login.login import login_page
+from src.pages.dashboard.dashboard import dashboard_page
+from src.pages.setup.setup import setup_page
+from src.pages.landing.landing import landing_page
 
 if getattr(sys, 'frozen', False):
     update_loading("Iniciando serviços...")
@@ -93,6 +93,7 @@ def find_free_port(start_port=8080, max_tries=100):
                 continue
     raise OSError("No free ports found")
 
-port = find_free_port()
-print(f"Starting UI on port {port}")
-ui.run(title='DeepFace Access Control', favicon='🛡️', port=port, reload=False, native=True)
+if __name__ in {"__main__", "__mp_main__"}:
+    port = find_free_port()
+    print(f"Starting UI on port {port}")
+    ui.run(title='DeepFace Access Control', favicon='🛡️', port=port, reload=False, native=True)
