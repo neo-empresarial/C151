@@ -1,51 +1,91 @@
 
+# DeepFaceRec Design System
+# Central Source of Truth for Colors, Fonts, and Shapes
 
-BG_COLOR = "#f9f9f9"      
-PANEL_COLOR = "#ffffff"   
-TEXT_COLOR = "#1a1a1a"    
-ACCENT_COLOR = "#0067c0"  
-SUCCESS_COLOR = "#107c10"
-DANGER_COLOR = "#c42b1c"
-BORDER_COLOR = "#e5e5e5"
-SIDEBAR_COLOR = "#f3f3f3" 
+# --- PALETTE (Windows 11 Inspired) ---
+class Colors:
+    # Mica / Backgrounds
+    MICA_BG = "#f3f3f3"
+    MICA_ALT = "#eeeeee"
+    SURFACE = "#ffffff"
+    
+    # Brand / Accent
+    PRIMARY = "#0067c0"
+    PRIMARY_HOVER = "#187bcd"
+    PRIMARY_PRESSED = "#005a9e"
+    TEXT_ON_PRIMARY = "#ffffff"
+    
+    # State
+    SUCCESS = "#107c10"
+    WARNING = "#ffb900" 
+    ERROR = "#c42b1c"   
+    INFO = "#0067c0"
+    
+    # Text
+    TEXT_PRIMARY = "#202020"
+    TEXT_SECONDARY = "#5d5d5d"
+    TEXT_DISABLED = "#a19f9d"
+    
+    # Borders & Dividers
+    BORDER = "#e5e5e5"
+    BORDER_FOCUS = "#0067c0"
+    
+    # Overlays
+    GLASS_WHITE = "rgba(255, 255, 255, 0.7)"
+    GLASS_BLACK = "rgba(0, 0, 0, 0.6)"
 
-MAIN_FONT = "Segoe UI Variable Display, Segoe UI, sans-serif"
-FONT_SIZE_NORMAL = "14px"
-FONT_SIZE_HEADER = "20px"
-FONT_SIZE_TITLE = "28px"
+# --- TYPOGRAPHY ---
+class Fonts:
+    MAIN = "Segoe UI Variable Display, Segoe UI, sans-serif"
+    MONO = "Consolas, monospace"
+    
+    SIZE_SM = "12px"
+    SIZE_MD = "14px"
+    SIZE_LG = "18px"
+    SIZE_XL = "24px"
+    SIZE_XXL = "32px"
 
+# --- SHAPES ---
+class Shapes:
+    RADIUS_SM = "4px"
+    RADIUS_MD = "8px"
+    RADIUS_LG = "12px"
+    RADIUS_XL = "16px"
+    RADIUS_FULL = "9999px" 
+
+# --- QT STYLESHEET (Legacy/Desktop) ---
+# Re-constructed using the new variables for consistency
 STYLESHEET = f"""
     QWidget {{
-        background-color: {BG_COLOR};
-        color: {TEXT_COLOR};
-        font-family: "{MAIN_FONT}";
-        font-size: {FONT_SIZE_NORMAL};
+        background-color: {Colors.MICA_BG};
+        color: {Colors.TEXT_PRIMARY};
+        font-family: "{Fonts.MAIN}";
+        font-size: {Fonts.SIZE_MD};
     }}
 
     QLabel {{
-        color: {TEXT_COLOR};
+        color: {Colors.TEXT_PRIMARY};
     }}
     
     QLabel#h1 {{
-        font-size: {FONT_SIZE_TITLE};
+        font-size: {Fonts.SIZE_XXL};
         font-weight: 600;
     }}
 
     /* Card / Panel Look */
     QFrame, QGroupBox, QListWidget {{
-        background-color: {PANEL_COLOR};
-        border: 1px solid {BORDER_COLOR};
-        border-radius: 8px;
+        background-color: {Colors.SURFACE};
+        border: 1px solid {Colors.BORDER};
+        border-radius: {Shapes.RADIUS_MD};
     }}
     
-    /* Remove border for specific containers if needed */
     QWidget#transparent {{
         background-color: transparent;
         border: none;
     }}
 
     QGroupBox {{
-        margin-top: 25px; /* Leave space for title */
+        margin-top: 25px; 
         padding-top: 10px;
     }}
 
@@ -54,18 +94,18 @@ STYLESHEET = f"""
         top: 0px;
         left: 10px;
         padding: 0 5px;
-        color: {TEXT_COLOR};
+        color: {Colors.TEXT_PRIMARY};
         font-weight: 600;
     }}
 
     /* Modern Buttons */
     QPushButton {{
-        background-color: {PANEL_COLOR};
-        border: 1px solid {BORDER_COLOR};
-        border-bottom: 1px solid #cccccc; /* Slight depth */
-        border-radius: 4px;
+        background-color: {Colors.SURFACE};
+        border: 1px solid {Colors.BORDER};
+        border-bottom: 1px solid #cccccc; 
+        border-radius: {Shapes.RADIUS_SM};
         padding: 6px 20px;
-        color: {{TEXT_COLOR}};
+        color: {Colors.TEXT_PRIMARY};
         font-weight: normal;
         min-height: 32px;
     }}
@@ -79,50 +119,50 @@ STYLESHEET = f"""
         background-color: #f0f0f0;
         border-color: #c0c0c0;
         border-bottom-color: #c0c0c0;
-        padding-top: 7px; /* pressed effect */
+        padding-top: 7px;
         padding-bottom: 5px;
     }}
 
-    /* Primary Action Button (Accent) */
+    /* Primary Action Button */
     QPushButton#primary {{
-        background-color: {ACCENT_COLOR};
-        color: white;
-        border: 1px solid {ACCENT_COLOR};
+        background-color: {Colors.PRIMARY};
+        color: {Colors.TEXT_ON_PRIMARY};
+        border: 1px solid {Colors.PRIMARY};
     }}
     
     QPushButton#primary:hover {{
-        background-color: #187bcd; /* Slightly lighter */
+        background-color: {Colors.PRIMARY_HOVER};
     }}
     
     QPushButton#primary:pressed {{
-        background-color: #005a9e; /* Slightly darker */
-        border-color: #005a9e;
+        background-color: {Colors.PRIMARY_PRESSED};
+        border-color: {Colors.PRIMARY_PRESSED};
     }}
 
     /* Danger Button */
     QPushButton#danger {{
-        background-color: white;
-        color: {DANGER_COLOR};
-        border: 1px solid {BORDER_COLOR};
+        background-color: {Colors.SURFACE};
+        color: {Colors.ERROR};
+        border: 1px solid {Colors.BORDER};
     }}
     QPushButton#danger:hover {{
         background-color: #fff0f0;
-        border-color: {DANGER_COLOR};
+        border-color: {Colors.ERROR};
     }}
 
     /* Inputs */
     QLineEdit {{
-        background-color: {PANEL_COLOR};
-        border: 1px solid {BORDER_COLOR};
-        border-bottom: 2px solid {BORDER_COLOR}; /* Windows 11 input style */
-        border-radius: 4px;
+        background-color: {Colors.SURFACE};
+        border: 1px solid {Colors.BORDER};
+        border-bottom: 2px solid {Colors.BORDER}; 
+        border-radius: {Shapes.RADIUS_SM};
         padding: 6px 10px;
-        selection-background-color: {ACCENT_COLOR};
+        selection-background-color: {Colors.PRIMARY};
     }}
     
     QLineEdit:focus {{
-        border-bottom-color: {ACCENT_COLOR};
-        background-color: white;
+        border-bottom-color: {Colors.PRIMARY};
+        background-color: {Colors.SURFACE};
     }}
 
     QListWidget {{
@@ -131,14 +171,14 @@ STYLESHEET = f"""
     }}
     
     QListWidget::item {{
-        border-radius: 4px;
+        border-radius: {Shapes.RADIUS_SM};
         padding: 8px;
         margin-bottom: 4px;
     }}
     
     QListWidget::item:selected {{
-        background-color: #e5f1fb; /* Light blue selection */
-        color: {TEXT_COLOR};
+        background-color: #e5f1fb; 
+        color: {Colors.TEXT_PRIMARY};
     }}
     QListWidget::item:hover {{
         background-color: #f0f0f0;
@@ -152,7 +192,7 @@ STYLESHEET = f"""
         text-align: center;
     }}
     QProgressBar::chunk {{
-        background-color: {ACCENT_COLOR};
+        background-color: {Colors.PRIMARY};
         border-radius: 2px;
     }}
 """

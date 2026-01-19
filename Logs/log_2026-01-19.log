@@ -1,0 +1,366 @@
+2026-01-19 16:27:23,567 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:27:23,582 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:27:38,562 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:27:46,662 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:27:46,808 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:27:46,826 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:27:49,974 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:27:56,070 - ERROR - name 'ui' is not defined
+  + Exception Group Traceback (most recent call last):
+  |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 783, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\brb\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\middlewares.py", line 23, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\brb\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\middlewares.py", line 13, in dispatch
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+    |     await responder(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+    |     await self.app(scope, receive, self.send_with_compression)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 355, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 243, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\page.py", line 162, in decorated
+    |     return create_500_error_page(e, request)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\page.py", line 129, in create_500_error_page
+    |     raise e
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\page.py", line 160, in decorated
+    |     result = func(*dec_args, **dec_kwargs)
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\main.py", line 72, in recognition
+    |     login_page()
+    |     ~~~~~~~~~~^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\src\pages\login\login.py", line 22, in login_page
+    |     video_image, feedback_label, face_overlay = camera.render_view()
+    |                                                 ~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\brb\Desktop\C151 - Copy\C151\src\pages\login\components\camera.py", line 4, in render_view
+    |     with ui.column().classes('w-full h-[500px] bg-black items-center justify-center relative overflow-hidden rounded-lg shadow-inner'):
+    |          ^^
+    | NameError: name 'ui' is not defined
+    +------------------------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\brb\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\middlewares.py", line 23, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\brb\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\middlewares.py", line 13, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+    await responder(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+    await self.app(scope, receive, self.send_with_compression)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\fastapi\routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\page.py", line 162, in decorated
+    return create_500_error_page(e, request)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\page.py", line 129, in create_500_error_page
+    raise e
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\nicegui\page.py", line 160, in decorated
+    result = func(*dec_args, **dec_kwargs)
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\main.py", line 72, in recognition
+    login_page()
+    ~~~~~~~~~~^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\src\pages\login\login.py", line 22, in login_page
+    video_image, feedback_label, face_overlay = camera.render_view()
+                                                ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\brb\Desktop\C151 - Copy\C151\src\pages\login\components\camera.py", line 4, in render_view
+    with ui.column().classes('w-full h-[500px] bg-black items-center justify-center relative overflow-hidden rounded-lg shadow-inner'):
+         ^^
+NameError: name 'ui' is not defined
+2026-01-19 16:28:47,816 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:28:47,831 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:28:50,788 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:28:52,592 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:28:52,980 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:28:52,994 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:28:58,485 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:29:31,585 - INFO - MATCH FOUND! User: brb, Confidence: 0.7668
+2026-01-19 16:29:33,378 - INFO - MATCH FOUND! User: brb, Confidence: 0.7945
+2026-01-19 16:29:35,080 - INFO - MATCH FOUND! User: brb, Confidence: 0.7886
+2026-01-19 16:29:36,928 - INFO - MATCH FOUND! User: brb, Confidence: 0.7886
+2026-01-19 16:29:46,852 - INFO - MATCH FOUND! User: brb, Confidence: 0.7627
+2026-01-19 16:29:48,687 - INFO - MATCH FOUND! User: brb, Confidence: 0.7774
+2026-01-19 16:29:50,537 - INFO - MATCH FOUND! User: brb, Confidence: 0.7708
+2026-01-19 16:29:52,255 - INFO - MATCH FOUND! User: brb, Confidence: 0.7708
+2026-01-19 16:29:54,027 - INFO - MATCH FOUND! User: brb, Confidence: 0.7420
+2026-01-19 16:29:57,673 - INFO - MATCH FOUND! User: brb, Confidence: 0.7801
+2026-01-19 16:29:59,466 - INFO - MATCH FOUND! User: brb, Confidence: 0.7861
+2026-01-19 16:30:01,301 - INFO - MATCH FOUND! User: brb, Confidence: 0.7644
+2026-01-19 16:30:03,085 - INFO - MATCH FOUND! User: brb, Confidence: 0.7520
+2026-01-19 16:30:04,918 - INFO - MATCH FOUND! User: brb, Confidence: 0.7525
+2026-01-19 16:30:06,649 - INFO - MATCH FOUND! User: brb, Confidence: 0.7699
+2026-01-19 16:30:08,374 - INFO - MATCH FOUND! User: brb, Confidence: 0.7699
+2026-01-19 16:30:10,020 - INFO - MATCH FOUND! User: brb, Confidence: 0.7699
+2026-01-19 16:30:11,505 - INFO - MATCH FOUND! User: brb, Confidence: 0.7699
+2026-01-19 16:30:12,592 - INFO - MATCH FOUND! User: brb, Confidence: 0.7699
+2026-01-19 16:30:13,659 - INFO - MATCH FOUND! User: brb, Confidence: 0.7699
+2026-01-19 16:36:46,086 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:36:46,276 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:37:00,244 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:37:08,863 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:37:09,086 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:37:09,103 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:37:12,119 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:37:22,975 - INFO - MATCH FOUND! User: brb, Confidence: 0.8019
+2026-01-19 16:37:27,412 - INFO - MATCH FOUND! User: brb, Confidence: 0.8514
+2026-01-19 16:37:28,883 - INFO - MATCH FOUND! User: brb, Confidence: 0.8153
+2026-01-19 16:37:30,461 - INFO - MATCH FOUND! User: brb, Confidence: 0.8153
+2026-01-19 16:37:38,592 - INFO - MATCH FOUND! User: brb, Confidence: 0.8030
+2026-01-19 16:37:40,194 - INFO - MATCH FOUND! User: brb, Confidence: 0.8288
+2026-01-19 16:37:41,813 - INFO - MATCH FOUND! User: brb, Confidence: 0.8288
+2026-01-19 16:37:43,421 - INFO - MATCH FOUND! User: brb, Confidence: 0.7725
+2026-01-19 16:37:45,074 - INFO - MATCH FOUND! User: brb, Confidence: 0.7958
+2026-01-19 16:37:46,652 - INFO - MATCH FOUND! User: brb, Confidence: 0.8128
+2026-01-19 16:37:49,675 - INFO - MATCH FOUND! User: brb, Confidence: 0.8082
+2026-01-19 16:37:51,330 - INFO - MATCH FOUND! User: brb, Confidence: 0.8245
+2026-01-19 16:37:52,922 - INFO - MATCH FOUND! User: brb, Confidence: 0.8245
+2026-01-19 16:37:54,511 - INFO - MATCH FOUND! User: brb, Confidence: 0.7629
+2026-01-19 16:37:55,998 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:37:57,493 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:37:58,909 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:38:00,369 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:38:01,394 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:38:02,426 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:38:03,402 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:38:04,369 - INFO - MATCH FOUND! User: brb, Confidence: 0.7642
+2026-01-19 16:40:30,488 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:40:30,503 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:40:33,330 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:40:35,079 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:40:35,441 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:40:35,460 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:40:38,630 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:40:49,497 - INFO - MATCH FOUND! User: brb, Confidence: 0.7635
+2026-01-19 16:40:50,531 - INFO - MATCH FOUND! User: brb, Confidence: 0.8295
+2026-01-19 16:40:51,546 - INFO - MATCH FOUND! User: brb, Confidence: 0.8295
+2026-01-19 16:40:52,673 - INFO - MATCH FOUND! User: brb, Confidence: 0.8140
+2026-01-19 16:40:53,739 - INFO - MATCH FOUND! User: brb, Confidence: 0.7435
+2026-01-19 16:40:54,864 - INFO - MATCH FOUND! User: brb, Confidence: 0.7435
+2026-01-19 16:40:55,924 - INFO - MATCH FOUND! User: brb, Confidence: 0.9073
+2026-01-19 16:40:57,047 - INFO - MATCH FOUND! User: brb, Confidence: 0.9073
+2026-01-19 16:40:58,287 - INFO - MATCH FOUND! User: brb, Confidence: 0.8714
+2026-01-19 16:40:59,524 - INFO - MATCH FOUND! User: brb, Confidence: 0.8714
+2026-01-19 16:41:05,319 - INFO - MATCH FOUND! User: brb, Confidence: 0.7320
+2026-01-19 16:41:06,439 - INFO - MATCH FOUND! User: brb, Confidence: 0.9166
+2026-01-19 16:41:07,564 - INFO - MATCH FOUND! User: brb, Confidence: 0.9231
+2026-01-19 16:41:08,686 - INFO - MATCH FOUND! User: brb, Confidence: 0.9231
+2026-01-19 16:41:09,768 - INFO - MATCH FOUND! User: brb, Confidence: 0.7712
+2026-01-19 16:41:10,844 - INFO - MATCH FOUND! User: brb, Confidence: 0.7712
+2026-01-19 16:41:11,943 - INFO - MATCH FOUND! User: brb, Confidence: 0.7667
+2026-01-19 16:41:12,998 - INFO - MATCH FOUND! User: brb, Confidence: 0.7667
+2026-01-19 16:41:14,115 - INFO - MATCH FOUND! User: brb, Confidence: 0.8056
+2026-01-19 16:41:15,345 - INFO - MATCH FOUND! User: brb, Confidence: 0.8186
+2026-01-19 16:41:16,522 - INFO - MATCH FOUND! User: brb, Confidence: 0.8877
+2026-01-19 16:41:17,659 - INFO - MATCH FOUND! User: brb, Confidence: 0.9451
+2026-01-19 16:41:18,802 - INFO - MATCH FOUND! User: brb, Confidence: 0.9451
+2026-01-19 16:41:20,008 - INFO - MATCH FOUND! User: brb, Confidence: 0.8143
+2026-01-19 16:41:21,171 - INFO - MATCH FOUND! User: brb, Confidence: 0.8143
+2026-01-19 16:41:22,211 - INFO - MATCH FOUND! User: brb, Confidence: 0.8075
+2026-01-19 16:41:23,260 - INFO - MATCH FOUND! User: brb, Confidence: 0.8075
+2026-01-19 16:41:24,291 - INFO - MATCH FOUND! User: brb, Confidence: 0.8099
+2026-01-19 16:41:25,334 - INFO - MATCH FOUND! User: brb, Confidence: 0.8099
+2026-01-19 16:41:26,380 - INFO - MATCH FOUND! User: brb, Confidence: 0.8269
+2026-01-19 16:41:27,459 - INFO - MATCH FOUND! User: brb, Confidence: 0.8269
+2026-01-19 16:41:28,546 - INFO - MATCH FOUND! User: brb, Confidence: 0.7839
+2026-01-19 16:41:29,634 - INFO - MATCH FOUND! User: brb, Confidence: 0.7839
+2026-01-19 16:41:30,699 - INFO - MATCH FOUND! User: brb, Confidence: 0.9012
+2026-01-19 16:41:31,771 - INFO - MATCH FOUND! User: brb, Confidence: 0.9012
+2026-01-19 16:41:32,837 - INFO - MATCH FOUND! User: brb, Confidence: 0.8329
+2026-01-19 16:41:33,919 - INFO - MATCH FOUND! User: brb, Confidence: 0.8329
+2026-01-19 16:41:34,997 - INFO - MATCH FOUND! User: brb, Confidence: 0.7263
+2026-01-19 16:41:36,078 - INFO - MATCH FOUND! User: brb, Confidence: 0.7263
+2026-01-19 16:41:37,153 - INFO - MATCH FOUND! User: brb, Confidence: 0.8120
+2026-01-19 16:41:38,259 - INFO - MATCH FOUND! User: brb, Confidence: 0.8120
+2026-01-19 16:41:39,376 - INFO - MATCH FOUND! User: brb, Confidence: 0.8053
+2026-01-19 16:41:40,746 - INFO - MATCH FOUND! User: brb, Confidence: 0.8053
+2026-01-19 16:41:41,807 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:43,002 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:44,079 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:45,140 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:46,452 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:47,645 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:48,804 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:49,979 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:51,291 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:52,537 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:53,683 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:54,763 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:55,798 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:41:56,852 - INFO - MATCH FOUND! User: brb, Confidence: 0.8032
+2026-01-19 16:43:28,111 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:43:28,125 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:43:30,924 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:43:32,728 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:43:33,032 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:43:33,047 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:43:36,071 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:43:43,392 - INFO - MATCH FOUND! User: brb, Confidence: 0.7242
+2026-01-19 16:43:45,112 - INFO - MATCH FOUND! User: brb, Confidence: 0.8415
+2026-01-19 16:43:46,842 - INFO - MATCH FOUND! User: brb, Confidence: 0.8502
+2026-01-19 16:43:48,555 - INFO - MATCH FOUND! User: brb, Confidence: 0.8353
+2026-01-19 16:43:52,340 - INFO - MATCH FOUND! User: brb, Confidence: 0.8404
+2026-01-19 16:43:53,993 - INFO - MATCH FOUND! User: brb, Confidence: 0.8522
+2026-01-19 16:43:55,643 - INFO - MATCH FOUND! User: brb, Confidence: 0.8657
+2026-01-19 16:43:57,368 - INFO - MATCH FOUND! User: brb, Confidence: 0.8778
+2026-01-19 16:43:59,055 - INFO - MATCH FOUND! User: brb, Confidence: 0.8475
+2026-01-19 16:44:09,273 - INFO - MATCH FOUND! User: brb, Confidence: 0.7995
+2026-01-19 16:44:10,957 - INFO - MATCH FOUND! User: brb, Confidence: 0.8083
+2026-01-19 16:44:12,686 - INFO - MATCH FOUND! User: brb, Confidence: 0.7986
+2026-01-19 16:44:14,387 - INFO - MATCH FOUND! User: brb, Confidence: 0.8038
+2026-01-19 16:44:20,160 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
+2026-01-19 16:44:21,829 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
+2026-01-19 16:44:23,488 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
+2026-01-19 16:44:24,625 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
+2026-01-19 16:44:25,676 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
+2026-01-19 16:44:26,717 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859

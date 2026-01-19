@@ -6,7 +6,7 @@ from . import functions as f
 from .components import form, camera
 
 def setup_page():
-    with ui.column().classes('w-full h-screen items-center justify-center bg-gray-50'):
+    with ui.column().classes('w-full h-screen items-center justify-center'):
         with ui.card().classes('w11-card w-[500px] p-8'):
             name_input, pin_input = form.render_inputs()
             cam_view = camera.render_view()

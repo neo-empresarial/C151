@@ -5,7 +5,7 @@ from .components.edit_dialog import EditDialog
 from .components.add_dialog import AddDialog
 
 def dashboard_page():
-    with ui.column().classes('w-full h-screen bg-gray-100 p-8 relative'):
+    with ui.column().classes('w-full h-screen p-8 relative'):
         ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 text-gray-400 text-xs')
 
         header.render(lambda: ui.navigate.to('/'))
