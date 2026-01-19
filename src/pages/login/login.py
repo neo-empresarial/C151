@@ -141,7 +141,11 @@ def login_page():
             else:
                 if valid_face_found:
                      res = results[0]
-                     if res['known']:
+                     
+                     if not res.get('is_real', True):
+                         feedback_label.text = "Rosto Falso Detectado"
+                         feedback_label.style('background-color: var(--error);')
+                     elif res['known']:
                          if logic_state['consecutive_hits'] > 0:
                              feedback_label.text = f"Identificando... {logic_state['consecutive_hits']}/3"
                              feedback_label.style('background-color: var(--primary);')
@@ -149,7 +153,7 @@ def login_page():
                          feedback_label.text = "Rosto Desconhecido"
                          feedback_label.style('background-color: var(--error);')
                 
-                     if not res.get("in_roi", False):
+                     if res.get('is_real', True) and not res.get("in_roi", False):
                          feedback_label.text = "Centralize o Rosto"
                          feedback_label.style('background-color: var(--warning); color: black;')
                     

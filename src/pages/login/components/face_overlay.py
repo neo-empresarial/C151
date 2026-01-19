@@ -49,7 +49,11 @@ class FaceOverlay:
         bg_color = Colors.WARNING
         status_text = "Analisando..."
 
-        if result.get('known'):
+        if not result.get('is_real', True):
+            color = Colors.ERROR
+            bg_color = Colors.ERROR
+            status_text = "Falso/Spoof"
+        elif result.get('known'):
             color = Colors.SUCCESS
             bg_color = Colors.SUCCESS
             status_text = result.get('name', 'Desconhecido')

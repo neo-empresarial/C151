@@ -6,6 +6,7 @@ import faiss
 import logging
 from deepface import DeepFace
 from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD
+from src.features.inferencia.liveness.detector import LivenessDetector
 
 class InferenceEngine:
     def __init__(self, db_manager):
@@ -26,6 +27,7 @@ class InferenceEngine:
         self.known_ids = []
         self.faiss_index = None
         self.is_loaded = False
+        self.liveness_detector = LivenessDetector()
 
     def load_model(self):
         try:
@@ -38,19 +40,15 @@ class InferenceEngine:
                 
                 if all_embeddings_data:
                     embeddings = [data["embedding"] for data in all_embeddings_data]
-                    # Map each index in FAISS to the full data dict
                     self.known_ids = [data for data in all_embeddings_data]
-                    
                     params = np.array(embeddings).astype('float32')
                     faiss.normalize_L2(params)
-                    
                     dimension = params.shape[1]
                     self.faiss_index = faiss.IndexFlatIP(dimension)
                     self.faiss_index.add(params)
-                    
+                
                 if self.faiss_index:
                     logging.debug(f"Index rebuilt with {self.faiss_index.ntotal} vectors/photos.")
-                    
                 self.is_loaded = True
         except Exception as e:
             logging.error(f"Failed to load model/index: {e}")
@@ -97,7 +95,6 @@ class InferenceEngine:
 
     def get_results(self):
         with self.lock:
-            # Avoid ghost results: if data is older than 1s, return empty
             if (time.time() - self.last_result_time) > 1.0:
                 return []
             return self.latest_results
@@ -107,7 +104,6 @@ class InferenceEngine:
 
         while self.running:
             if self.paused:
-                # print("DEBUG: Engine paused. Sleeping...") # Commented out to avoid spam
                 time.sleep(0.1)
                 continue
 
@@ -121,7 +117,6 @@ class InferenceEngine:
                 continue
 
             try:
-                # Rate limit to prevent CPU starvation
                 current_time = time.time()
                 if (current_time - self.last_recognition_time) < 0.5:
                     time.sleep(0.1)
@@ -130,21 +125,16 @@ class InferenceEngine:
                 face_objs = []
                 try:
                     with self.df_lock:
-                        # Snapshot knowledge base
                         current_index = self.faiss_index
                         current_known_ids = self.known_ids
-                        
-                        # Optimization: Resize frame for faster processing
                         h_orig, w_orig = frame.shape[:2]
                         target_w = 640
                         scale_factor = 1.0
-                        
                         process_frame = frame
                         if w_orig > target_w:
                             scale_factor = target_w / w_orig
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
-                        
                         
                         logging.debug(f"Attempting face detection with model={self.model_name}, detector={self.detector_backend}")
                         face_objs = DeepFace.represent(
@@ -165,7 +155,6 @@ class InferenceEngine:
                 for face in face_objs:
                     target_embedding = face["embedding"]
                     area = face["facial_area"]
-                    # Scale coordinates back to original frame size
                     x = int(area["x"] / scale_factor)
                     y = int(area["y"] / scale_factor)
                     w = int(area["w"] / scale_factor)
@@ -177,7 +166,38 @@ class InferenceEngine:
                     best_access = "Visitante"
                     confidence = 0.0
 
-                    if current_index and current_index.ntotal > 0:
+                    is_real = True
+                    liveness_score = 0.0
+                    
+                    # Calculate expanded crop (Scale 2.7 for MiniFASNet)
+                    scale = 2.7
+                    center_x = x + w / 2
+                    center_y = y + h / 2
+                    h_new = int(h * scale)
+                    w_new = int(w * scale)
+                    
+                    x1 = int(center_x - w_new / 2)
+                    y1 = int(center_y - h_new / 2)
+                    x2 = x1 + w_new
+                    y2 = y1 + h_new
+                    
+                    # Clamp to frame bounds
+                    x1 = max(0, x1)
+                    y1 = max(0, y1)
+                    x2 = min(w_orig, x2)
+                    y2 = min(h_orig, y2)
+                    
+                    if (x2 > x1) and (y2 > y1):
+                        face_crop = frame[y1:y2, x1:x2]
+                        is_real, liveness_score = self.liveness_detector.check_liveness(face_crop)
+                        logging.info(f"Liveness Check: Score={liveness_score:.4f}, Real={is_real}")
+                        if not is_real:
+                            logging.warning(f"Spoof detected! Score: {liveness_score:.4f}")
+                    
+                    if not is_real:
+                        best_name = "Fake/Spoof"
+                        best_access = "Negado"
+                    elif current_index and current_index.ntotal > 0:
                         query = np.array([target_embedding]).astype('float32')
                         faiss.normalize_L2(query)
                         
@@ -188,19 +208,17 @@ class InferenceEngine:
                         logging.debug(f"Face detected. Similarity score: {score:.4f}, Threshold: {(1 - self.threshold):.4f}")
                         if score > (1 - self.threshold):
                             idx = I[0][0]
-                            # Safety check for index bounds
                             if idx < len(current_known_ids):
                                 user_data = current_known_ids[idx]
-                                # user_data now contains {id, name, embedding, access_level, photo_id}
                                 best_name = user_data["name"]
-                                best_id = user_data["id"] # This is the USER_ID
+                                best_id = user_data["id"]
                                 best_access = user_data.get("access_level", "Visitante")
                                 found_match = True
                                 confidence = float(score)
                                 logging.info(f"MATCH FOUND! User: {best_name}, Confidence: {confidence:.4f}")
                         else:
                             logging.debug(f"No match - score {score:.4f} not greater than threshold {(1 - self.threshold):.4f}")
-
+                    
                     h_frame, w_frame, _ = frame.shape
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
                     cx_face = x + w // 2
@@ -216,7 +234,9 @@ class InferenceEngine:
                         "access_level": best_access,
                         "known": found_match,
                         "confidence": confidence,
-                        "in_roi": in_roi
+                        "in_roi": in_roi,
+                        "is_real": is_real,
+                        "liveness_score": liveness_score
                     })
                 
                 with self.lock:
