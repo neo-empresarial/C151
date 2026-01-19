@@ -3,6 +3,7 @@
 # Central Source of Truth for Colors, Fonts, and Shapes
 
 # --- PALETTE (Windows 11 Inspired) ---
+# --- PALETTE (Windows 11 Inspired) ---
 class Colors:
     # Mica / Backgrounds
     MICA_BG = "#f3f3f3"
@@ -33,10 +34,34 @@ class Colors:
     # Overlays
     GLASS_WHITE = "rgba(255, 255, 255, 0.7)"
     GLASS_BLACK = "rgba(0, 0, 0, 0.6)"
+    
+    # Acrylic
+    ACRYLIC_BG = "rgba(255, 255, 255, 0.5)"
+
+class DarkColors:
+    # Mica / Backgrounds
+    MICA_BG = "#202020"
+    MICA_ALT = "#1a1a1a"
+    SURFACE = "#2c2c2c"
+    
+    # Text
+    TEXT_PRIMARY = "#ffffff"
+    TEXT_SECONDARY = "#d0d0d0"
+    TEXT_DISABLED = "#707070"
+    
+    # Borders
+    BORDER = "rgba(255, 255, 255, 0.08)"
+    
+    # Acrylic
+    ACRYLIC_BG = "rgba(32, 32, 32, 0.6)"
+    
+    # Overlays
+    GLASS_WHITE = "rgba(255, 255, 255, 0.05)"
+    GLASS_BLACK = "rgba(0, 0, 0, 0.8)"
 
 # --- TYPOGRAPHY ---
 class Fonts:
-    MAIN = "Segoe UI Variable Display, Segoe UI, sans-serif"
+    MAIN = '"Segoe UI Variable Display", "Segoe UI", sans-serif'
     MONO = "Consolas, monospace"
     
     SIZE_SM = "12px"

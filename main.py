@@ -99,4 +99,4 @@ def find_free_port(start_port=8080, max_tries=100):
 if __name__ in {"__main__", "__mp_main__"}:
     port = find_free_port()
     print(f"Starting UI on port {port}")
-    ui.run(title='DeepFace Access Control', favicon='🛡️', port=port, reload=False, native=True)
+    ui.run(title='DeepFace Access Control', favicon='src/public/images/certi/logo-certi.png', port=port, reload=False, native=True, storage_secret='deepface_secret')

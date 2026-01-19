@@ -3,6 +3,7 @@ import cv2
 import base64
 from src.services.services import camera_manager
 from src.common.state import state
+from src.common import theme
 from . import functions as f
 from .components import header, camera
 from .components.pin_dialog import PinDialog, render_trigger_button
@@ -15,7 +16,8 @@ def login_page():
     state.is_admin = False
     
     with ui.column().classes('w-full h-screen items-center justify-center p-4 relative').style('background-color: var(--bg-mica);'):
-        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 text-gray-500 text-sm')
+        theme.render_theme_toggle_button()
+        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 left-4 text-gray-500 text-sm')
 
         with ui.card().classes('w11-card w-full max-w-[1000px] h-[700px] p-0 flex flex-col overflow-hidden'):
             header.render()

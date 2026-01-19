@@ -10,7 +10,7 @@ class EditDialog:
         self.edit_capture_state = {'frame': None, 'confirmed': False, 'paused': False}
         self.on_user_updated = on_user_updated
         
-        with self.dialog, ui.card().classes('w-full h-full p-8 overflow-hidden'):
+        with self.dialog, ui.card().classes('w11-card w-full h-full p-8 overflow-hidden'):
             self.render_header()
             with ui.row().classes('w-full h-full flex-nowrap max-w-full gap-8'):
                 self.render_left_column()
@@ -25,28 +25,29 @@ class EditDialog:
 
     def render_left_column(self):
         with ui.column().classes('w-1/3 min-w-[350px] h-full gap-6'):
-            ui.label('Dados Pessoais').classes('text-xl font-semibold text-gray-600')
-            with ui.card().classes('w-full p-6 gap-4'):
+            ui.label('Dados Pessoais').classes('text-xl font-semibold opacity-80')
+            with ui.card().classes('w11-card w-full p-6 gap-4'):
                 self.edit_name = ui.input('Nome Completo').classes('w-full')
                 self.edit_pin = ui.input('PIN de Acesso', password=True, password_toggle_button=True).classes('w-full')
                 self.edit_access = ui.select(['Admin', 'Funcionario', 'Visitante'], label='Nível de Acesso').classes('w-full')
 
             with ui.row().classes('w-full gap-4 mt-6'):
-                ui.button('Cancelar', on_click=self.dialog.close).classes('flex-1').props('flat')
-                ui.button('Salvar', on_click=self.save_edit_info).classes('flex-1 bg-blue-600 text-white')
+                ui.button('Cancelar', on_click=self.dialog.close).classes('flex-1 w11-btn')
+                ui.button('Salvar', on_click=self.save_edit_info).classes('flex-1 w11-btn bg-primary')
 
     def render_right_column(self):
          with ui.column().classes('flex-1 h-full gap-4 overflow-hidden'):
-            ui.label('Biometria e Fotos').classes('text-xl font-semibold text-gray-600')
-            with ui.card().classes('w-full h-full p-6 flex flex-col gap-4 overflow-hidden'):
+            ui.label('Biometria e Fotos').classes('text-xl font-semibold opacity-80')
+            with ui.card().classes('w11-card w-full h-full p-6 flex flex-col gap-4 overflow-hidden'):
                 with ui.row().classes('w-full justify-between items-center'):
-                    ui.label('Fotos Cadastradas').classes('text-sm font-bold text-gray-400')
-                    ui.button('Adicionar Nova Foto', icon='add_a_photo', on_click=self.open_capture_dialog).classes('px-4')
-                self.photos_container = ui.element('div').classes('w-full flex-1 overflow-y-auto p-2 bg-gray-50 rounded border border-gray-100 flex flex-wrap content-start gap-4 transition-all')
+                    ui.label('Fotos Cadastradas').classes('text-sm font-bold opacity-60')
+                    ui.button('Adicionar Nova Foto', icon='add_a_photo', on_click=self.open_capture_dialog).classes('px-4 w11-btn bg-primary')
+                self.photos_container = ui.element('div').classes('w-full flex-1 overflow-y-auto p-2 rounded border flex flex-wrap content-start gap-4 transition-all')
+                self.photos_container.style('border-color: var(--border)')
 
     def setup_capture_dialog(self):
         self.capture_dialog = ui.dialog()
-        with self.capture_dialog, ui.card().classes('w-[500px] p-0 overflow-hidden flex flex-col'):
+        with self.capture_dialog, ui.card().classes('w-[500px] p-0 overflow-hidden flex flex-col w11-card'):
             with ui.row().classes('w-full bg-black p-2 justify-between items-center'):
                 ui.label('Capturar Foto').classes('text-white font-bold ml-2')
                 ui.button(icon='close', on_click=self.capture_dialog.close).props('round dense flat color=white')

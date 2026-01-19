@@ -364,3 +364,616 @@ NameError: name 'ui' is not defined
 2026-01-19 16:44:24,625 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
 2026-01-19 16:44:25,676 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
 2026-01-19 16:44:26,717 - INFO - MATCH FOUND! User: brb, Confidence: 0.7859
+2026-01-19 16:47:51,125 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:47:51,140 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:47:53,963 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:47:55,701 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:47:56,067 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:47:56,082 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:47:59,358 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:49:17,635 - INFO - MATCH FOUND! User: brb, Confidence: 0.9187
+2026-01-19 16:49:18,709 - INFO - MATCH FOUND! User: brb, Confidence: 0.9236
+2026-01-19 16:49:19,809 - INFO - MATCH FOUND! User: brb, Confidence: 0.9236
+2026-01-19 16:49:22,873 - INFO - MATCH FOUND! User: brb, Confidence: 0.8042
+2026-01-19 16:49:23,934 - INFO - MATCH FOUND! User: brb, Confidence: 0.7898
+2026-01-19 16:49:25,035 - INFO - MATCH FOUND! User: brb, Confidence: 0.7898
+2026-01-19 16:49:26,150 - INFO - MATCH FOUND! User: brb, Confidence: 0.8092
+2026-01-19 16:49:27,261 - INFO - MATCH FOUND! User: brb, Confidence: 0.8092
+2026-01-19 16:49:28,454 - INFO - MATCH FOUND! User: brb, Confidence: 0.8040
+2026-01-19 16:49:29,511 - INFO - MATCH FOUND! User: brb, Confidence: 0.8040
+2026-01-19 16:49:30,557 - INFO - MATCH FOUND! User: brb, Confidence: 0.8040
+2026-01-19 16:49:31,566 - INFO - MATCH FOUND! User: brb, Confidence: 0.8040
+2026-01-19 16:49:32,554 - INFO - MATCH FOUND! User: brb, Confidence: 0.8040
+2026-01-19 16:56:07,720 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:56:07,735 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:56:10,587 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:56:12,359 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:56:12,727 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:56:12,742 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:56:15,776 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:56:30,492 - INFO - MATCH FOUND! User: brb, Confidence: 0.7249
+2026-01-19 16:58:52,371 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:58:52,386 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:58:55,280 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:58:57,065 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 16:58:57,470 - INFO - Loading faiss with AVX2 support.
+2026-01-19 16:58:57,487 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 16:59:00,806 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 16:59:44,321 - INFO - MATCH FOUND! User: brb, Confidence: 0.7228
+2026-01-19 16:59:49,732 - INFO - MATCH FOUND! User: brb, Confidence: 0.7875
+2026-01-19 16:59:51,425 - INFO - MATCH FOUND! User: brb, Confidence: 0.7924
+2026-01-19 16:59:53,047 - INFO - MATCH FOUND! User: brb, Confidence: 0.7203
+2026-01-19 16:59:54,511 - INFO - MATCH FOUND! User: brb, Confidence: 0.7541
+2026-01-19 17:19:42,759 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:19:42,773 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:19:46,187 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:19:48,053 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:19:48,456 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:19:48,477 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:19:51,646 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:23:34,152 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.9756
+2026-01-19 17:23:35,411 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8098
+2026-01-19 17:23:36,717 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8098
+2026-01-19 17:23:37,927 - INFO - MATCH FOUND! User: brb, Confidence: 0.8340
+2026-01-19 17:23:39,216 - INFO - MATCH FOUND! User: brb, Confidence: 0.8340
+2026-01-19 17:23:40,271 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8048
+2026-01-19 17:23:41,374 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8048
+2026-01-19 17:23:42,512 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8261
+2026-01-19 17:23:43,633 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8261
+2026-01-19 17:23:44,728 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7910
+2026-01-19 17:23:45,815 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7910
+2026-01-19 17:23:46,932 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7816
+2026-01-19 17:23:47,988 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7816
+2026-01-19 17:23:49,068 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8254
+2026-01-19 17:23:50,157 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8254
+2026-01-19 17:23:51,243 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8068
+2026-01-19 17:23:52,339 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8068
+2026-01-19 17:23:53,452 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8056
+2026-01-19 17:23:54,562 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8056
+2026-01-19 17:23:55,707 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7903
+2026-01-19 17:23:56,922 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7903
+2026-01-19 17:23:58,427 - INFO - MATCH FOUND! User: brb, Confidence: 0.7484
+2026-01-19 17:23:59,729 - INFO - MATCH FOUND! User: brb, Confidence: 0.8142
+2026-01-19 17:24:00,915 - INFO - MATCH FOUND! User: brb, Confidence: 0.8142
+2026-01-19 17:24:02,094 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7851
+2026-01-19 17:24:03,254 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7851
+2026-01-19 17:24:05,191 - INFO - MATCH FOUND! User: brb, Confidence: 0.8222
+2026-01-19 17:24:06,478 - INFO - MATCH FOUND! User: brb, Confidence: 0.7836
+2026-01-19 17:24:07,690 - INFO - MATCH FOUND! User: brb, Confidence: 0.7836
+2026-01-19 17:24:08,741 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8176
+2026-01-19 17:24:09,861 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8176
+2026-01-19 17:24:10,938 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8181
+2026-01-19 17:24:12,026 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8181
+2026-01-19 17:24:13,120 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8462
+2026-01-19 17:24:14,146 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8462
+2026-01-19 17:24:17,314 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8583
+2026-01-19 17:24:18,359 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8124
+2026-01-19 17:24:19,396 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8124
+2026-01-19 17:24:20,439 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8394
+2026-01-19 17:24:21,495 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8394
+2026-01-19 17:24:22,570 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8447
+2026-01-19 17:24:23,669 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8447
+2026-01-19 17:24:24,751 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8864
+2026-01-19 17:24:25,895 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8864
+2026-01-19 17:24:26,970 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8545
+2026-01-19 17:24:28,047 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8545
+2026-01-19 17:24:29,164 - INFO - MATCH FOUND! User: brb, Confidence: 0.8535
+2026-01-19 17:24:30,294 - INFO - MATCH FOUND! User: brb, Confidence: 0.8535
+2026-01-19 17:24:31,400 - INFO - MATCH FOUND! User: brb, Confidence: 0.7748
+2026-01-19 17:24:32,478 - INFO - MATCH FOUND! User: brb, Confidence: 0.7748
+2026-01-19 17:24:33,615 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8032
+2026-01-19 17:24:34,791 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8032
+2026-01-19 17:24:35,928 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8110
+2026-01-19 17:24:37,093 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8110
+2026-01-19 17:24:38,174 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7602
+2026-01-19 17:24:39,221 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7602
+2026-01-19 17:24:40,291 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7610
+2026-01-19 17:24:41,409 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.7610
+2026-01-19 17:24:42,527 - INFO - MATCH FOUND! User: brb, Confidence: 0.8812
+2026-01-19 17:24:43,874 - INFO - MATCH FOUND! User: brb, Confidence: 0.8812
+2026-01-19 17:24:45,189 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:46,475 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:47,506 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:48,560 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:49,549 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:50,538 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:51,537 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:52,534 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:53,537 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:54,530 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:55,524 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:56,521 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:57,503 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:58,572 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:24:59,568 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:00,565 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:01,550 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:02,554 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:03,550 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:04,535 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:05,513 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:06,545 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:07,546 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:08,562 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:09,558 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:10,549 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:11,538 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:12,550 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:13,537 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:14,520 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:15,511 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:16,506 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:17,501 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:18,499 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:19,491 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:20,489 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:21,477 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:22,480 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:23,468 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:24,455 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:25,453 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:26,451 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:27,450 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:28,451 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:29,438 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:30,430 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:31,417 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:32,419 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:33,404 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:34,399 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:35,396 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:36,384 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:37,384 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:38,378 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:39,372 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:40,363 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:41,361 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:42,359 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:43,352 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:44,386 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:45,374 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:46,359 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:47,354 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:48,347 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:49,346 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:50,346 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:51,356 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:52,383 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:53,398 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:54,383 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:55,375 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:56,377 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:57,379 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:58,373 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:25:59,355 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:00,344 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:01,334 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:02,347 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:03,340 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:04,319 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:05,325 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:06,323 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:07,307 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:08,295 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:09,285 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:10,287 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:11,276 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:12,266 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:13,276 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:14,284 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:15,315 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:16,320 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:17,310 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:18,294 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:19,287 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:20,260 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:21,263 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:22,263 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:23,249 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:24,236 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:25,219 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:26,209 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:27,209 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:28,214 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:29,211 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:30,210 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:31,206 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:32,199 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:33,210 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:34,193 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:35,182 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:36,189 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:37,178 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:38,167 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:39,171 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:40,160 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:41,173 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:42,175 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:43,263 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:44,266 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:45,274 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:46,385 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:47,572 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:48,758 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:49,945 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:51,136 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:52,321 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:53,480 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:54,645 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:55,814 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:56,938 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:58,072 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:26:59,196 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:00,319 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:01,429 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:02,560 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:03,668 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:04,789 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:05,917 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:07,011 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:08,121 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:09,302 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:10,442 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:11,540 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:12,684 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:13,812 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:14,891 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:16,021 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:17,128 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:18,246 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:19,402 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:20,567 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:21,695 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:22,836 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:24,004 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:25,175 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:26,330 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:27,473 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:28,610 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:29,727 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:30,817 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:31,927 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:33,041 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:34,162 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:35,216 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:36,225 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:37,214 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:38,201 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:39,191 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:40,192 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:41,193 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:42,178 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:43,180 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:44,235 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:45,268 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:46,260 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:27:47,272 - INFO - MATCH FOUND! User: TESTE, Confidence: 0.8468
+2026-01-19 17:28:49,149 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:28:49,164 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:28:52,142 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:28:53,951 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:28:54,319 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:28:54,339 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:28:57,694 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:29:28,581 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:29:28,596 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:29:31,522 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:29:33,360 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:29:33,851 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:29:33,867 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:29:37,144 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:29:56,461 - INFO - MATCH FOUND! User: brb, Confidence: 0.7577
+2026-01-19 17:29:58,069 - INFO - MATCH FOUND! User: brb, Confidence: 0.7981
+2026-01-19 17:29:59,802 - INFO - MATCH FOUND! User: brb, Confidence: 0.7981
+2026-01-19 17:30:01,478 - INFO - MATCH FOUND! User: brb, Confidence: 0.7287
+2026-01-19 17:30:06,244 - INFO - MATCH FOUND! User: brb, Confidence: 0.7539
+2026-01-19 17:30:07,895 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:09,604 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:11,339 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:13,037 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:14,759 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:16,333 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:17,933 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:19,297 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:20,310 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:21,314 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:22,304 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:23,486 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:24,515 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:26,019 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:27,202 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:28,381 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:29,573 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:30,607 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:31,599 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:32,594 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:33,594 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:34,583 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:35,573 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:36,563 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:37,554 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:38,549 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:39,542 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:40,537 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:41,521 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:42,513 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:43,506 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:44,512 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:45,515 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:46,650 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:47,857 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:49,019 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:50,017 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:51,003 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:52,044 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:53,034 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:54,029 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:55,017 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:56,004 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:56,994 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:57,975 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:58,953 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:30:59,948 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:00,944 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:01,944 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:02,940 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:03,940 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:04,919 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:05,912 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:06,905 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:07,899 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:08,889 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:09,871 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:10,864 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:11,860 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:12,849 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:13,856 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:14,854 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:15,860 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:16,900 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:18,055 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:19,278 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:20,503 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:21,670 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:22,824 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:23,987 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:25,158 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:26,232 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:27,421 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:28,615 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:29,787 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:30,933 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:32,196 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:33,371 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:34,538 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:35,744 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:36,941 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:38,190 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:39,374 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:40,550 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:41,735 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:42,928 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:44,137 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:45,361 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:46,561 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:47,759 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:48,957 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:50,132 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:51,464 - INFO - MATCH FOUND! User: brb, Confidence: 0.8061
+2026-01-19 17:31:52,691 - INFO - MATCH FOUND! User: brb, Confidence: 0.7575
+2026-01-19 17:31:53,909 - INFO - MATCH FOUND! User: brb, Confidence: 0.7575
+2026-01-19 17:31:55,887 - INFO - MATCH FOUND! User: brb, Confidence: 0.8484
+2026-01-19 17:31:57,136 - INFO - MATCH FOUND! User: brb, Confidence: 0.8259
+2026-01-19 17:31:58,355 - INFO - MATCH FOUND! User: brb, Confidence: 0.7814
+2026-01-19 17:31:59,607 - INFO - MATCH FOUND! User: brb, Confidence: 0.7814
+2026-01-19 17:32:00,781 - INFO - MATCH FOUND! User: brb, Confidence: 0.7737
+2026-01-19 17:32:02,032 - INFO - MATCH FOUND! User: brb, Confidence: 0.7737
+2026-01-19 17:32:03,037 - INFO - MATCH FOUND! User: brb, Confidence: 0.8277
+2026-01-19 17:32:04,036 - INFO - MATCH FOUND! User: brb, Confidence: 0.8277
+2026-01-19 17:32:05,057 - INFO - MATCH FOUND! User: brb, Confidence: 0.7778
+2026-01-19 17:32:06,051 - INFO - MATCH FOUND! User: brb, Confidence: 0.7684
+2026-01-19 17:32:07,706 - INFO - MATCH FOUND! User: brb, Confidence: 0.7459
+2026-01-19 17:32:08,746 - INFO - MATCH FOUND! User: brb, Confidence: 0.7593
+2026-01-19 17:32:09,858 - INFO - MATCH FOUND! User: brb, Confidence: 0.7542
+2026-01-19 17:32:10,954 - INFO - MATCH FOUND! User: brb, Confidence: 0.7843
+2026-01-19 17:32:12,091 - INFO - MATCH FOUND! User: brb, Confidence: 0.7603
+2026-01-19 17:32:13,104 - INFO - MATCH FOUND! User: brb, Confidence: 0.7562
+2026-01-19 17:32:14,223 - INFO - MATCH FOUND! User: brb, Confidence: 0.7484
+2026-01-19 17:32:15,318 - INFO - MATCH FOUND! User: brb, Confidence: 0.7716
+2026-01-19 17:32:16,351 - INFO - MATCH FOUND! User: brb, Confidence: 0.7326
+2026-01-19 17:32:17,525 - INFO - MATCH FOUND! User: brb, Confidence: 0.7262
+2026-01-19 17:32:18,571 - INFO - MATCH FOUND! User: brb, Confidence: 0.7897
+2026-01-19 17:32:22,912 - INFO - MATCH FOUND! User: brb, Confidence: 0.7476
+2026-01-19 17:32:23,929 - INFO - MATCH FOUND! User: brb, Confidence: 0.7208
+2026-01-19 17:32:24,960 - INFO - MATCH FOUND! User: brb, Confidence: 0.7267
+2026-01-19 17:32:26,077 - INFO - MATCH FOUND! User: brb, Confidence: 0.7691
+2026-01-19 17:32:34,616 - INFO - MATCH FOUND! User: brb, Confidence: 0.7920
+2026-01-19 17:32:35,686 - INFO - MATCH FOUND! User: brb, Confidence: 0.7287
+2026-01-19 17:32:36,698 - INFO - MATCH FOUND! User: brb, Confidence: 0.7694
+2026-01-19 17:32:37,806 - INFO - MATCH FOUND! User: brb, Confidence: 0.7291
+2026-01-19 17:32:38,830 - INFO - MATCH FOUND! User: brb, Confidence: 0.7349
+2026-01-19 17:32:39,859 - INFO - MATCH FOUND! User: brb, Confidence: 0.7477
+2026-01-19 17:32:40,955 - INFO - MATCH FOUND! User: brb, Confidence: 0.7354
+2026-01-19 17:32:42,061 - INFO - MATCH FOUND! User: brb, Confidence: 0.7540
+2026-01-19 17:32:43,102 - INFO - MATCH FOUND! User: brb, Confidence: 0.7353
+2026-01-19 17:32:44,131 - INFO - MATCH FOUND! User: brb, Confidence: 0.7448
+2026-01-19 17:32:49,454 - INFO - MATCH FOUND! User: brb, Confidence: 0.7403
+2026-01-19 17:32:53,666 - INFO - MATCH FOUND! User: brb, Confidence: 0.7394
+2026-01-19 17:32:59,119 - INFO - MATCH FOUND! User: brb, Confidence: 0.7210
+2026-01-19 17:33:03,490 - INFO - MATCH FOUND! User: brb, Confidence: 0.8412
+2026-01-19 17:33:04,583 - INFO - MATCH FOUND! User: brb, Confidence: 0.8570
+2026-01-19 17:33:05,677 - INFO - MATCH FOUND! User: brb, Confidence: 0.8570
+2026-01-19 17:33:09,259 - INFO - MATCH FOUND! User: brb, Confidence: 0.8134
+2026-01-19 17:33:10,386 - INFO - MATCH FOUND! User: brb, Confidence: 0.7879
+2026-01-19 17:33:11,451 - INFO - MATCH FOUND! User: brb, Confidence: 0.7465
+2026-01-19 17:36:05,695 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:36:05,710 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:36:08,590 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:36:14,366 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:36:14,383 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:36:17,459 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:37:30,497 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:37:30,511 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:37:33,340 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:37:35,124 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:37:35,483 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:37:35,498 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:37:38,548 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:37:50,445 - INFO - MATCH FOUND! User: brb, Confidence: 0.7552
+2026-01-19 17:37:53,262 - INFO - MATCH FOUND! User: brb, Confidence: 0.7698
+2026-01-19 17:37:54,372 - INFO - MATCH FOUND! User: brb, Confidence: 0.8123
+2026-01-19 17:37:55,420 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:37:56,558 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:37:57,641 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:37:58,701 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:37:59,762 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:38:00,798 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:38:01,868 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:38:03,085 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:38:04,135 - INFO - MATCH FOUND! User: brb, Confidence: 0.8041
+2026-01-19 17:40:16,959 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:40:16,975 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:40:19,790 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:40:21,532 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:40:21,921 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:40:21,938 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:40:25,011 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:40:38,560 - INFO - MATCH FOUND! User: brb, Confidence: 0.7578
+2026-01-19 17:40:39,602 - INFO - MATCH FOUND! User: brb, Confidence: 0.8057
+2026-01-19 17:40:40,652 - INFO - MATCH FOUND! User: brb, Confidence: 0.7710
+2026-01-19 17:40:41,679 - INFO - MATCH FOUND! User: brb, Confidence: 0.7729
+2026-01-19 17:40:42,705 - INFO - MATCH FOUND! User: brb, Confidence: 0.7729
+2026-01-19 17:40:43,735 - INFO - MATCH FOUND! User: brb, Confidence: 0.7551
+2026-01-19 17:40:44,803 - INFO - MATCH FOUND! User: brb, Confidence: 0.7771
+2026-01-19 17:40:45,843 - INFO - MATCH FOUND! User: brb, Confidence: 0.7771
+2026-01-19 17:40:46,885 - INFO - MATCH FOUND! User: brb, Confidence: 0.7560
+2026-01-19 17:40:47,923 - INFO - MATCH FOUND! User: brb, Confidence: 0.7560
+2026-01-19 17:40:48,978 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:50,049 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:51,099 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:52,215 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:53,326 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:54,412 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:55,499 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:56,575 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:57,651 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:58,755 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:40:59,797 - INFO - MATCH FOUND! User: brb, Confidence: 0.7782
+2026-01-19 17:41:39,239 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:41:39,254 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:41:42,260 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:41:44,061 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:41:44,408 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:41:44,424 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:41:47,606 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:41:54,725 - INFO - MATCH FOUND! User: brb, Confidence: 0.7386
+2026-01-19 17:41:55,841 - INFO - MATCH FOUND! User: brb, Confidence: 0.7506
+2026-01-19 17:41:56,857 - INFO - MATCH FOUND! User: brb, Confidence: 0.8019
+2026-01-19 17:41:57,909 - INFO - MATCH FOUND! User: brb, Confidence: 0.8019
+2026-01-19 17:41:58,951 - INFO - MATCH FOUND! User: brb, Confidence: 0.7709
+2026-01-19 17:41:59,968 - INFO - MATCH FOUND! User: brb, Confidence: 0.7709
+2026-01-19 17:42:01,047 - INFO - MATCH FOUND! User: brb, Confidence: 0.8576
+2026-01-19 17:42:02,187 - INFO - MATCH FOUND! User: brb, Confidence: 0.8547
+2026-01-19 17:42:03,249 - INFO - MATCH FOUND! User: brb, Confidence: 0.8547
+2026-01-19 17:42:04,282 - INFO - MATCH FOUND! User: brb, Confidence: 0.8434
+2026-01-19 17:42:05,335 - INFO - MATCH FOUND! User: brb, Confidence: 0.8434
+2026-01-19 17:42:06,524 - INFO - MATCH FOUND! User: brb, Confidence: 0.8063
+2026-01-19 17:42:07,570 - INFO - MATCH FOUND! User: brb, Confidence: 0.8063
+2026-01-19 17:42:08,691 - INFO - MATCH FOUND! User: brb, Confidence: 0.8035
+2026-01-19 17:42:09,737 - INFO - MATCH FOUND! User: brb, Confidence: 0.8035
+2026-01-19 17:42:11,348 - INFO - MATCH FOUND! User: brb, Confidence: 0.8162
+2026-01-19 17:42:12,325 - INFO - MATCH FOUND! User: brb, Confidence: 0.8162
+2026-01-19 17:42:13,327 - INFO - MATCH FOUND! User: brb, Confidence: 0.8201
+2026-01-19 17:42:14,363 - INFO - MATCH FOUND! User: brb, Confidence: 0.8201
+2026-01-19 17:42:15,369 - INFO - MATCH FOUND! User: brb, Confidence: 0.7823
+2026-01-19 17:42:16,389 - INFO - MATCH FOUND! User: brb, Confidence: 0.7823
+2026-01-19 17:42:17,400 - INFO - MATCH FOUND! User: brb, Confidence: 0.7657
+2026-01-19 17:42:18,429 - INFO - MATCH FOUND! User: brb, Confidence: 0.7657
+2026-01-19 17:42:23,461 - INFO - MATCH FOUND! User: brb, Confidence: 0.7257
+2026-01-19 17:42:26,481 - INFO - MATCH FOUND! User: brb, Confidence: 0.7320
+2026-01-19 17:42:36,568 - INFO - MATCH FOUND! User: brb, Confidence: 0.7449
+2026-01-19 17:42:37,577 - INFO - MATCH FOUND! User: brb, Confidence: 0.7455
+2026-01-19 17:42:38,591 - INFO - MATCH FOUND! User: brb, Confidence: 0.7455
+2026-01-19 17:42:39,681 - INFO - MATCH FOUND! User: brb, Confidence: 0.7993
+2026-01-19 17:42:40,707 - INFO - MATCH FOUND! User: brb, Confidence: 0.7993
+2026-01-19 17:42:41,763 - INFO - MATCH FOUND! User: brb, Confidence: 0.7694
+2026-01-19 17:42:42,810 - INFO - MATCH FOUND! User: brb, Confidence: 0.7694
+2026-01-19 17:43:03,833 - INFO - MATCH FOUND! User: brb, Confidence: 0.7411
+2026-01-19 17:43:04,931 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:06,021 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:07,081 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:08,151 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:09,240 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:10,315 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:11,412 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:12,614 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:13,667 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:14,730 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:15,902 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:17,012 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:18,141 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:19,218 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:20,294 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:21,489 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:22,629 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:23,767 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:24,983 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:26,036 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:27,087 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:28,082 - INFO - MATCH FOUND! User: brb, Confidence: 0.7260
+2026-01-19 17:43:34,992 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:43:35,006 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:43:37,801 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:43:39,528 - INFO - Câmera 0 iniciada com sucesso.
+2026-01-19 17:43:39,894 - INFO - Loading faiss with AVX2 support.
+2026-01-19 17:43:39,914 - INFO - Successfully loaded faiss with AVX2 support.
+2026-01-19 17:43:42,908 - WARNING - From C:\Users\brb\Desktop\C151 - Copy\C151\venv\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2026-01-19 17:43:49,024 - INFO - MATCH FOUND! User: brb, Confidence: 0.7243
+2026-01-19 17:43:51,246 - INFO - MATCH FOUND! User: brb, Confidence: 0.7300
+2026-01-19 17:43:52,326 - INFO - MATCH FOUND! User: brb, Confidence: 0.8688
+2026-01-19 17:43:53,425 - INFO - MATCH FOUND! User: brb, Confidence: 0.7442
+2026-01-19 17:43:54,510 - INFO - MATCH FOUND! User: brb, Confidence: 0.7442
+2026-01-19 17:43:59,978 - INFO - MATCH FOUND! User: brb, Confidence: 0.7406
+2026-01-19 17:44:01,095 - INFO - MATCH FOUND! User: brb, Confidence: 0.7468
+2026-01-19 17:44:02,286 - INFO - MATCH FOUND! User: brb, Confidence: 0.7468
+2026-01-19 17:44:03,381 - INFO - MATCH FOUND! User: brb, Confidence: 0.7391
+2026-01-19 17:44:04,490 - INFO - MATCH FOUND! User: brb, Confidence: 0.7391
+2026-01-19 17:44:06,058 - INFO - MATCH FOUND! User: brb, Confidence: 0.8291
+2026-01-19 17:44:07,085 - INFO - MATCH FOUND! User: brb, Confidence: 0.8291
+2026-01-19 17:44:08,178 - INFO - MATCH FOUND! User: brb, Confidence: 0.7914
+2026-01-19 17:44:09,338 - INFO - MATCH FOUND! User: brb, Confidence: 0.7914
+2026-01-19 17:44:12,654 - INFO - MATCH FOUND! User: brb, Confidence: 0.7900
+2026-01-19 17:44:13,746 - INFO - MATCH FOUND! User: brb, Confidence: 0.7746
+2026-01-19 17:44:14,805 - INFO - MATCH FOUND! User: brb, Confidence: 0.7746
+2026-01-19 17:44:15,880 - INFO - MATCH FOUND! User: brb, Confidence: 0.8158
+2026-01-19 17:44:16,953 - INFO - MATCH FOUND! User: brb, Confidence: 0.8158
+2026-01-19 17:44:17,994 - INFO - MATCH FOUND! User: brb, Confidence: 0.7803
+2026-01-19 17:44:19,141 - INFO - MATCH FOUND! User: brb, Confidence: 0.7983
+2026-01-19 17:44:20,224 - INFO - MATCH FOUND! User: brb, Confidence: 0.8240
+2026-01-19 17:44:21,255 - INFO - MATCH FOUND! User: brb, Confidence: 0.8112
+2026-01-19 17:44:22,281 - INFO - MATCH FOUND! User: brb, Confidence: 0.8112
+2026-01-19 17:44:24,342 - INFO - MATCH FOUND! User: brb, Confidence: 0.8336
+2026-01-19 17:44:25,425 - INFO - MATCH FOUND! User: brb, Confidence: 0.7931
+2026-01-19 17:44:26,459 - INFO - MATCH FOUND! User: brb, Confidence: 0.7345

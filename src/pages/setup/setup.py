@@ -2,11 +2,13 @@ from nicegui import ui
 import cv2
 import base64
 from src.services.services import camera_manager
+from src.common import theme
 from . import functions as f
 from .components import form, camera
 
 def setup_page():
     with ui.column().classes('w-full h-screen items-center justify-center'):
+        theme.render_theme_toggle_button()
         with ui.card().classes('w11-card w-[500px] p-8'):
             name_input, pin_input = form.render_inputs()
             cam_view = camera.render_view()
