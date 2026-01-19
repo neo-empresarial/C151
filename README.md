@@ -8,6 +8,13 @@ Sistema visual de controle de acesso baseado em reconhecimento facial utilizando
 - **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
 - **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
 - **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
+- **Múltiplas Fotos**: Suporte para múltiplas fotos por usuário para maior precisão.
+- **Modelos de IA**: Flexibilidade para trocar o modelo de reconhecimento (ArcFace, Facenet, etc).
+
+## 🧠 Trocando o Modelo de IA
+
+O sistema suporta diversos modelos de reconhecimento facial. Para trocar o modelo (ex: de ArcFace para FaceNet), consulte o guia detalhado:
+[Guia: Trocando o Modelo de IA](changing_models.md)
 
 ## Como Usar
 

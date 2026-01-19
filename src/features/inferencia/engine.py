@@ -30,13 +30,15 @@ class InferenceEngine:
         try:
             with self.df_lock:
                 DeepFace.build_model(self.model_name)
-                users = self.db_manager.get_all_embeddings()
+                all_embeddings_data = self.db_manager.get_all_embeddings()
+                
                 self.known_embeddings = []
                 self.known_ids = []
                 
-                if users:
-                    embeddings = [u["embedding"] for u in users]
-                    self.known_ids = [u for u in users]
+                if all_embeddings_data:
+                    embeddings = [data["embedding"] for data in all_embeddings_data]
+                    # Map each index in FAISS to the full data dict
+                    self.known_ids = [data for data in all_embeddings_data]
                     
                     params = np.array(embeddings).astype('float32')
                     faiss.normalize_L2(params)
@@ -46,7 +48,7 @@ class InferenceEngine:
                     self.faiss_index.add(params)
                     
                 if self.faiss_index:
-                    print(f"DEBUG: Index rebuilt with {self.faiss_index.ntotal} vectors.")
+                    print(f"DEBUG: Index rebuilt with {self.faiss_index.ntotal} vectors/photos.")
                     
                 self.is_loaded = True
         except Exception as e:
@@ -187,8 +189,9 @@ class InferenceEngine:
                             # Safety check for index bounds
                             if idx < len(current_known_ids):
                                 user_data = current_known_ids[idx]
+                                # user_data now contains {id, name, embedding, access_level, photo_id}
                                 best_name = user_data["name"]
-                                best_id = user_data["id"]
+                                best_id = user_data["id"] # This is the USER_ID
                                 best_access = user_data.get("access_level", "Visitante")
                                 found_match = True
                                 confidence = float(score)
