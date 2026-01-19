@@ -8,7 +8,6 @@ if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.
 
 .\venv\Scripts\pyinstaller --noconfirm --onefile --console --name "DeepFaceRec_Debug" `
     --specpath "build" `
-    --add-data "$PWD\users.db;." `
     --add-data "$PWD\src;src" `
     --hidden-import "deepface" `
     --hidden-import "nicegui" `
@@ -20,8 +19,6 @@ if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.
     --hidden-import "PIL" `
     --hidden-import "numpy" `
     --hidden-import "pandas" `
-    --hidden-import "pandas" `
-    --hidden-import "webview" `
     --hidden-import "faiss" `
     --collect-all "faiss" `
     --collect-all "deepface" `

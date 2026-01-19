@@ -3,6 +3,7 @@ import threading
 import time
 import numpy as np
 import faiss
+import logging
 from deepface import DeepFace
 from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD
 
@@ -48,18 +49,18 @@ class InferenceEngine:
                     self.faiss_index.add(params)
                     
                 if self.faiss_index:
-                    print(f"DEBUG: Index rebuilt with {self.faiss_index.ntotal} vectors/photos.")
+                    logging.debug(f"Index rebuilt with {self.faiss_index.ntotal} vectors/photos.")
                     
                 self.is_loaded = True
         except Exception as e:
-            print(f"ERROR: Failed to load model/index: {e}")
+            logging.error(f"Failed to load model/index: {e}")
             import traceback
-            traceback.print_exc()
+            logging.error(traceback.format_exc())
 
     def generate_embedding(self, frame):
-        print("DEBUG: generate_embedding called. Requesting df_lock...")
+        logging.debug("generate_embedding called. Requesting df_lock...")
         with self.df_lock:
-            print("DEBUG: df_lock acquired. Starting DeepFace.represent...")
+            logging.debug("df_lock acquired. Starting DeepFace.represent...")
             start_time = time.time()
             try:
                 result = DeepFace.represent(
@@ -70,13 +71,13 @@ class InferenceEngine:
                     align=True,
                     anti_spoofing=False
                 )
-                print(f"DEBUG: DeepFace.represent finished in {time.time() - start_time:.2f}s")
+                logging.debug(f"DeepFace.represent finished in {time.time() - start_time:.2f}s")
                 return result
             except Exception as e:
-                print(f"ERROR: DeepFace.represent failed: {e}")
+                logging.error(f"DeepFace.represent failed: {e}")
                 raise e
             finally:
-                print("DEBUG: Releasing df_lock.")
+                logging.debug("Releasing df_lock.")
 
     def start(self):
         if self.running:
@@ -144,7 +145,8 @@ class InferenceEngine:
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
                         
-                        print(f"DEBUG: Attempting face detection with model={self.model_name}, detector={self.detector_backend}")
+                        
+                        logging.debug(f"Attempting face detection with model={self.model_name}, detector={self.detector_backend}")
                         face_objs = DeepFace.represent(
                             img_path=process_frame,
                             model_name=self.model_name,
@@ -153,10 +155,10 @@ class InferenceEngine:
                             align=True,
                             anti_spoofing=False
                         )
-                        print(f"DEBUG: {len(face_objs)} face(s) detected")
+                        logging.debug(f"{len(face_objs)} face(s) detected")
                         self.last_recognition_time = time.time()
                 except Exception as e:
-                    print(f"DEBUG: Face detection error: {e}")
+                    logging.debug(f"Face detection error: {e}")
 
                 results = []
                 
@@ -179,11 +181,11 @@ class InferenceEngine:
                         query = np.array([target_embedding]).astype('float32')
                         faiss.normalize_L2(query)
                         
-                        print(f"DEBUG: Query shape: {query.shape}, Index dimension: {current_index.d}")
+                        logging.debug(f"Query shape: {query.shape}, Index dimension: {current_index.d}")
                         D, I = current_index.search(query, 1)
                         
                         score = D[0][0] 
-                        print(f"DEBUG: Face detected. Similarity score: {score:.4f}, Threshold: {(1 - self.threshold):.4f}")
+                        logging.debug(f"Face detected. Similarity score: {score:.4f}, Threshold: {(1 - self.threshold):.4f}")
                         if score > (1 - self.threshold):
                             idx = I[0][0]
                             # Safety check for index bounds
@@ -195,9 +197,9 @@ class InferenceEngine:
                                 best_access = user_data.get("access_level", "Visitante")
                                 found_match = True
                                 confidence = float(score)
-                                print(f"DEBUG: MATCH FOUND! User: {best_name}, Confidence: {confidence:.4f}")
+                                logging.info(f"MATCH FOUND! User: {best_name}, Confidence: {confidence:.4f}")
                         else:
-                            print(f"DEBUG: No match - score {score:.4f} not greater than threshold {(1 - self.threshold):.4f}")
+                            logging.debug(f"No match - score {score:.4f} not greater than threshold {(1 - self.threshold):.4f}")
 
                     h_frame, w_frame, _ = frame.shape
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
@@ -223,7 +225,6 @@ class InferenceEngine:
 
             except Exception as e:
                 import traceback
-                traceback.print_exc()
-                print(f"Engine Loop Error: {e}")
+                logging.error(f"Engine Loop Error: {e} - {traceback.format_exc()}")
             
             time.sleep(0.05)

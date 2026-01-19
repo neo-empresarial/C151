@@ -2,6 +2,9 @@ import sys
 import os
 from nicegui import ui, app
 import socket
+from src.common.logger import AppLogger
+
+AppLogger.setup()
 
 if getattr(sys, 'frozen', False):
     from src.common.loading_screen import show_loading, update_loading, close_loading

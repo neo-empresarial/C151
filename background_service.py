@@ -7,24 +7,26 @@ from src.services.services import camera_manager, engine, db_manager
 from src.services.access_control import AccessController
 from src.services.alert_manager import AlertManager
 from src.services.ui_layout import UILayout
+from src.common.logger import AppLogger
+import logging
 
 access_controller = AccessController()
 alert_manager = AlertManager()
 layout = UILayout(access_controller, db_manager)
 
 def face_processing_loop():
-    print("DEBUG: Loop de processamento iniciado.", flush=True)
+    AppLogger.log("Loop de processamento iniciado.", "info")
     try:
         engine.start()
-        print("DEBUG: Engine iniciada.", flush=True)
+        AppLogger.log("Engine iniciada.", "info")
         camera_manager.start()
         if camera_manager.cap is None or not camera_manager.cap.isOpened():
-             print("DEBUG: AVISO - Falha ao abrir a câmera no reset inicial.", flush=True)
+             AppLogger.log("AVISO - Falha ao abrir a câmera no reset inicial.", "warning")
         else:
-             print("DEBUG: Câmera iniciada com sucesso.", flush=True)
+             AppLogger.log("Câmera iniciada com sucesso.", "info")
 
     except Exception as e:
-        print(f"DEBUG: Erro na inicialização: {e}", flush=True)
+        AppLogger.log(f"Erro na inicialização: {e}", "error")
         pass
     
     first_pass = True
@@ -33,9 +35,9 @@ def face_processing_loop():
             ret, frame = camera_manager.read()
             if first_pass:
                  if ret:
-                      print("DEBUG: PRIMEIRO FRAME LIDO COM SUCESSO!", flush=True)
+                      AppLogger.log("PRIMEIRO FRAME LIDO COM SUCESSO!", "info")
                  else:
-                      print("DEBUG: FALHA AO LER PRIMEIRO FRAME - Verifique a camera", flush=True)
+                      AppLogger.log("FALHA AO LER PRIMEIRO FRAME - Verifique a camera", "error")
                  first_pass = False
 
             if ret:
@@ -47,7 +49,7 @@ def face_processing_loop():
             access_controller.process_result(results)
 
         except Exception as e:
-            print(f"DEBUG: Erro no loop: {e}", flush=True)
+            AppLogger.log(f"Erro no loop: {e}", "error")
             pass
         
         time.sleep(0.5)
@@ -58,6 +60,7 @@ def main_page():
     ui.timer(0.5, layout.update_visibility)
 
 def main():
+    AppLogger.setup()
     proc_thread = threading.Thread(target=face_processing_loop, daemon=True)
     proc_thread.start()
     
@@ -71,7 +74,7 @@ def main():
 
     try:
         port = find_free_port()
-        print(f"Starting Background Service UI on port {port}")
+        AppLogger.log(f"Starting Background Service UI on port {port}", "info")
         ui.run(
             title="Serviço de Biometria",
             port=port,
@@ -83,7 +86,7 @@ def main():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        print(f"FATAL ERROR in main: {e}")
+        AppLogger.log(f"FATAL ERROR in main: {e}", "error")
 
 if __name__ in {"__main__", "__mp_main__"}:
     main()

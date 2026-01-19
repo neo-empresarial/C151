@@ -2,173 +2,129 @@
 
 Sistema visual de controle de acesso baseado em reconhecimento facial utilizando DeepFace, OpenCV e NiceGUI.
 
-## Funcionalidades
+## 🚀 Funcionalidades
 
 - **Reconhecimento Facial em Tempo Real**: Identificação de usuários cadastrados via webcam.
 - **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
 - **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
 - **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
 - **Múltiplas Fotos**: Suporte para múltiplas fotos por usuário para maior precisão.
-- **Modelos de IA**: Flexibilidade para trocar o modelo de reconhecimento (ArcFace, Facenet, etc).
+- **Serviço de Background**: Executável silencioso que monitora o acesso e bloqueia a tela se necessário.
 
-## 🧠 Trocando o Modelo de IA
+---
 
-O sistema suporta diversos modelos de reconhecimento facial. Para trocar o modelo (ex: de ArcFace para FaceNet), consulte o guia detalhado:
-[Guia: Trocando o Modelo de IA](changing_models.md)
+## 💻 Ambiente de Desenvolvimento (Windows)
 
-## Como Usar
+### Pré-requisitos
+- Python 3.10 ou superior.
+- Git.
+- Webcam conectada.
+- [Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (necessário para compilar algumas bibliotecas Python).
 
-1. **Configuração**: Na primeira execução, se não houver usuários, você será direcionado para `/setup`. Crie o Admin.
-2. **Login/Reconhecimento**: A tela inicial mostra o feed da câmera.
-    - Se o rosto for reconhecido, o acesso é liberado (ou admin logado).
-    - Se falhar, use o "Entrar com PIN".
-3. **Dashboard (Admin)**:
-    - **Adicionar Usuário**: Clique em "Adicionar Usuário", preencha os dados e capture a foto. É obrigatório **Confirmar** a foto.
-    - **Editar Usuário**: Altere nome/PIN ou clique em "Alterar Foto" para atualizar a biometria.
-    - **Remover**: Exclui o usuário permanentemente.
+### Instalação
 
-## Instalação e Build
+1. **Clone o repositório:**
+   ```powershell
+   git clone <URL_DO_REPOSITORIO>
+   cd C151
+   ```
 
-### Dependências
-```bash
-sudo apt install libgirepository1.0-dev libcairo2-dev python3-dev
-pip install -r requirements.txt
-```
+2. **Crie e ative o ambiente virtual:**
+   ```powershell
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
 
-### Rodar Localmente
-```bash
+3. **Instale as dependências:**
+   ```powershell
+   pip install -r requirements.txt
+   ```
+
+### Rodando Localmente
+
+**1. Aplicação Principal (Interface de Gestão/Quiosque):**
+Esta é a interface onde você cadastra usuários e vê o feedback visual.
+```powershell
 python main.py
 ```
 
-## 🔒 Serviço de Background (DeepFaceService)
-
-O sistema agora conta com um componente dedicado: **DeepFaceService**. Este é um serviço, execução em System Tray, independente da interface gráfica principal.
-
-### Funcionalidades do Serviço
-1.  **Monitoramento Contínuo**: Roda em background, acessando a câmera diretamente.
-2.  **API Local (Porta 8080)**: Oferece endpoints para verificação de identidade.
-3.  **System Tray**: Ícone na bandeja do sistema para controle básico (Sair).
-4.  **Segurança Ativa**:
-    - **Bloqueio Visual**: Se um usuário não identificado ou sem permissão for detectado, o serviço pode acionar um bloqueio visual de tela cheia ("ACESSO NEGADO") até que um Administrador seja reconhecido.
-    - **Integração**: Outros aplicativos podem simplesmente consultar a API para saber quem está na frente do PC.
-
-### API - Integração
-**Endpoint:** `GET http://localhost:8080/verificar_operador`
-
-**Resposta (JSON):**
-```json
-{
-  "status": "sucesso",
-  "usuario": "NomeDoUsuario",
-  "id": "uuid-do-usuario",
-  "funcao": "Admin",
-  "confianca": 0.98
-}
+**2. Serviço de Background (Proteção):**
+Este script roda silenciosamente (ou minimizado) e monitora a câmera.
+```powershell
+python background_service.py
 ```
-
-### Como Executar
-O serviço pode ser rodado de duas formas:
-
-**1. Via Python (Desenvolvimento):**
-```bash
-# Requer o ambiente virtual ativado
-./venv/bin/python3 src/background_service.py
-```
-
-**2. Via Executável Standalone (Produção):**
-Após o build, execute o arquivo gerado:
-```bash
-./dist/DeepFaceService/DeepFaceService
-```
-*Recomendado configurar este executável para iniciar com o sistema operacional.*
-
-> [!WARNING]
-> **Atenção com Caminhos/Diretórios**: 
-> Se o executável falhar com erro `ModuleNotFoundError: No module named 'encodings'`, é porque o caminho onde o app está salvo contém caracteres especiais (ex: "Área de trabalho").
-> **Solução**: Mova a pasta `dist/DeepFaceService` para um local simples, como `C:\DeepFaceRec` ou `/home/usuario/DeepFaceRec`.
 
 ---
 
-## 🔄 Integração com Outros Softwares
+## 🛠️ Build (Gerando Executáveis)
 
-O `DeepFaceService` foi desenhado para rodar como um **processo em background**.
-Você deve iniciá-lo assim que o computador ligar ou quando seu sistema principal abrir.
+O projeto possui scripts PowerShell para gerar os executáveis independentes (`.exe`) para Windows.
 
-**Exemplos de como chamar o executável:**
+**Local dos scripts:** `build_scripts/windows/`
 
-### Python (subprocess)
+### 1. Construir Aplicação Principal (`DeepFaceRec_Debug.exe`)
+Gera o executável com console (para debug) da interface principal.
+
+```powershell
+.\build_scripts\windows\build_debug.ps1
+```
+*Saída gerada em: `dist/DeepFaceRec_Debug.exe`*
+
+### 2. Construir Serviço (`DeepFaceService.exe`)
+Gera o executável do serviço de background (sem console).
+
+```powershell
+.\build_scripts\windows\build_service.ps1
+```
+*Saída gerada em: `dist/DeepFaceService.exe`*
+
+---
+
+## � Deploy e Distribuição
+
+Para que o sistema funcione corretamente em produção, a estrutura de pastas deve ser mantida.
+
+### Estrutura Recomendada
+
+Crie uma pasta (ex: `C:\DeepFaceAccess`) e coloque os seguintes arquivos:
+
+```text
+C:\DeepFaceAccess\
+├── DeepFaceRec_Debug.exe   # Aplicação Principal
+├── DeepFaceService.exe     # Serviço de Background
+└── users.db                # Banco de dados (COMPARTILHADO)
+```
+
+> [!IMPORTANT]
+> O arquivo `users.db` deve estar na **mesma pasta** dos executáveis. Se o arquivo não existir, o sistema criará um novo automaticamente na primeira execução. Ambos os programas leem e escrevem neste mesmo arquivo.
+
+### Notas sobre o `DeepFaceService`
+- Ele roda em **background** e pode adicionar um ícone na bandeja do sistema (Tray Icon).
+- Se rodar e fechar imediatamente, verifique se a câmera já não está sendo usada por outro app.
+- Para fechar o serviço, procure o ícone na bandeja ou use o Gerenciador de Tarefas.
+
+---
+
+## ⚠️ Solução de Problemas Comuns
+
+### 1. Erro: `can't open camera by index`
+Significa que a câmera já está em uso.
+- Verifique se você não tem o `main.py` e o `background_service.py` abertos ao mesmo tempo tentando acessar a câmera (o sistema tenta gerenciar isso, mas conflitos podem ocorrer).
+- Verifique outros apps (Zoom, Teams).
+
+### 2. Erro de `ModuleNotFoundError` no executável
+Geralmente resolvido nos scripts de build. Se persistir, verifique se instalou todas as dependências no `venv` antes de compilar.
+
+### 3. Banco de dados vazio após reiniciar
+Certifique-se de que não está rodando o executável de dentro de um arquivo ZIP. Extraia tudo para uma pasta. O banco de dados `users.db` é criado ao lado do executável.
+
+---
+
+## 🧠 Trocando o Modelo de IA
+
+O padrão é configurado no arquivo `src/common/config.py`.
+Para trocar (ex: ArcFace, FaceNet, VGG-Face), edite a variável:
+
 ```python
-import subprocess
-
-# Inicia o serviço sem bloquear o script principal
-subprocess.Popen(["C:/DeepFaceRec/DeepFaceService.exe"])
+MODEL_NAME = 'ArcFace'
 ```
-
-### C# (.NET)
-```csharp
-using System.Diagnostics;
-
-Process.Start("C:\\DeepFaceRec\\DeepFaceService.exe");
-```
-
-### Shell / Bash (Linux)
-```bash
-# O '&' no final libera o terminal
-./DeepFaceService &
-```
-
-## 🔒 Segurança Ativa e Comportamento Oculto
-
-O `DeepFaceService` opera de forma **totalmente oculta**.
-1.  **Startup Silencioso**: Ao iniciar, **nenhuma janela** é exibida. O processo roda em background.
-2.  **Monitoramento**: Ele verifica silenciosamente quem está na frente da câmera.
-3.  **Proteção de Admin**: Se um **Administrador** (ex: "BRB") for detectado, o contador de segurança é **zerado**. O sistema entende que está tudo seguro.
-4.  **Bloqueio de Intruso**: Se uma pessoa **Desconhecida** ou **Sem Acesso** for detectada por **5 frames seguidos** (aprox. 5-10s), o sistema exibe uma **Tela Vermelha de ACESSO NEGADO** em tela cheia (modo quiosque), bloqueando o uso do PC.
-
-### Desbloqueio
-Para remover a tela de alerta:
-1.  Um **Administrador** deve olhar para a câmera.
-2.  OU digitar o **PIN de Administrador** na tela de bloqueio.
-
----
-
-## ⚠️ Solução de Problemas
-
-### Erro: `can't open camera by index`
-Se ao rodar o serviço você ver erros como `[WARN:0@...] can't open camera by index`, significa que **outra instância do programa já está rodando** e "segurando" a câmera.
-
-**Solução**:
-Execute o comando abaixo no terminal para matar todos os processos antigos:
-```bash
-pkill -f DeepFaceService
-```
-Em seguida, tente rodar novamente.
-
-## 🛠️ Build e Distribuição
-
-O projeto possui dois scripts de build separados para gerar executáveis independentes.
-
-### 1. Aplicação Principal (Interface de Gestão)
-Gera o `DeepFaceRec`, utilizado para cadastrar usuários e gerenciar o banco de dados.
-```bash
-./build.sh
-# Saída: dist/DeepFaceRec
-```
-
-### 2. Serviço de Background (DeepFaceService)
-Gera o `DeepFaceService`, o serviço silencioso que deve rodar sempre.
-```bash
-./build_service.sh
-# Saída: dist/DeepFaceService
-```
-
-### Notas de Deploy
-- O arquivo `users.db` é compartilhado. Se os executáveis estiverem na mesma pasta, eles compartilharão o banco de dados.
-- O `DeepFaceService` deve ser iniciado **antes** de qualquer aplicação que dependa da autenticação facial.
-
-## Estrutura do Projeto
-
-- `src/`: Código fonte da aplicação
-- `src/pages/`: Interfaces (Login, Dashboard, Setup)
-- `src/common/`: Utilitários (Câmera, Banco de Dados, Config)
-- `src/features/`: Lógica de negócios (Auth, Inferência)
