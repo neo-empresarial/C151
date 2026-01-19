@@ -19,10 +19,13 @@ Write-Host "Building DeepFaceService (Hidden Camera Service)..."
     --hidden-import "pandas" `
     --hidden-import "pystray" `
     --hidden-import "cairo" `
+    --hidden-import "faiss" `
+    --collect-all "faiss" `
     --collect-all "pystray" `
     --collect-all "cv2" `
     --collect-all "nicegui" `
     --collect-all "webview" `
+    --collect-all "mtcnn" `
     background_service.py
 
 Write-Host "Build complete. Executable should be at dist/DeepFaceService.exe"

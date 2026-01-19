@@ -20,12 +20,16 @@ if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.
     --hidden-import "PIL" `
     --hidden-import "numpy" `
     --hidden-import "pandas" `
+    --hidden-import "pandas" `
     --hidden-import "webview" `
+    --hidden-import "faiss" `
+    --collect-all "faiss" `
     --collect-all "deepface" `
     --collect-all "tensorflow" `
     --collect-all "cv2" `
     --collect-all "nicegui" `
     --collect-all "webview" `
+    --collect-all "mtcnn" `
     main.py
 
 Write-Host "Debug build complete. Executable is at dist/DeepFaceRec_Debug.exe"
