@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+cd "$(dirname "$0")/../.."
 
 if [ -f "dist/DeepFaceRec/users.db" ]; then
     echo "Backing up existing users.db from dist..."
@@ -11,8 +12,10 @@ fi
 rm -rf build dist *.spec
 
 ./venv/bin/pyinstaller --noconfirm --onefile --windowed --name "DeepFaceRec" \
-    --add-data "users.db:." \
-    --add-data "src:src" \
+    --specpath "build" \
+    --splash "src/public/images/certi/logo-certi.png" \
+    --add-data "$(pwd)/users.db:." \
+    --add-data "$(pwd)/src:src" \
     --hidden-import "deepface" \
     --hidden-import "tensorflow" \
     --hidden-import "tf_keras" \

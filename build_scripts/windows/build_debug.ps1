@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Stop"
+Set-Location $PSScriptRoot\..\..
 
 if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
 if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
@@ -6,8 +7,9 @@ if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.
 
 
 .\venv\Scripts\pyinstaller --noconfirm --onefile --console --name "DeepFaceRec_Debug" `
-    --add-data "users.db;." `
-    --add-data "src;src" `
+    --specpath "build" `
+    --add-data "$PWD\users.db;." `
+    --add-data "$PWD\src;src" `
     --hidden-import "deepface" `
     --hidden-import "nicegui" `
     --hidden-import "scipy" `
