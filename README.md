@@ -80,7 +80,7 @@ Gera o executável do serviço de background (sem console).
 
 ---
 
-## � Deploy e Distribuição
+## Deploy e Distribuição
 
 Para que o sistema funcione corretamente em produção, a estrutura de pastas deve ser mantida.
 
