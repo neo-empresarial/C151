@@ -1,18 +1,84 @@
 import sys
-import argparse
-from src.gui.recognition_ui import run_recognition
-from src.gui.management_ui import run_management
-from src.gui.main_window import run_launcher
+import os
+from nicegui import ui, app
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="DeepFace Recognition App")
-    parser.add_argument("--mode", choices=["recognition", "manage"], help="Mode to run the application in")
+if getattr(sys, 'frozen', False):
+    from src.common.loading_screen import show_loading, update_loading, close_loading
+    loading = show_loading()
+    update_loading("Inicializando aplicação...")
+
+if getattr(sys, 'frozen', False):
+    exe_dir = os.path.dirname(sys.executable)
+    os.chdir(exe_dir)
     
-    args = parser.parse_args()
+    base_path = getattr(sys, '_MEIPASS', exe_dir)
+    static_src_path = os.path.join(base_path, 'src')
     
-    if args.mode == "recognition":
-        run_recognition()
-    elif args.mode == "manage":
-        run_management()
+    if os.path.exists('users.db'):
+        print("Database found in executable directory")
     else:
-        run_launcher()
+        print("WARNING: users.db not found in executable directory")
+else:
+    static_src_path = 'src'
+
+sys.path.append(".") 
+
+if getattr(sys, 'frozen', False):
+    update_loading("Carregando componentes...")
+
+from src.common.theme import load_theme
+from src.services.services import start_services, stop_services
+from src.pages.login import login_page
+from src.pages.dashboard import dashboard_page
+from src.pages.setup import setup_page
+from src.pages.landing import landing_page
+
+if getattr(sys, 'frozen', False):
+    update_loading("Iniciando serviços...")
+
+def startup_wrapper():
+    """Wrapper to start services"""
+    start_services()
+
+app.on_startup(startup_wrapper)
+app.on_shutdown(stop_services)
+
+def close_splash():
+    pass
+
+app.on_startup(close_splash)
+
+load_theme()
+
+print(f"Static Src Path: {static_src_path}")
+if os.path.exists(static_src_path):
+    print(f"Contents of src: {os.listdir(static_src_path)}")
+    public_path = os.path.join(static_src_path, 'public')
+    if os.path.exists(public_path):
+         print(f"Contents of src/public: {os.listdir(public_path)}")
+
+app.add_static_files('/src', static_src_path)
+
+@ui.page('/')
+def index():
+    landing_page()
+
+@ui.page('/recognition')
+def recognition():
+    login_page()
+
+@ui.page('/dashboard')
+def dashboard():
+    dashboard_page()
+
+@ui.page('/setup')
+def setup():
+    setup_page()
+
+if getattr(sys, 'frozen', False):
+    update_loading("Abrindo interface...")
+    import time
+    time.sleep(0.3) 
+    close_loading()
+
+ui.run(title='DeepFace Access Control', favicon='🛡️', port=8080, reload=False, native=True)

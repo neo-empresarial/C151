@@ -1,63 +1,167 @@
-# DeepFace Real-Time Recognition App
+# DeepFace Recognition Access Control
 
-## Overview
-A modular, cross-platform desktop application for real-time face recognition and user management. Built with **Python 3.12**, **PySide6 (Qt)**, and **DeepFace**.
+Sistema visual de controle de acesso baseado em reconhecimento facial utilizando DeepFace, OpenCV e NiceGUI.
 
-## Project Structure
-```
-DeepFaceRec/
-├── database/            # Stores user images (1 folder per user)
-├── dist/                # Contains the compiled executable
-├── Logs/                # Recognition history (CSV)
-├── src/                 # Source code
-│   ├── core/            # Backend logic (Database, Recognition)
-│   └── gui/             # Frontend logic (PySide6 Windows)
-├── main.py              # Application entry point
-├── build.sh             # Linux build script (PyInstaller)
-└── requirements.txt     # Python dependencies
-```
+## Funcionalidades
 
-## Application Flow
+- **Reconhecimento Facial em Tempo Real**: Identificação de usuários cadastrados via webcam.
+- **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
+- **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
+- **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
 
-### 1. Initialization
--   The application starts via `main.py`.
--   It parses command-line arguments to determine the mode.
--   If no arguments are provided, the **Launcher Window** (`src/gui/main_window.py`) is shown.
+## Como Usar
 
-### 2. Recognition Mode (`--mode recognition`)
--   Initializes the `RecognitionEngine` (`src/core/recognition.py`).
--   Loads the **FaceNet** model (downloaded to `~/.deepface` on first run).
--   Captures video from the default webcam.
--   Detects faces and compares embeddings against the `database/` folder.
--   Updates the UI (`src/gui/recognition_ui.py`) with bounding boxes (Green=Known, Red=Unknown).
--   Logs recognitions to `Logs/history.csv` (max once per minute per user).
+1. **Configuração**: Na primeira execução, se não houver usuários, você será direcionado para `/setup`. Crie o Admin.
+2. **Login/Reconhecimento**: A tela inicial mostra o feed da câmera.
+    - Se o rosto for reconhecido, o acesso é liberado (ou admin logado).
+    - Se falhar, use o "Entrar com PIN".
+3. **Dashboard (Admin)**:
+    - **Adicionar Usuário**: Clique em "Adicionar Usuário", preencha os dados e capture a foto. É obrigatório **Confirmar** a foto.
+    - **Editar Usuário**: Altere nome/PIN ou clique em "Alterar Foto" para atualizar a biometria.
+    - **Remover**: Exclui o usuário permanentemente.
 
-### 3. Management Mode (`--mode manage`)
--   Opens the User Manager (`src/gui/management_ui.py`).
--   **Register**: Captures a frame from the webcam and saves it as `database/{Name}/{Name}.jpg`.
--   **Edit**: Allows updating the detection photo for an existing user.
--   **Delete**: Removes the user's folder and data.
--   Automatically clears internal caches (`.pkl` files) to ensure immediate recognition updates.
+## Instalação e Build
 
-## Executable Usage
-The application is compiled into a standalone binary in the `dist/` folder.
-
-**Run Launcher:**
+### Dependências
 ```bash
-./dist/DeepFaceRec
+sudo apt install libgirepository1.0-dev libcairo2-dev python3-dev
+pip install -r requirements.txt
 ```
 
-**Run Specific Modes:**
+### Rodar Localmente
 ```bash
-./dist/DeepFaceRec --mode recognition
-./dist/DeepFaceRec --mode manage
+python main.py
 ```
 
-## Licenses
--   **DeepFace**: [MIT License](https://github.com/serengil/deepface/blob/master/LICENSE) - Copyright (c) 2020 Sefik Ilkin Serengil
--   **TensorFlow**: [Apache 2.0](https://github.com/tensorflow/tensorflow/blob/master/LICENSE)
--   **PySide6 (Qt)**: [LGPLv3](https://doc.qt.io/qtforpython-6/licenses.html)
--   **OpenCV**: [Apache 2.0](https://github.com/opencv/opencv/blob/4.x/LICENSE)
+## 🔒 Serviço de Background (DeepFaceService)
 
-## Credits
-Developed for educational and demonstration purposes showing the integration of Deep Learning with modern Desktop GUIs.
+O sistema agora conta com um componente dedicado: **DeepFaceService**. Este é um serviço, execução em System Tray, independente da interface gráfica principal.
+
+### Funcionalidades do Serviço
+1.  **Monitoramento Contínuo**: Roda em background, acessando a câmera diretamente.
+2.  **API Local (Porta 8080)**: Oferece endpoints para verificação de identidade.
+3.  **System Tray**: Ícone na bandeja do sistema para controle básico (Sair).
+4.  **Segurança Ativa**:
+    - **Bloqueio Visual**: Se um usuário não identificado ou sem permissão for detectado, o serviço pode acionar um bloqueio visual de tela cheia ("ACESSO NEGADO") até que um Administrador seja reconhecido.
+    - **Integração**: Outros aplicativos podem simplesmente consultar a API para saber quem está na frente do PC.
+
+### API - Integração
+**Endpoint:** `GET http://localhost:8080/verificar_operador`
+
+**Resposta (JSON):**
+```json
+{
+  "status": "sucesso",
+  "usuario": "NomeDoUsuario",
+  "id": "uuid-do-usuario",
+  "funcao": "Admin",
+  "confianca": 0.98
+}
+```
+
+### Como Executar
+O serviço pode ser rodado de duas formas:
+
+**1. Via Python (Desenvolvimento):**
+```bash
+# Requer o ambiente virtual ativado
+./venv/bin/python3 src/background_service.py
+```
+
+**2. Via Executável Standalone (Produção):**
+Após o build, execute o arquivo gerado:
+```bash
+./dist/DeepFaceService/DeepFaceService
+```
+*Recomendado configurar este executável para iniciar com o sistema operacional.*
+
+> [!WARNING]
+> **Atenção com Caminhos/Diretórios**: 
+> Se o executável falhar com erro `ModuleNotFoundError: No module named 'encodings'`, é porque o caminho onde o app está salvo contém caracteres especiais (ex: "Área de trabalho").
+> **Solução**: Mova a pasta `dist/DeepFaceService` para um local simples, como `C:\DeepFaceRec` ou `/home/usuario/DeepFaceRec`.
+
+---
+
+## 🔄 Integração com Outros Softwares
+
+O `DeepFaceService` foi desenhado para rodar como um **processo em background**.
+Você deve iniciá-lo assim que o computador ligar ou quando seu sistema principal abrir.
+
+**Exemplos de como chamar o executável:**
+
+### Python (subprocess)
+```python
+import subprocess
+
+# Inicia o serviço sem bloquear o script principal
+subprocess.Popen(["C:/DeepFaceRec/DeepFaceService.exe"])
+```
+
+### C# (.NET)
+```csharp
+using System.Diagnostics;
+
+Process.Start("C:\\DeepFaceRec\\DeepFaceService.exe");
+```
+
+### Shell / Bash (Linux)
+```bash
+# O '&' no final libera o terminal
+./DeepFaceService &
+```
+
+## 🔒 Segurança Ativa e Comportamento Oculto
+
+O `DeepFaceService` opera de forma **totalmente oculta**.
+1.  **Startup Silencioso**: Ao iniciar, **nenhuma janela** é exibida. O processo roda em background.
+2.  **Monitoramento**: Ele verifica silenciosamente quem está na frente da câmera.
+3.  **Proteção de Admin**: Se um **Administrador** (ex: "BRB") for detectado, o contador de segurança é **zerado**. O sistema entende que está tudo seguro.
+4.  **Bloqueio de Intruso**: Se uma pessoa **Desconhecida** ou **Sem Acesso** for detectada por **5 frames seguidos** (aprox. 5-10s), o sistema exibe uma **Tela Vermelha de ACESSO NEGADO** em tela cheia (modo quiosque), bloqueando o uso do PC.
+
+### Desbloqueio
+Para remover a tela de alerta:
+1.  Um **Administrador** deve olhar para a câmera.
+2.  OU digitar o **PIN de Administrador** na tela de bloqueio.
+
+---
+
+## ⚠️ Solução de Problemas
+
+### Erro: `can't open camera by index`
+Se ao rodar o serviço você ver erros como `[WARN:0@...] can't open camera by index`, significa que **outra instância do programa já está rodando** e "segurando" a câmera.
+
+**Solução**:
+Execute o comando abaixo no terminal para matar todos os processos antigos:
+```bash
+pkill -f DeepFaceService
+```
+Em seguida, tente rodar novamente.
+
+## 🛠️ Build e Distribuição
+
+O projeto possui dois scripts de build separados para gerar executáveis independentes.
+
+### 1. Aplicação Principal (Interface de Gestão)
+Gera o `DeepFaceRec`, utilizado para cadastrar usuários e gerenciar o banco de dados.
+```bash
+./build.sh
+# Saída: dist/DeepFaceRec
+```
+
+### 2. Serviço de Background (DeepFaceService)
+Gera o `DeepFaceService`, o serviço silencioso que deve rodar sempre.
+```bash
+./build_service.sh
+# Saída: dist/DeepFaceService
+```
+
+### Notas de Deploy
+- O arquivo `users.db` é compartilhado. Se os executáveis estiverem na mesma pasta, eles compartilharão o banco de dados.
+- O `DeepFaceService` deve ser iniciado **antes** de qualquer aplicação que dependa da autenticação facial.
+
+## Estrutura do Projeto
+
+- `src/`: Código fonte da aplicação
+- `src/pages/`: Interfaces (Login, Dashboard, Setup)
+- `src/common/`: Utilitários (Câmera, Banco de Dados, Config)
+- `src/features/`: Lógica de negócios (Auth, Inferência)

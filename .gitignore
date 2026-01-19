@@ -2,23 +2,17 @@
 __pycache__/
 *.pyc
 venv/
+!venv/pyvenv.cfg
 .env
 
 # Build / Distribution
 build/
 dist/
-*.spec
+
 
 # DeepFace / TensorFlow
 .deepface/
 weights/
-
-# Project Data (Heavy/Private)
-database/
-Logs/
-*.jpg
-*.png
-*.csv
 
 # IDEs
 .vscode/
