@@ -1,12 +1,14 @@
 #!/bin/bash
 set -e
+cd "$(dirname "$0")/../.."
 
 rm -rf build_service dist/DeepFaceService *.spec
 
 ./venv/bin/pyinstaller --noconfirm --onefile --noconsole --name "DeepFaceService" \
+    --specpath "build" \
     --exclude-module "nvidia" \
     --exclude-module "tensorrt" \
-    --add-data "src:src" \
+    --add-data "$(pwd)/src:src" \
     --hidden-import "deepface" \
     --hidden-import "encodings" \
     --hidden-import "tensorflow" \
