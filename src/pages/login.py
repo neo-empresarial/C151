@@ -111,8 +111,9 @@ def login_page():
         engine.update_frame(frame)
         results = engine.get_results()
         
-        display_frame = frame.copy()
-        
+        display_frame = cv2.flip(frame, 1)
+        h_frame, w_frame, _ = display_frame.shape
+
         detected_known = False
         user_found = None
         
@@ -124,6 +125,9 @@ def login_page():
             name = res.get("name", "Desconhecido")
             in_roi = res.get("in_roi", False)
             
+            # Ajustar coordenada X para o frame espelhado
+            mirror_x = w_frame - x - w
+            
             color = (100, 100, 100)
             if in_roi:
                 if known:
@@ -133,12 +137,12 @@ def login_page():
             else:
                 color = (0, 255, 255)
             
-            cv2.rectangle(display_frame, (x, y), (x+w, y+h), color, 2)
+            cv2.rectangle(display_frame, (mirror_x, y), (mirror_x+w, y+h), color, 2)
             
             if not in_roi:
-                 cv2.putText(display_frame, "Centralize", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+                 cv2.putText(display_frame, "Centralize", (mirror_x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
             else:
-                 cv2.putText(display_frame, name, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+                 cv2.putText(display_frame, name, (mirror_x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
 
             if in_roi:
                 if known:
@@ -183,7 +187,8 @@ def login_page():
                      feedback_label.text = "Centralize o Rosto"
                      feedback_label.classes(remove='bg-black/60 bg-red-600', add='bg-yellow-600')
 
-        flipped_frame = cv2.flip(display_frame, 1)
+        # Frame is already flipped
+        flipped_frame = display_frame
         _, buffer = cv2.imencode('.jpg', flipped_frame)
         video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
 
