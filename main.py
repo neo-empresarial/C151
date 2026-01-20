@@ -1,8 +1,11 @@
 import sys
 import os
+print("DEBUG: Imports starting...")
 from nicegui import ui, app
+print("DEBUG: NiceGUI imported")
 import socket
 from src.common.logger import AppLogger
+print("DEBUG: Logger imported")
 
 AppLogger.setup()
 
@@ -99,4 +102,5 @@ def find_free_port(start_port=8080, max_tries=100):
 if __name__ in {"__main__", "__mp_main__"}:
     port = find_free_port()
     print(f"Starting UI on port {port}")
-    ui.run(title='DeepFace Access Control', favicon='src/public/images/certi/logo-certi.png', port=port, reload=False, native=True, storage_secret='deepface_secret')
+    favicon_path = os.path.join(static_src_path, 'public/images/certi/logo-certi.png')
+    ui.run(title='DeepFace Access Control', favicon=favicon_path, port=port, reload=False, native=True, storage_secret='deepface_secret')

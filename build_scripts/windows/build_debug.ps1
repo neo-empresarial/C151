@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot\..\..
 
 if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
-if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
+if (Test-Path "dist/DeepFaceRec_Debug.exe") { Remove-Item -Force "dist/DeepFaceRec_Debug.exe" }
 if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.spec" }
 
 
@@ -20,6 +20,8 @@ if (Test-Path "DeepFaceRec_Debug.spec") { Remove-Item -Force "DeepFaceRec_Debug.
     --hidden-import "numpy" `
     --hidden-import "pandas" `
     --hidden-import "faiss" `
+    --hidden-import "torch" `
+    --hidden-import "torchvision" `
     --collect-all "faiss" `
     --collect-all "deepface" `
     --collect-all "tensorflow" `

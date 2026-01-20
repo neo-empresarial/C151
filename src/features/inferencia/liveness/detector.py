@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 import logging
 import os
+import sys
 
 from src.common.config import LIVENESS_MODEL_PATH, LIVENESS_THRESHOLD
 from src.features.inferencia.liveness.model import MiniFASNetV2
@@ -18,11 +19,16 @@ class LivenessDetector:
 
     def _load_model(self):
         try:
-            if not os.path.exists(LIVENESS_MODEL_PATH):
-                logging.warning(f"Liveness model not found at {LIVENESS_MODEL_PATH}. Liveness check will be disabled.")
+            # Resolve path for PyInstaller
+            model_path = LIVENESS_MODEL_PATH
+            if hasattr(sys, '_MEIPASS'):
+                model_path = os.path.join(sys._MEIPASS, LIVENESS_MODEL_PATH)
+
+            if not os.path.exists(model_path):
+                logging.warning(f"Liveness model not found at {model_path}. Liveness check will be disabled.")
                 return
             self.model = MiniFASNetV2(conv6_kernel=(5, 5)).to(self.device)
-            state_dict = torch.load(LIVENESS_MODEL_PATH, map_location=self.device)
+            state_dict = torch.load(model_path, map_location=self.device)
             if list(state_dict.keys())[0].startswith('module.'):
                 from collections import OrderedDict
                 new_state_dict = OrderedDict()

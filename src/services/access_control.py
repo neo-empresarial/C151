@@ -17,6 +17,14 @@ class AccessController:
         if results:
             for res in results:
                 found_someone = True
+                
+                # Check for spoof or explicit denial
+                if not res.get("is_real", True) or res.get("access_level") == "Negado":
+                    # Treat as unauthorized immediately or just continue to ensure no admin overrides?
+                    # For now, treat as non-admin. 
+                    # If we want immediate lock for spoof, we can trigger it here.
+                    continue
+
                 if res.get("access_level") == "Admin":
                     found_admin = True
                     break

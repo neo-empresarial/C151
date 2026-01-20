@@ -11,6 +11,8 @@ Write-Host "Building DeepFaceService (Hidden Camera Service)..."
     --exclude-module "tensorrt" `
     --add-data "$PWD\src;src" `
     --hidden-import "deepface" `
+    --hidden-import "torch" `
+    --hidden-import "torchvision" `
     --hidden-import "encodings" `
     --hidden-import "tensorflow" `
     --hidden-import "tf_keras" `
