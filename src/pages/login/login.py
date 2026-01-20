@@ -17,6 +17,7 @@ def login_page():
     
     with ui.column().classes('w-full h-screen items-center justify-center p-4 relative').style('background-color: var(--bg-mica);'):
         theme.render_theme_toggle_button()
+        theme.render_close_button()
         ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 left-4 text-gray-500 text-sm')
 
         with ui.card().classes('w11-card w-full max-w-[1000px] h-[700px] p-0 flex flex-col overflow-hidden'):

@@ -62,6 +62,10 @@ class AlertManager:
                     
                     print("DEBUG: AlertManager - Setting FULLSCREEN.", flush=True)
                     window.fullscreen = True
+                    # Validate and re-apply if needed
+                    # if not window.fullscreen:
+                    #    window.toggle_fullscreen()
+
                     
                     self.local_state_fullscreen = True
                     print("DEBUG: AlertManager - Window sequence complete. Should be visible and fullscreen.", flush=True)

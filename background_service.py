@@ -47,6 +47,9 @@ def face_processing_loop():
             
             results = engine.get_results()
             access_controller.process_result(results)
+            
+            if int(time.time()) % 10 == 0:
+                 print(f"DEBUG: Background Loop - Denied={access_controller.denied}, Results={len(results)}", flush=True)
 
         except Exception as e:
             AppLogger.log(f"Erro no loop: {e}", "error")
@@ -81,6 +84,7 @@ def main():
             show=False,
             reload=False,
             native=True,
+            fullscreen=True,
             window_size=(800, 600)
         )
     except Exception as e:

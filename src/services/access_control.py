@@ -18,11 +18,7 @@ class AccessController:
             for res in results:
                 found_someone = True
                 
-                # Check for spoof or explicit denial
                 if not res.get("is_real", True) or res.get("access_level") == "Negado":
-                    # Treat as unauthorized immediately or just continue to ensure no admin overrides?
-                    # For now, treat as non-admin. 
-                    # If we want immediate lock for spoof, we can trigger it here.
                     continue
 
                 if res.get("access_level") == "Admin":
@@ -34,19 +30,24 @@ class AccessController:
                 self.unauthorized_count += 1
                 if self.unauthorized_count >= 5:
                     if not self.denied:
+                        print(f"DEBUG: AccessController - DENIED triggered. User={results[0]['name']}", flush=True)
                         self.denied = True
                         self.user = results[0]["name"]
                     return "DENY"
             
+            
             elif found_admin:
                 self.unauthorized_count = 0
                 if self.denied:
+                    print("DEBUG: AccessController - Admin found. Resetting denied state.", flush=True)
                     self.denied = False
                     self.user = None
                     return "ALLOW"
             
             else:
                 self.unauthorized_count = 0
+                # Do NOT reset self.denied here. Only Admin can reset it.
+
                 
             return "NEUTRAL"
 

@@ -85,9 +85,12 @@ class InferenceEngine:
         self.thread.start()
 
     def stop(self):
+        logging.info("Stopping InferenceEngine...")
         self.running = False
-        if self.thread:
-            self.thread.join(timeout=1.0)
+        if self.thread and self.thread.is_alive():
+            self.thread.join(timeout=2.0)
+        logging.info("InferenceEngine stopped.")
+
 
     def update_frame(self, frame):
         with self.lock:

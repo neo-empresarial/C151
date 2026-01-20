@@ -1,11 +1,8 @@
 import sys
 import os
-print("DEBUG: Imports starting...")
 from nicegui import ui, app
-print("DEBUG: NiceGUI imported")
 import socket
 from src.common.logger import AppLogger
-print("DEBUG: Logger imported")
 
 AppLogger.setup()
 
@@ -44,7 +41,6 @@ if getattr(sys, 'frozen', False):
     update_loading("Iniciando serviços...")
 
 def startup_wrapper():
-    """Wrapper to start services"""
     start_services()
 
 app.on_startup(startup_wrapper)
@@ -103,4 +99,5 @@ if __name__ in {"__main__", "__mp_main__"}:
     port = find_free_port()
     print(f"Starting UI on port {port}")
     favicon_path = os.path.join(static_src_path, 'public/images/certi/logo-certi.png')
-    ui.run(title='DeepFace Access Control', favicon=favicon_path, port=port, reload=False, native=True, storage_secret='deepface_secret')
+
+    ui.run(title='DeepFace Access Control', favicon=favicon_path, port=port, reload=False, native=True, fullscreen=True, storage_secret='deepface_secret')

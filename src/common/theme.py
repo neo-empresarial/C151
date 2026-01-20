@@ -220,27 +220,21 @@ def load_theme():
     </style>
     ''', shared=True)
 
+
+_is_dark_mode = False
+
 def render_theme_toggle_button():
-    """
-    Renders a fixed floating action button to toggle dark mode.
-    Place this in the layout of every page.
-    """
-    # Initialize from storage or default to False
-    is_dark = app.storage.user.get('dark_mode', False)
-    
-    # Apply initial state
+    global _is_dark_mode
+    is_dark = _is_dark_mode
     if is_dark:
         ui.run_javascript("document.body.classList.add('body--dark')")
     else:
         ui.run_javascript("document.body.classList.remove('body--dark')")
 
     def toggle_mode():
-        # Get current state
-        new_state = not app.storage.user.get('dark_mode', False)
-        # Update storage
-        app.storage.user['dark_mode'] = new_state
-        
-        # Apply changes
+        global _is_dark_mode
+        _is_dark_mode = not _is_dark_mode
+        new_state = _is_dark_mode
         if new_state:
             ui.run_javascript("document.body.classList.add('body--dark')")
             btn.props('icon=light_mode')
@@ -256,3 +250,13 @@ def render_theme_toggle_button():
     with ui.button(icon=icon_name, on_click=toggle_mode).classes('fixed bottom-6 right-6 z-50 w11-btn rounded-full shadow-lg').props('round') as btn:
         btn.style('width: 48px; height: 48px; background-color: var(--surface); color: var(--text-primary); border: 1px solid var(--border);')
         tooltip = ui.tooltip(tooltip_text)
+
+def render_close_button():
+    """
+    Renders a fixed button at top-right to close the application.
+    Useful for fullscreen/kiosk mode.
+    """
+    with ui.button(icon='close', on_click=app.shutdown).classes('fixed top-4 right-4 z-50 w11-btn rounded-full shadow-lg').props('round'):
+        ui.tooltip('Sair do Sistema')
+
+
