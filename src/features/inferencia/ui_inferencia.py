@@ -68,7 +68,7 @@ class RecognitionWindow(QWidget):
         """)
         self.lbl_status.setAlignment(Qt.AlignCenter)
         self.lbl_status.resize(300, 40)
-        self.lbl_status.move(20, 20) # Top Left
+        self.lbl_status.move(20, 20)
 
         self.btn_exit = QPushButton("✕", self)
         self.btn_exit.setFixedSize(40, 40)

@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-# Definition based on Silent-Face-Anti-Spoofing/src/model_lib/MiniFASNet.py
 
 class Flatten(nn.Module):
     def forward(self, x):

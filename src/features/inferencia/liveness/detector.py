@@ -19,7 +19,6 @@ class LivenessDetector:
 
     def _load_model(self):
         try:
-            # Resolve path for PyInstaller
             model_path = LIVENESS_MODEL_PATH
             if hasattr(sys, '_MEIPASS'):
                 model_path = os.path.join(sys._MEIPASS, LIVENESS_MODEL_PATH)
@@ -52,7 +51,6 @@ class LivenessDetector:
 
         try:
             img = cv2.resize(face_img, (80, 80))
-            # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # Model assumes BGR from opencv
             img = img.transpose((2, 0, 1))
             img = np.ascontiguousarray(img)
             
@@ -63,7 +61,7 @@ class LivenessDetector:
                 output = self.model(img)
                 probs = F.softmax(output, dim=1)            
                 score = probs[0][1].item()
-                logging.info(f"Liveness Probs: {probs[0].tolist()}") # DEBUG
+                logging.info(f"Liveness Probs: {probs[0].tolist()}") 
             
             is_real = score > LIVENESS_THRESHOLD
             return is_real, score

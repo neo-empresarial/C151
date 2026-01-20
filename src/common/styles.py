@@ -1,65 +1,47 @@
 
-# DeepFaceRec Design System
-# Central Source of Truth for Colors, Fonts, and Shapes
-
-# --- PALETTE (Windows 11 Inspired) ---
-# --- PALETTE (Windows 11 Inspired) ---
 class Colors:
-    # Mica / Backgrounds
     MICA_BG = "#f3f3f3"
     MICA_ALT = "#eeeeee"
     SURFACE = "#ffffff"
     
-    # Brand / Accent
     PRIMARY = "#0067c0"
     PRIMARY_HOVER = "#187bcd"
     PRIMARY_PRESSED = "#005a9e"
     TEXT_ON_PRIMARY = "#ffffff"
     
-    # State
     SUCCESS = "#107c10"
     WARNING = "#ffb900" 
     ERROR = "#c42b1c"   
     INFO = "#0067c0"
     
-    # Text
     TEXT_PRIMARY = "#202020"
     TEXT_SECONDARY = "#5d5d5d"
     TEXT_DISABLED = "#a19f9d"
     
-    # Borders & Dividers
     BORDER = "#e5e5e5"
     BORDER_FOCUS = "#0067c0"
     
-    # Overlays
     GLASS_WHITE = "rgba(255, 255, 255, 0.7)"
     GLASS_BLACK = "rgba(0, 0, 0, 0.6)"
     
-    # Acrylic
     ACRYLIC_BG = "rgba(255, 255, 255, 0.5)"
 
 class DarkColors:
-    # Mica / Backgrounds
     MICA_BG = "#202020"
     MICA_ALT = "#1a1a1a"
     SURFACE = "#2c2c2c"
     
-    # Text
     TEXT_PRIMARY = "#ffffff"
     TEXT_SECONDARY = "#d0d0d0"
     TEXT_DISABLED = "#707070"
     
-    # Borders
     BORDER = "rgba(255, 255, 255, 0.08)"
     
-    # Acrylic
     ACRYLIC_BG = "rgba(32, 32, 32, 0.6)"
     
-    # Overlays
     GLASS_WHITE = "rgba(255, 255, 255, 0.05)"
     GLASS_BLACK = "rgba(0, 0, 0, 0.8)"
 
-# --- TYPOGRAPHY ---
 class Fonts:
     MAIN = '"Segoe UI Variable Display", "Segoe UI", sans-serif'
     MONO = "Consolas, monospace"
@@ -70,7 +52,6 @@ class Fonts:
     SIZE_XL = "24px"
     SIZE_XXL = "32px"
 
-# --- SHAPES ---
 class Shapes:
     RADIUS_SM = "4px"
     RADIUS_MD = "8px"
@@ -78,8 +59,6 @@ class Shapes:
     RADIUS_XL = "16px"
     RADIUS_FULL = "9999px" 
 
-# --- QT STYLESHEET (Legacy/Desktop) ---
-# Re-constructed using the new variables for consistency
 STYLESHEET = f"""
     QWidget {{
         background-color: {Colors.MICA_BG};

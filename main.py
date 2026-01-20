@@ -100,4 +100,11 @@ if __name__ in {"__main__", "__mp_main__"}:
     print(f"Starting UI on port {port}")
     favicon_path = os.path.join(static_src_path, 'public/images/certi/logo-certi.png')
 
-    ui.run(title='DeepFace Access Control', favicon=favicon_path, port=port, reload=False, native=True, fullscreen=True, storage_secret='deepface_secret')
+    ui.run(title='DeepFace Access Control', 
+            favicon=favicon_path, 
+            port=port, 
+            reload=False, 
+            native=True, 
+            fullscreen=True, 
+            storage_secret='deepface_secret')
+

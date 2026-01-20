@@ -11,10 +11,10 @@ class PinDialog:
             
             with ui.grid(columns=3).classes('gap-3 w-full'):
                 for i in range(1, 10):
-                    ui.button(str(i), on_click=lambda x=i: self.pin_input.set_value(self.pin_input.value + str(x))).classes('w11-btn bg-white text-lg h-12')
-                ui.button('C', on_click=lambda: self.pin_input.set_value('')).classes('w11-btn bg-white text-lg h-12 text-red-500')
-                ui.button('0', on_click=lambda: self.pin_input.set_value(self.pin_input.value + '0')).classes('w11-btn bg-white text-lg h-12')
-                ui.button('OK', on_click=self.verify_pin).classes('w11-btn bg-primary text-lg h-12 col-span-3')
+                    ui.button(str(i), on_click=lambda x=i: self.pin_input.set_value(self.pin_input.value + str(x))).classes('w11-btn bg-white text-black dark:bg-grey-8 dark:text-white text-lg h-12')
+                ui.button('C', on_click=lambda: self.pin_input.set_value('')).classes('w11-btn bg-white text-red-500 dark:bg-grey-8 dark:text-red-400 text-lg h-12')
+                ui.button('0', on_click=lambda: self.pin_input.set_value(self.pin_input.value + '0')).classes('w11-btn bg-white text-black dark:bg-grey-8 dark:text-white text-lg h-12')
+                ui.button('OK', on_click=self.verify_pin).classes('w11-btn bg-primary text-white text-lg h-12 col-span-3')
 
     def open(self):
         self.pin_input.value = ''
@@ -31,4 +31,4 @@ class PinDialog:
 
 def render_trigger_button(on_click):
     with ui.row().classes('w-full h-[80px] items-center justify-center px-6 shrink-0').style('background-color: var(--surface); border-top: 1px solid var(--border);'):
-         ui.button('Entrar com PIN', on_click=on_click).classes('w11-btn bg-white w-full max-w-sm')
+         ui.button('Entrar com PIN', on_click=on_click).classes('w11-btn bg-white text-black dark:bg-grey-8 dark:text-white w-full max-w-sm')

@@ -9,10 +9,13 @@ class AccessController:
         self.lock = threading.Lock()
         self.history = deque(maxlen=5)
         self.unauthorized_count = 0
+        self.authorized_count = 0
+        self.last_authorized_user = None
 
     def process_result(self, results):
         found_admin = False
         found_someone = False
+        admin_name = None
         
         if results:
             for res in results:
@@ -23,32 +26,41 @@ class AccessController:
 
                 if res.get("access_level") == "Admin":
                     found_admin = True
+                    admin_name = res.get("name")
                     break
         
         with self.lock:
             if found_someone and not found_admin:
                 self.unauthorized_count += 1
+                self.authorized_count = 0 
+                self.last_authorized_user = None
+                
                 if self.unauthorized_count >= 5:
                     if not self.denied:
-                        print(f"DEBUG: AccessController - DENIED triggered. User={results[0]['name']}", flush=True)
+                        print(f"DEBUG: AccessController - DENIED triggered. User={results[0]['name'] if results else 'Unknown'}", flush=True)
                         self.denied = True
-                        self.user = results[0]["name"]
+                        self.user = results[0]["name"] if results else "Desconhecido"
                     return "DENY"
-            
-            
             elif found_admin:
                 self.unauthorized_count = 0
-                if self.denied:
-                    print("DEBUG: AccessController - Admin found. Resetting denied state.", flush=True)
-                    self.denied = False
-                    self.user = None
-                    return "ALLOW"
+                if admin_name == self.last_authorized_user:
+                    self.authorized_count += 1
+                else:
+                    self.authorized_count = 1
+                    self.last_authorized_user = admin_name
+                print(f"DEBUG: Admin Found: {admin_name} - Count: {self.authorized_count}", flush=True)
+                if self.authorized_count >= 3:
+                     if self.denied:
+                         print("DEBUG: AccessController - Admin authorized (3x). Resetting denied state.", flush=True)
+                         self.denied = False
+                         self.user = None
+                     return "ALLOW"
             
             else:
                 self.unauthorized_count = 0
-                # Do NOT reset self.denied here. Only Admin can reset it.
-
-                
+                self.authorized_count = 0
+                self.last_authorized_user = None
+            
             return "NEUTRAL"
 
     def unlock_with_pin(self, pin, db_manager):

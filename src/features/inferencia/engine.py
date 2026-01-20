@@ -98,7 +98,7 @@ class InferenceEngine:
 
     def get_results(self):
         with self.lock:
-            if (time.time() - self.last_result_time) > 1.0:
+            if (time.time() - self.last_result_time) > 5.0:
                 return []
             return self.latest_results
 
@@ -131,7 +131,7 @@ class InferenceEngine:
                         current_index = self.faiss_index
                         current_known_ids = self.known_ids
                         h_orig, w_orig = frame.shape[:2]
-                        target_w = 640
+                        target_w = 480
                         scale_factor = 1.0
                         process_frame = frame
                         if w_orig > target_w:
@@ -184,7 +184,6 @@ class InferenceEngine:
                     x2 = x1 + w_new
                     y2 = y1 + h_new
                     
-                    # Clamp to frame bounds
                     x1 = max(0, x1)
                     y1 = max(0, y1)
                     x2 = min(w_orig, x2)
@@ -239,7 +238,8 @@ class InferenceEngine:
                         "confidence": confidence,
                         "in_roi": in_roi,
                         "is_real": is_real,
-                        "liveness_score": liveness_score
+                        "liveness_score": liveness_score,
+                        "result_timestamp": time.time()
                     })
                 
                 with self.lock:
@@ -250,4 +250,4 @@ class InferenceEngine:
                 import traceback
                 logging.error(f"Engine Loop Error: {e} - {traceback.format_exc()}")
             
-            time.sleep(0.05)
+            time.sleep(0.005)
