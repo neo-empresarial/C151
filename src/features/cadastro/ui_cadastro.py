@@ -1,7 +1,5 @@
 
 import cv2
-import sys
-import os
 import threading
 from deepface import DeepFace
 from src.common.database import DatabaseManager
@@ -31,7 +29,7 @@ class FlashOverlay(QWidget):
         self.anim.start()
 
 class EmbeddingWorker(QObject):
-    finished = Signal(bool, str, object) # success, msg, embedding
+    finished = Signal(bool, str, object)
 
     def __init__(self, frame, model_name="Facenet"):
         super().__init__()

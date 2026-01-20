@@ -1,19 +1,12 @@
-# Python / Environment
 __pycache__/
 *.pyc
 venv/
 !venv/pyvenv.cfg
 .env
-
-# Build / Distribution
+*.db
 build/
 dist/
-
-
-# DeepFace / TensorFlow
 .deepface/
 weights/
-
-# IDEs
 .vscode/
 .idea/

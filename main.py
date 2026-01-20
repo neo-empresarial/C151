@@ -1,6 +1,10 @@
 import sys
 import os
 from nicegui import ui, app
+import socket
+from src.common.logger import AppLogger
+
+AppLogger.setup()
 
 if getattr(sys, 'frozen', False):
     from src.common.loading_screen import show_loading, update_loading, close_loading
@@ -28,16 +32,15 @@ if getattr(sys, 'frozen', False):
 
 from src.common.theme import load_theme
 from src.services.services import start_services, stop_services
-from src.pages.login import login_page
-from src.pages.dashboard import dashboard_page
-from src.pages.setup import setup_page
-from src.pages.landing import landing_page
+from src.pages.login.login import login_page
+from src.pages.dashboard.dashboard import dashboard_page
+from src.pages.setup.setup import setup_page
+from src.pages.landing.landing import landing_page
 
 if getattr(sys, 'frozen', False):
     update_loading("Iniciando serviços...")
 
 def startup_wrapper():
-    """Wrapper to start services"""
     start_services()
 
 app.on_startup(startup_wrapper)
@@ -81,4 +84,20 @@ if getattr(sys, 'frozen', False):
     time.sleep(0.3) 
     close_loading()
 
-ui.run(title='DeepFace Access Control', favicon='🛡️', port=8080, reload=False, native=True)
+
+def find_free_port(start_port=8080, max_tries=100):
+    for port in range(start_port, start_port + max_tries):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('127.0.0.1', port))
+                return port
+            except OSError:
+                continue
+    raise OSError("No free ports found")
+
+if __name__ in {"__main__", "__mp_main__"}:
+    port = find_free_port()
+    print(f"Starting UI on port {port}")
+    favicon_path = os.path.join(static_src_path, 'public/images/certi/logo-certi.png')
+
+    ui.run(title='DeepFace Access Control', favicon=favicon_path, port=port, reload=False, native=True, fullscreen=True, storage_secret='deepface_secret')
