@@ -21,3 +21,8 @@ def frame_to_b64(frame):
     return base64.b64encode(buffer).decode("utf-8")
 
 
+def resume_engine():
+    engine.paused = False
+
+def pause_engine():
+    engine.paused = True

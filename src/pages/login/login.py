@@ -14,6 +14,7 @@ REQUIRED_HITS = 3
 
 def login_page():
     print(f"DEBUG: login_page loaded. REQUIRED_HITS = {REQUIRED_HITS}")
+    f.resume_engine()
     if not f.check_users_exist():
         ui.navigate.to('/setup')
         return
@@ -46,6 +47,9 @@ def login_page():
         ui.timer(2.0, on_timeout, once=True)
 
     pin_dialog = PinDialog(on_success=trigger_access)
+    
+    # Ensure engine is paused when user leaves/disconnects
+    ui.context.client.on_disconnect(lambda: f.pause_engine())
 
     with ui.column().classes('w-full h-screen items-center justify-center p-4 relative').style('background-color: var(--bg-mica);'):
         theme.render_theme_toggle_button()
@@ -58,6 +62,8 @@ def login_page():
             render_trigger_button(lambda: pin_dialog.open())
 
     async def loop():
+        if not ui.context.client.has_socket_connection:
+             return
         ret, frame = camera_manager.read()
         if not ret:
             face_overlay.set_state("Câmera desconectada", 'var(--error)')

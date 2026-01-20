@@ -58,7 +58,7 @@ class AddDialog:
             for index, (frame, _) in enumerate(self.captured_photos):
                 with ui.card().classes('w11-card p-2 flex flex-col gap-2 items-center'):
                     jpg_as_text = f.process_frame_for_display(frame)
-                    ui.image(f'data:image/jpeg;base64,{jpg_as_text}').style('height: 120px; width: auto; object-fit: contain;').classes('rounded')
+                    ui.image(f'data:image/jpeg;base64,{jpg_as_text}').style('width: 120px; height: 120px; object-fit: cover;').classes('rounded')
                     ui.button(icon='close', color='negative', on_click=lambda _, i=index: self.remove_photo(i)).props('round flat dense size=sm')
 
     def remove_photo(self, index):
@@ -122,23 +122,29 @@ class AddDialog:
 
     async def confirm_capture(self):
         if self.capture_state['frame'] is not None:
-            n = ui.notify('Processando...', type='ongoing', timeout=0)
             try:
-                embedding_objs = await f.generate_embedding_logic(self.capture_state['frame'])
-                if embedding_objs:
-                    emb = embedding_objs[0]['embedding']
-                    self.captured_photos.append((self.capture_state['frame'], emb))
-                    if n: n.dismiss()
-                    ui.notify('Foto adicionada!', type='positive')
-                    self.update_gallery()
-                    self.capture_dialog.close()
-                else:
-                    if n: n.dismiss()
-                    ui.notify('Rosto não detectado', type='warning')
+                result = await f.verify_enrollment_logic(self.capture_state['frame'])
+                
+                if not result['success']:
+                    ui.notify(result['message'], type='negative')
                     self.reset_capture()
+                    return
+
+                matched_user = result.get('matched_user')
+                if matched_user:
+                    ui.notify(f"Erro: Rosto já pertence a {matched_user['name']}", type='negative')
+                    self.reset_capture()
+                    return
+
+                emb = result['embedding']
+                self.captured_photos.append((self.capture_state['frame'], emb))
+                
+                ui.notify('Foto validada e adicionada!', type='positive')
+                self.update_gallery()
+                self.capture_dialog.close()
+                
             except Exception as e:
-                if n: n.dismiss()
-                ui.notify(f'Erro: {e}', type='negative')
+                ui.notify(f'Erro interno: {e}', type='negative')
 
     async def save_new_user(self):
         if not self.name_input.value or not self.pin_setup.value:
