@@ -117,26 +117,33 @@ class EditDialog:
 
     async def edit_confirm_add(self):
         if self.edit_capture_state['frame'] is not None:
-            n = ui.notify('Processando nova foto...', type='ongoing', timeout=0)
             try:
-                embedding_objs = await f.generate_embedding_logic(self.edit_capture_state['frame'])
-                if embedding_objs:
-                    emb = embedding_objs[0]['embedding']
-                    success, _ = f.add_user_photo_db(self.current_edit_id[0], self.edit_capture_state['frame'], emb)
-                    if n: n.dismiss()
-                    if success:
-                        ui.notify('Foto adicionada com sucesso!', type='positive')
-                        self.refresh_edit_gallery(self.current_edit_id[0])
-                        self.capture_dialog.close()
-                        await f.reload_model_logic()
-                    else:
-                        ui.notify('Erro ao salvar foto no banco', type='negative')
-                else:
-                    if n: n.dismiss()
-                    ui.notify('Nenhum rosto detectado', type='warning')
+                result = await f.verify_enrollment_logic(self.edit_capture_state['frame'])
+                
+                if not result['success']:
+                    ui.notify(result['message'], type='negative')
                     self.edit_reset()
+                    return
+
+                matched_user = result.get('matched_user')
+                if matched_user:
+                    if matched_user['id'] != self.current_edit_id[0]:
+                        ui.notify(f"Erro: Rosto já pertence a {matched_user['name']}", type='negative')
+                        self.edit_reset()
+                        return
+                
+                emb = result['embedding']
+                success, _ = f.add_user_photo_db(self.current_edit_id[0], self.edit_capture_state['frame'], emb)
+                
+                if success: 
+                    ui.notify('Foto validada e adicionada!', type='positive')
+                    self.refresh_edit_gallery(self.current_edit_id[0])
+                    self.capture_dialog.close()
+                    await f.reload_model_logic()
+                else:
+                    ui.notify('Erro ao salvar foto no banco', type='negative')
+                    
             except Exception as e:
-                if n: n.dismiss()
                 ui.notify(f'Erro ao processar: {str(e)}', type='negative')
 
     async def save_edit_info(self):

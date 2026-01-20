@@ -9,4 +9,5 @@ dist/
 .deepface/
 weights/
 .vscode/
+.gemini/
 .idea/

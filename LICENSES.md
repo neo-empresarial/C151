@@ -10,6 +10,14 @@ This project uses the following major open-source libraries:
 - **License**: MIT License
 - **Source**: https://github.com/serengil/deepface
 
+## Faiss
+- **License**: MIT License
+- **Source**: https://github.com/serengil/faiss
+
+## MiniFASNetV2
+- **License**: Apache 2.0 License
+- **Source**: ----
+
 ## OpenCV (opencv-python)
 - **License**: Apache 2.0 License
 - **Source**: https://github.com/opencv/opencv-python

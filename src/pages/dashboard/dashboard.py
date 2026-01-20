@@ -6,6 +6,9 @@ from .components.add_dialog import AddDialog
 from src.common import theme
 
 def dashboard_page():
+    f.pause_engine()
+    # Force pause again after a short delay to ensure any lingering loops don't override it
+    ui.timer(0.5, lambda: f.pause_engine(), once=True)
     with ui.column().classes('w-full h-screen p-8 relative'):
         theme.render_theme_toggle_button()
         ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 opacity-50 text-xs')

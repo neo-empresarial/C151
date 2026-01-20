@@ -15,7 +15,7 @@ class InferenceEngine:
         self.detector_backend = DETECTOR_BACKEND
         self.threshold = VERIFICATION_THRESHOLD
         self.running = False
-        self.paused = False
+        self._paused = False
         self.last_recognition_time = 0
         self.last_result_time = 0
         self.thread = None
@@ -28,6 +28,16 @@ class InferenceEngine:
         self.faiss_index = None
         self.is_loaded = False
         self.liveness_detector = LivenessDetector()
+
+    @property
+    def paused(self):
+        return self._paused
+
+    @paused.setter
+    def paused(self, value):
+        if self._paused != value:
+            logging.info(f"Engine paused state changed: {self._paused} -> {value}")
+            self._paused = value
 
     def load_model(self):
         try:
@@ -77,6 +87,85 @@ class InferenceEngine:
             finally:
                 logging.debug("Releasing df_lock.")
 
+    def verify_enrollment_face(self, frame):
+        logging.debug("verify_enrollment_face called.")
+        try:
+             results = self.generate_embedding(frame)
+             
+        except Exception as e:
+            return {'success': False, 'message': 'Nenhum rosto detectado ou erro na detecção.', 'embedding': None, 'matched_user': None}
+
+        if not results:
+             return {'success': False, 'message': 'Nenhum rosto detectado.', 'embedding': None, 'matched_user': None}
+        
+        try:
+            face_data = results[0]
+            embedding = face_data['embedding']
+            facial_area = face_data.get('facial_area')
+            is_real = True
+            liveness_score = 0.0
+
+            if facial_area:
+                x = facial_area['x']
+                y = facial_area['y']
+                w = facial_area['w']
+                h = facial_area['h']
+                
+                scale = 2.7
+                center_x = x + w / 2
+                center_y = y + h / 2
+                h_new = int(h * scale)
+                w_new = int(w * scale)
+                
+                h_orig, w_orig = frame.shape[:2]
+                
+                x1 = int(center_x - w_new / 2)
+                y1 = int(center_y - h_new / 2)
+                x2 = x1 + w_new
+                y2 = y1 + h_new
+                
+                x1 = max(0, x1)
+                y1 = max(0, y1)
+                x2 = min(w_orig, x2)
+                y2 = min(h_orig, y2)
+                
+                if x2 > x1 and y2 > y1:
+                    face_crop = frame[y1:y2, x1:x2]
+                    is_real, liveness_score = self.liveness_detector.check_liveness(face_crop)
+                    logging.info(f"Enrollment Liveness: {is_real} ({liveness_score:.4f})")
+                
+            if not is_real:
+                return {
+                    'success': False,
+                    'message': f'Rosto identificado como FALSO (Spoofing). Score: {liveness_score:.4f}',
+                    'embedding': None,
+                    'matched_user': None
+                }
+
+            matched_user = None
+            if self.faiss_index and self.faiss_index.ntotal > 0:
+                query = np.array([embedding]).astype('float32')
+                faiss.normalize_L2(query)
+                
+                D, I = self.faiss_index.search(query, 1)
+                score = D[0][0]
+                
+                if score > (1 - self.threshold):
+                    idx = I[0][0]
+                    if idx < len(self.known_ids):
+                        matched_user = self.known_ids[idx]
+                        logging.info(f"Enrollment Match Found: {matched_user.get('name')} score={score}")
+
+            return {
+                'success': True,
+                'message': 'OK',
+                'embedding': embedding,
+                'matched_user': matched_user
+            }
+        except Exception as e:
+            logging.error(f"Error in verification logic: {e}")
+            return {'success': False, 'message': f'Erro interno verificação: {str(e)}', 'embedding': None, 'matched_user': None}
+
     def start(self):
         if self.running:
             return
@@ -98,7 +187,7 @@ class InferenceEngine:
 
     def get_results(self):
         with self.lock:
-            if (time.time() - self.last_result_time) > 1.0:
+            if (time.time() - self.last_result_time) > 5.0:
                 return []
             return self.latest_results
 
@@ -106,14 +195,15 @@ class InferenceEngine:
         self.load_model()
 
         while self.running:
-            if self.paused:
-                time.sleep(0.1)
+            if self._paused:
+                time.sleep(0.5)
                 continue
 
             frame = None
             with self.lock:
                 if self.latest_frame is not None:
                     frame = self.latest_frame.copy()
+                    self.latest_frame = None # Consume the frame so we don't re-process it
             
             if frame is None:
                 time.sleep(0.05)
@@ -131,7 +221,7 @@ class InferenceEngine:
                         current_index = self.faiss_index
                         current_known_ids = self.known_ids
                         h_orig, w_orig = frame.shape[:2]
-                        target_w = 640
+                        target_w = 480
                         scale_factor = 1.0
                         process_frame = frame
                         if w_orig > target_w:
@@ -184,7 +274,6 @@ class InferenceEngine:
                     x2 = x1 + w_new
                     y2 = y1 + h_new
                     
-                    # Clamp to frame bounds
                     x1 = max(0, x1)
                     y1 = max(0, y1)
                     x2 = min(w_orig, x2)
@@ -239,7 +328,8 @@ class InferenceEngine:
                         "confidence": confidence,
                         "in_roi": in_roi,
                         "is_real": is_real,
-                        "liveness_score": liveness_score
+                        "liveness_score": liveness_score,
+                        "result_timestamp": time.time()
                     })
                 
                 with self.lock:
@@ -250,4 +340,4 @@ class InferenceEngine:
                 import traceback
                 logging.error(f"Engine Loop Error: {e} - {traceback.format_exc()}")
             
-            time.sleep(0.05)
+            time.sleep(0.005)
