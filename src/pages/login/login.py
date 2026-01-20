@@ -48,7 +48,6 @@ def login_page():
 
     pin_dialog = PinDialog(on_success=trigger_access)
     
-    # Ensure engine is paused when user leaves/disconnects
     ui.context.client.on_disconnect(lambda: f.pause_engine())
 
     with ui.column().classes('w-full h-screen items-center justify-center p-4 relative').style('background-color: var(--bg-mica);'):
@@ -56,7 +55,7 @@ def login_page():
         theme.render_close_button()
         ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 left-4 text-gray-500 text-sm')
 
-        with ui.card().classes('w11-card w-full max-w-[1000px] h-auto p-0 flex flex-col'):
+        with ui.card().classes('w11-card w-full max-w-[1000px] h-auto p-0 flex flex-col anim-enter delay-200'):
             header.render()
             video_image, feedback_label, face_overlay = camera.render_view()
             render_trigger_button(lambda: pin_dialog.open())

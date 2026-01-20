@@ -4,7 +4,8 @@ from src.common.styles import Colors, DarkColors, Fonts, Shapes
 def load_theme():
     ui.add_head_html(f'''
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         
         :root {{
             /* Colors */
@@ -28,10 +29,19 @@ def load_theme():
             --font-main: {Fonts.MAIN};
             
             /* Shapes */
-            --radius-sm: {Shapes.RADIUS_SM}; /* 4px */
-            --radius-md: {Shapes.RADIUS_MD}; /* 8px */
-            --radius-lg: {Shapes.RADIUS_LG}; /* 12px */
+            --radius-sm: {Shapes.RADIUS_SM}; 
+            --radius-md: {Shapes.RADIUS_MD}; 
+            --radius-lg: {Shapes.RADIUS_LG}; 
+            --radius-xl: {Shapes.RADIUS_XL};
             --radius-full: {Shapes.RADIUS_FULL};
+            
+            /* Effects - Refined Shadows and Glows */
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.08);
+            --glow-color: rgba(66, 133, 244, 0.0);
+            
+            /* Physics Constants */
+            --ease-physics: cubic-bezier(0.2, 0.8, 0.2, 1);
         }}
     
         body {{
@@ -39,11 +49,11 @@ def load_theme():
             background-color: var(--bg-mica);
             color: var(--text-primary);
             margin: 0;
-            overflow: hidden; /* Prevent body scroll if using full layout */
-            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow: hidden;
+            transition: background-color 0.5s var(--ease-physics), color 0.5s ease;
         }}
         
-        /* Dark Mode Overrides */
+        /* Dark Mode - Antigravity Aurora Style */
         body.body--dark {{
             --bg-mica: {DarkColors.MICA_BG};
             --bg-mica-alt: {DarkColors.MICA_ALT};
@@ -52,50 +62,63 @@ def load_theme():
             --text-secondary: {DarkColors.TEXT_SECONDARY};
             --border: {DarkColors.BORDER};
             --acrylic-bg: {DarkColors.ACRYLIC_BG};
+            --glow-color: rgba(66, 133, 244, 0.15); 
+            --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.4);
+            
+            /* Subtle Gradient Background for Depth */
+            background-image: radial-gradient(circle at 10% 20%, rgba(66, 133, 244, 0.08) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(147, 52, 230, 0.08) 0%, transparent 40%);
         }}
         
         /* --- UTILITY CLASSES --- */
         
-        /* Windows 11 Card */
-        /* rounded corners: 8px for main windows (though we use 12px for standalone cards which looks nice) */
+        /* Glassmorphism Card */
         .w11-card {{
             background-color: var(--surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             color: var(--text-primary);
-            border-radius: var(--radius-md); /* Standard 8px for containers */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Soft shadow */
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-card);
             border: 1px solid var(--border);
-            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.3s ease;
+            transition: all 0.4s var(--ease-physics);
+            position: relative;
+            overflow: hidden;
         }}
         
+        /* Interactive Card Physics */
         .w11-card:hover {{
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12); /* Lift effect */
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px) scale(1.002);
+            border-color: rgba(66, 133, 244, 0.2); /* Subtle blue hint */
         }}
         
-        /* Glassmorphism / Acrylic Effect */
-        .glass {{
-            background: var(--acrylic-bg); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-        }}
-
         /* Typography */
         h1, h2, h3, .text-h1, .text-h2, .text-h3 {{ 
             margin: 0; 
-            font-weight: 600; 
-            font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
+            font-weight: 400; 
+            letter-spacing: -0.8px; 
+            font-family: var(--font-main);
         }}
         
-        /* --- BUTTONS (Fluent Design) --- */
-        /* Geometry: 4px radius */
-        /* State Changes: Rest, Hover, Pressed */
+        /* --- BUTTONS (Antigravity Physics) --- */
         
         .w11-btn {{
-            border-radius: var(--radius-sm) !important; /* 4px */
-            transition: all 0.1s ease-in-out;
+            border-radius: var(--radius-full) !important;
+            transition: all 0.3s var(--ease-physics);
             font-weight: 500;
             text-transform: none !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: none;
+            padding: 12px 28px;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+        }}
+        
+        /* Click Physics - Shrink */
+        .w11-btn:active {{
+            transform: scale(0.95);
         }}
         
         /* Primary Button */
@@ -107,112 +130,92 @@ def load_theme():
         
         .w11-btn.bg-primary:hover {{
             background-color: var(--primary-hover) !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
         }}
         
         .w11-btn.bg-primary:active {{
             background-color: var(--primary-pressed) !important;
-            transform: scale(0.98); /* Slight shrink */
+            transform: scale(0.95) translateY(0);
         }}
         
-        /* Standard/Secondary Button */
+        /* Standard/White Button */
         .w11-btn.bg-white, .w11-btn:not(.bg-primary):not(.bg-red-600):not(.bg-green-600) {{
             background-color: var(--surface) !important;
             border: 1px solid var(--border) !important;
             color: var(--text-primary) !important;
-            border-bottom: 1px solid var(--border) !important; /* Slight depth */
         }}
         
-        .w11-btn.bg-white:hover, .w11-btn:not(.bg-primary):not(.bg-red-600):not(.bg-green-600):hover {{
+        .w11-btn.bg-white:hover {{
             background-color: var(--bg-mica-alt) !important;
+            border-color: var(--text-primary) !important;
+            transform: translateY(-1px);
+        }}
+
+        /* --- INPUTS --- */
+        
+        .q-field__control {{
+            border-radius: var(--radius-full) !important; /* Rounded inputs */
+            border: 1px solid var(--border);
+            padding: 0 20px;
+            background-color: var(--surface); 
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            height: 52px;
+            transition: all 0.3s var(--ease-physics);
         }}
         
-        .w11-btn.bg-white:active, .w11-btn:not(.bg-primary):not(.bg-red-600):not(.bg-green-600):active {{
-            background-color: var(--border) !important;
-            transform: scale(0.98);
+        .q-field__control:hover {{
+             border-color: var(--text-secondary);
+             background-color: rgba(255,255,255,0.05);
+        }}
+        
+        .q-field--focused .q-field__control {{
+             border: 1px solid var(--primary) !important;
+             box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.1); /* Focus Ring */
+        }}
+        
+        .q-field__control:before, .q-field__control:after {{
+             border: none !important; 
+        }}
+        
+        .q-field__label {{
+            color: var(--text-secondary) !important;
+            top: 16px;
         }}
         
         /* --- ANIMATIONS --- */
         
         @keyframes fadeIn {{
-            from {{ opacity: 0; }}
-            to {{ opacity: 1; }}
+            from {{ opacity: 0; transform: scale(0.96); filter: blur(4px); }}
+            to {{ opacity: 1; transform: scale(1); filter: blur(0); }}
         }}
         
         @keyframes slideUp {{
-            from {{ transform: translateY(20px); opacity: 0; }}
+            from {{ transform: translateY(40px); opacity: 0; }}
             to {{ transform: translateY(0); opacity: 1; }}
         }}
         
-        .anim-fade-in {{ animation: fadeIn 0.4s ease-out forwards; }}
-        .anim-slide-up {{ animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }}
+        .anim-fade-in {{ animation: fadeIn 0.8s var(--ease-physics) forwards; }}
+        .anim-slide-up {{ animation: slideUp 0.8s var(--ease-physics) forwards; }}
         
-        /* Input Field Styling (NiceGUI/Quasar Overrides) */
+        /* Staggered Delays for Children */
+        .stagger-1 {{ animation-delay: 0.1s; }}
+        .stagger-2 {{ animation-delay: 0.2s; }}
+        .stagger-3 {{ animation-delay: 0.3s; }}
         
-        /* Radius 4px */
-        .q-field__control {{
-            border-radius: var(--radius-sm) !important; 
-            border: 1px solid var(--border);
-            padding: 0 12px;
-            background-color: var(--surface);
-            color: var(--text-primary);
-        }}
-        
-        .q-field__native {{
-            color: var(--text-primary) !important;
-        }}
-        
-        .q-field__control:before {{
-             border-bottom: 1px solid var(--text-secondary); /* Rest state */
-        }}
-        
-        .q-field__control:hover:before {{
-             border-bottom: 1px solid var(--text-primary); /* Hover state */
-        }}
-        
-        .q-field__control:after {{
-            border-bottom: 2px solid var(--primary); /* Focus state */
-        }}
-        
-        /* Dialogs */
+        /* Dialogs - Glassy */
         .q-dialog__inner > div {{
-            border-radius: var(--radius-md) !important; /* 8px */
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important; /* Diffused shadow */
+            border-radius: var(--radius-lg) !important;
             background-color: var(--surface) !important;
+            backdrop-filter: blur(32px) !important;
+            -webkit-backdrop-filter: blur(32px) !important;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.3) !important;
             border: 1px solid var(--border);
             color: var(--text-primary);
         }}
-        
-        /* Input Field Label Styling */
-        .q-field__label {{
-            color: var(--text-secondary) !important;
-        }}
-        .q-field__control:hover .q-field__label,
-        .q-field__control.q-field--focused .q-field__label {{
-            color: var(--text-primary) !important;
-        }}
 
-        /* Checkbox/Radio Labels */
-        .q-checkbox__label, .q-radio__label {{
-            color: var(--text-primary) !important;
-        }}
-
-        /* Dropdown/Menu (Select) */
-        .q-menu {{
-            background-color: var(--surface) !important;
-            color: var(--text-primary) !important;
-            border: 1px solid var(--border);
-        }}
-        
-        .q-item {{
-            color: var(--text-primary);
-        }}
-        
-        .q-item--active, .q-item:hover, .q-manual-focusable--focused {{
-            background-color: var(--bg-mica-alt) !important;
-        }}
-
-        /* Text Color Global Override for Quasar components */
+        /* Text Color Global Override */
         .text-gray-800, .text-gray-600, .text-gray-500, .text-gray-400 {{
             color: var(--text-primary) !important;
         }}
@@ -248,15 +251,16 @@ def render_theme_toggle_button():
     tooltip_text = "Modo Claro" if is_dark else "Modo Escuro"
 
     with ui.button(icon=icon_name, on_click=toggle_mode).classes('fixed bottom-6 right-6 z-50 w11-btn rounded-full shadow-lg').props('round') as btn:
-        btn.style('width: 48px; height: 48px; background-color: var(--surface); color: var(--text-primary); border: 1px solid var(--border);')
+        btn.style('width: 64px; height: 64px; background-color: var(--surface); color: var(--text-primary); border: 1px solid var(--border); transition: transform 0.3s ease;')
         tooltip = ui.tooltip(tooltip_text)
 
 def render_close_button():
     """
     Renders a fixed button at top-right to close the application.
-    Useful for fullscreen/kiosk mode.
     """
-    with ui.button(icon='close', on_click=app.shutdown).classes('fixed top-4 right-4 z-50 w11-btn rounded-full shadow-lg').props('round'):
-        ui.tooltip('Sair do Sistema')
+    with ui.button(icon='close', on_click=app.shutdown).classes('fixed top-4 right-4 z-50 w11-btn rounded-full shadow-none').props('round'):
+         ui.tooltip('Sair do Sistema')
+
+
 
 

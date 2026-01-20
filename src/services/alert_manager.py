@@ -21,7 +21,6 @@ class AlertManager:
     async def manage_window(self, is_denied):
         try:
             if not app.native.main_window:
-                # print("DEBUG: AlertManager - No window available yet.")
                 return
 
             window = app.native.main_window
@@ -36,7 +35,6 @@ class AlertManager:
                         print(f"DEBUG: AlertManager - Restore failed (might not be needed): {e}", flush=True)
                     
                     try:
-                        # Aggressive Fullscreen Strategy: Resize to Screen Dimensions
                         screens = webview.screens
                         if screens:
                             screen = screens[0]
@@ -62,11 +60,6 @@ class AlertManager:
                     
                     print("DEBUG: AlertManager - Setting FULLSCREEN.", flush=True)
                     window.fullscreen = True
-                    # Validate and re-apply if needed
-                    # if not window.fullscreen:
-                    #    window.toggle_fullscreen()
-
-                    
                     self.local_state_fullscreen = True
                     print("DEBUG: AlertManager - Window sequence complete. Should be visible and fullscreen.", flush=True)
             else:

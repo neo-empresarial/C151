@@ -258,11 +258,9 @@ class InferenceEngine:
                     best_id = None
                     best_access = "Visitante"
                     confidence = 0.0
-
                     is_real = True
                     liveness_score = 0.0
                     
-                    # Calculate expanded crop (Scale 2.7 for MiniFASNet)
                     scale = 2.7
                     center_x = x + w / 2
                     center_y = y + h / 2

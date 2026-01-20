@@ -42,7 +42,6 @@ class CameraManager:
                 logging.info(f"Câmera encontrada e iniciada no index {self.index}.")
             else:
                 logging.error("Nenhuma câmera funcional encontrada nos primeiros 10 índices.")
-                # Initialize with 0 anyway to avoid crashes, even if it doesn't work
                 self.index = 0
                 self.cap = cv2.VideoCapture(0) 
                 self.running = True
@@ -56,9 +55,6 @@ class CameraManager:
     def find_working_camera(self, max_check=10):
         logging.debug("Buscando câmera disponível...")
         for i in range(max_check):
-            # Skip the current index if we already tried it
-            # if self.index is not None and i == self.index: continue
-            
             temp_cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
             if not temp_cap.isOpened():
                 temp_cap = cv2.VideoCapture(i)
