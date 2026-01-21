@@ -16,7 +16,6 @@ def dashboard_page():
 
         header.render(lambda: ui.navigate.to('/'))
 
-        # Content container with padding
         with ui.column().classes('w-full p-8 gap-4'):
             users_card = ui.card().classes('w11-card w-full p-4 shrink-0')
             with users_card:
@@ -24,7 +23,7 @@ def dashboard_page():
                 users = f.get_all_users()
                 user_list.render(users, lambda u: edit_dialog.open(u), lambda uid: open_confirm_delete(uid))
             
-            with ui.row().classes('w-full justify-end mt-4 mb-20'): # Added margin bottom for scrolling space
+            with ui.row().classes('w-full justify-end mt-4 mb-20'):
                  ui.button(lm.t('add_user'), on_click=lambda: add_dialog.open()).classes('w11-btn bg-primary text-white shadow-xl')
 
     confirm_dialog = ui.dialog()

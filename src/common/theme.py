@@ -35,7 +35,7 @@ def render_theme_toggle_button():
         tooltip = ui.tooltip(tooltip_text)
 
 def render_window_controls():
-    with ui.row().classes('fixed top-6 right-6 z-50 gap-2 anim-enter delay-300'):
+    with ui.row().classes('fixed top-6 right-6 z-50 gap-2 items-center anim-enter delay-300'):
         async def toggle_fullscreen():
             if app.native.main_window:
                 app.native.main_window.toggle_fullscreen()

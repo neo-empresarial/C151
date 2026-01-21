@@ -55,19 +55,19 @@ def login_page():
         f.pause_engine()
         await ui.run_javascript('window.location.href = "/"')
 
-    with ui.column().classes('w-full h-screen items-center justify-center p-4 relative bg-transparent'):
+    with ui.column().classes('w-full h-screen p-0 relative bg-surface'):
         theme.render_theme_toggle_button()
         theme.render_window_controls()
         
-        with ui.card().classes('w11-card w-full max-w-[1100px] h-[85vh] p-0 flex flex-col anim-enter delay-200 shadow-2xl overflow-hidden'):
-            
-            with ui.row().classes('w-full justify-center p-0 shrink-0'):
-                 header.render(on_pin_click=lambda: pin_dialog.open(), on_back=safe_back)
-            
-            with ui.column().classes('w-full flex-grow relative overflow-hidden bg-black'):
+        header.render(on_pin_click=None, on_back=safe_back)
+        
+        with ui.column().classes('w-full flex-grow items-center justify-center p-2 gap-4'):
+            with ui.card().classes('w-full max-w-[80vw] max-h-[70vh] aspect-video rounded-3xl overflow-hidden shadow-2xl relative bg-surface'):
                  video_image, feedback_label, face_overlay = camera.render_view()
+
+            ui.button(lm.t('enter_with_pin'), on_click=lambda: pin_dialog.open()).classes('w11-btn bg-surface border border-white/10 text-primary px-8 py-3 rounded-xl hover:bg-white/5 backdrop-blur-md transition-all shadow-lg text-lg tracking-wide')
             
-        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-6 text-white text-xs opacity-40')
+        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-6 opacity-40 text-xs')
 
     async def loop():
         if not ui.context.client.has_socket_connection:
