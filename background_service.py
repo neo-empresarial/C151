@@ -59,7 +59,7 @@ def main_page():
     layout.build()
     ui.timer(0.5, layout.update_visibility)
 
-def main():
+def main(timeout=None):
     AppLogger.setup()
     proc_thread = threading.Thread(target=face_processing_loop, daemon=True)
     proc_thread.start()
@@ -71,6 +71,17 @@ def main():
             await alert_manager.manage_window(access_controller.denied)
 
     app.on_startup(window_loop)
+
+    if timeout:
+        def auto_shutdown():
+            print("Timeout reached ({timeout}s). FORCING EXIT via threading.Timer")
+            import os
+            AppLogger.log(f"Timeout reached ({timeout}s). FORCING EXIT via threading.Timer", "info")
+            os._exit(0)
+        
+        t = threading.Timer(timeout, auto_shutdown)
+        t.daemon = True 
+        t.start()
 
     try:
         port = find_free_port()

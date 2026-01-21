@@ -32,12 +32,13 @@ class AccessController:
         with self.lock:
             if found_someone and not found_admin:
                 self.unauthorized_count += 1
+                print(f"DEBUG: Unauthorized Count: {self.unauthorized_count}", flush=True)
                 self.authorized_count = 0 
                 self.last_authorized_user = None
                 
-                if self.unauthorized_count >= 5:
+                if self.unauthorized_count >= 3:
                     if not self.denied:
-                        print(f"DEBUG: AccessController - DENIED triggered. User={results[0]['name'] if results else 'Unknown'}", flush=True)
+                        print(f"DEBUG: AccessController - DENIED triggered (Hit {self.unauthorized_count}/3). User={results[0]['name'] if results else 'Unknown'}", flush=True)
                         self.denied = True
                         self.user = results[0]["name"] if results else "Desconhecido"
                     return "DENY"

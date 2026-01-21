@@ -64,7 +64,15 @@ app.add_static_files('/src', static_src_path)
 
 @ui.page('/')
 def index():
-    landing_page()
+    # Helper to check if we should redirect based on start_mode
+    mode = app.storage.user.get('start_mode', 'default')
+    
+    if mode == 'dashboard':
+        dashboard_page()
+    elif mode == 'recognition':
+        login_page()
+    else:
+        landing_page()
 
 @ui.page('/recognition')
 def recognition():
@@ -95,9 +103,12 @@ def find_free_port(start_port=8080, max_tries=100):
                 continue
     raise OSError("No free ports found")
 
-if __name__ in {"__main__", "__mp_main__"}:
+def run_app(start_mode='default'):
+    global START_MODE
+    START_MODE = start_mode
+
     port = find_free_port()
-    print(f"Starting UI on port {port}")
+    print(f"Starting UI on port {port} with mode {start_mode}")
     favicon_path = os.path.join(static_src_path, 'public/images/certi/logo-certi.png')
 
     ui.run(title='DeepFace Access Control', 
@@ -108,4 +119,18 @@ if __name__ in {"__main__", "__mp_main__"}:
             fullscreen=True, 
             window_size=(1280, 800), 
             storage_secret='deepface_secret')
+
+START_MODE = 'default'
+
+@ui.page('/')
+def index_page():
+    if START_MODE == 'dashboard':
+        dashboard_page()
+    elif START_MODE == 'recognition':
+        login_page()
+    else:
+        landing_page()
+
+if __name__ in {"__main__", "__mp_main__"}:
+    run_app()
 
