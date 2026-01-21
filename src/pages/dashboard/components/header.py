@@ -1,14 +1,12 @@
 from nicegui import ui
 from src.common.styles import Colors
+from src.language.manager import language_manager as lm
 
-# New Header Layout
 def render(on_back):
-    with ui.row().classes('w-full justify-between items-center mb-8 shrink-0'):
-        # Left Side: Back Arrow + Title
-        with ui.row().classes('items-center gap-4'):
-            ui.button(icon='arrow_back', on_click=on_back).props('round flat').classes('text-2xl opacity-70 hover:opacity-100 transition-opacity')
-            ui.label('Painel Administrativo').classes('text-3xl font-light tracking-tight')
+    with ui.row().classes('w-full h-[80px] items-center px-8 justify-between shrink-0').style('background: transparent; border-bottom: 1px solid var(--border);'):
+        with ui.row().classes('items-center gap-6'):
+            ui.button(icon='arrow_back', on_click=on_back).props('round flat').classes('text-2xl text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-opacity')
+            ui.label(lm.t('admin_panel')).classes('text-2xl font-light tracking-wide text-[var(--text-primary)]')
 
-        # Right Side: Actions
         with ui.row().classes('items-center gap-4'):
-             pass # Controls are now global in theme.render_window_controls()
+             pass

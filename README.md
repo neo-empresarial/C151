@@ -9,6 +9,8 @@ Sistema visual de controle de acesso baseado em reconhecimento facial utilizando
 - **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
 - **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
 - **Múltiplas Fotos**: Suporte para múltiplas fotos por usuário para maior precisão.
+- **Internacionalização (i18n)**: Suporte completo para múltiplos idiomas (Português, Inglês e Espanhol).
+- **Interface Moderna**: Design com Glassmorphism, temas Claro/Escuro e controles de janela integrados.
 - **Serviço de Background**: Executável silencioso que monitora o acesso e bloqueia a tela se necessário.
 
 ---
@@ -105,18 +107,21 @@ C:\DeepFaceAccess\
 
 ---
 
-## ⚠️ Solução de Problemas Comuns
+---
 
-### 1. Erro: `can't open camera by index`
-Significa que a câmera já está em uso.
-- Verifique se você não tem o `main.py` e o `background_service.py` abertos ao mesmo tempo tentando acessar a câmera (o sistema tenta gerenciar isso, mas conflitos podem ocorrer).
-- Verifique outros apps (Zoom, Teams).
+## 📂 Estrutura do Projeto
 
-### 2. Erro de `ModuleNotFoundError` no executável
-Geralmente resolvido nos scripts de build. Se persistir, verifique se instalou todas as dependências no `venv` antes de compilar.
-
-### 3. Banco de dados vazio após reiniciar
-Certifique-se de que não está rodando o executável de dentro de um arquivo ZIP. Extraia tudo para uma pasta. O banco de dados `users.db` é criado ao lado do executável.
+```text
+C151/
+├── src/
+│   ├── common/         # Estilos, temas e estado global
+│   ├── features/       # Lógica principal (Motor de reconhecimento)
+│   ├── language/       # Gerenciamento de idiomas e traduções (i18n)
+│   ├── pages/          # Páginas da interface (Login, Dashboard, Landing)
+│   └── services/       # Serviços (Câmera, Banco de Dados)
+├── build_scripts/      # Scripts para gerar executáveis
+└── main.py             # Ponto de entrada da aplicação
+```
 
 ---
 
