@@ -62,7 +62,7 @@ def login_page():
         header.render(on_pin_click=None, on_back=safe_back)
         
         with ui.column().classes('w-full flex-grow items-center justify-center p-2 gap-4'):
-            with ui.card().classes('w-full max-w-[80vw] max-h-[70vh] aspect-video rounded-3xl overflow-hidden shadow-2xl relative bg-surface'):
+            with ui.card().classes('w-full max-w-[80vw] max-h-[70vh] aspect-video rounded-3xl overflow-hidden shadow-2xl relative bg-transparent'):
                  video_image, feedback_label, face_overlay = camera.render_view()
 
             ui.button(lm.t('enter_with_pin'), on_click=lambda: pin_dialog.open()).classes('w11-btn bg-surface border border-white/10 text-primary px-8 py-3 rounded-xl hover:bg-white/5 backdrop-blur-md transition-all shadow-lg text-lg tracking-wide')
