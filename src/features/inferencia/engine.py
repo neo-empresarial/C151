@@ -211,17 +211,18 @@ class InferenceEngine:
 
             try:
                 current_time = time.time()
-                if (current_time - self.last_recognition_time) < 0.5:
-                    time.sleep(0.1)
+                # Optimized FPS: check every 0.15s
+                if (current_time - self.last_recognition_time) < 0.15:
+                    time.sleep(0.05)
                     continue
 
                 face_objs = []
                 try:
-                    with self.df_lock:
+                     with self.df_lock:
                         current_index = self.faiss_index
                         current_known_ids = self.known_ids
                         h_orig, w_orig = frame.shape[:2]
-                        target_w = 480
+                        target_w = 320 # Reduced resolution for speed
                         scale_factor = 1.0
                         process_frame = frame
                         if w_orig > target_w:
@@ -229,7 +230,6 @@ class InferenceEngine:
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
                         
-                        logging.debug(f"Attempting face detection with model={self.model_name}, detector={self.detector_backend}")
                         face_objs = DeepFace.represent(
                             img_path=process_frame,
                             model_name=self.model_name,
@@ -238,13 +238,11 @@ class InferenceEngine:
                             align=True,
                             anti_spoofing=False
                         )
-                        logging.debug(f"{len(face_objs)} face(s) detected")
                         self.last_recognition_time = time.time()
-                except Exception as e:
-                    logging.debug(f"Face detection error: {e}")
+                except Exception:
+                    pass 
 
                 results = []
-                
                 for face in face_objs:
                     target_embedding = face["embedding"]
                     area = face["facial_area"]

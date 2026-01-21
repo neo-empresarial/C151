@@ -10,8 +10,10 @@ def dashboard_page():
     ui.timer(0.5, lambda: f.pause_engine(), once=True)
     with ui.column().classes('w-full h-screen p-8 relative'):
         theme.render_theme_toggle_button()
+        theme.render_close_button()
         ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 opacity-50 text-xs')
 
+        # Pass lambda to navigate back to landing
         header.render(lambda: ui.navigate.to('/'))
 
         users_card = ui.card().classes('w11-card w-full p-4')

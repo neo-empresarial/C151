@@ -50,15 +50,24 @@ def login_page():
     
     ui.context.client.on_disconnect(lambda: f.pause_engine())
 
-    with ui.column().classes('w-full h-screen items-center justify-center p-4 relative').style('background-color: var(--bg-mica);'):
+    with ui.column().classes('w-full h-screen items-center justify-center p-4 relative bg-transparent'):
         theme.render_theme_toggle_button()
         theme.render_close_button()
-        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 left-4 text-gray-500 text-sm')
-
-        with ui.card().classes('w11-card w-full max-w-[1000px] h-auto p-0 flex flex-col anim-enter delay-200'):
-            header.render()
-            video_image, feedback_label, face_overlay = camera.render_view()
-            render_trigger_button(lambda: pin_dialog.open())
+        
+        # Main Glass Card - Centered with animation
+        with ui.card().classes('w11-card w-full max-w-[1100px] h-[85vh] p-0 flex flex-col anim-enter delay-200 shadow-2xl overflow-hidden'):
+            
+            # Header
+            with ui.row().classes('w-full justify-center p-0 shrink-0'):
+                 header.render(on_pin_click=lambda: pin_dialog.open())
+            
+            # Camera View - Flex Grow to fill space
+            with ui.column().classes('w-full flex-grow relative overflow-hidden bg-black'):
+                 video_image, feedback_label, face_overlay = camera.render_view()
+            
+            # Floating PIN Button REMOVED (Moved to Header)
+            
+        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 left-6 text-white text-xs opacity-40')
 
     async def loop():
         if not ui.context.client.has_socket_connection:

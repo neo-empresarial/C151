@@ -5,27 +5,32 @@ class PinDialog:
     def __init__(self, on_success):
         self.on_success = on_success
         self.dialog = ui.dialog()
-        # Use glass card with extra padding
-        with self.dialog, ui.card().classes('w11-card w-[360px] items-center p-8'):
-            ui.label('Digite o PIN').classes('text-2xl font-normal mb-8')
+        # Glass card with large rounding
+        with self.dialog, ui.card().classes('w11-card w-[420px] items-center p-10 bg-opacity-90'):
+            ui.label('Acesso via PIN').classes('text-3xl font-light mb-10 tracking-tight text-center w-full')
             
-            # Input needs high contrast against glass
-            self.pin_input = ui.input(password=True).classes('w-full mb-8 text-center text-3xl tracking-[1em] font-mono')
-            self.pin_input.props('outlined rounded input-class="text-center"')
+            # Huge Input with Letter Spacing - High Contrast for Glass
+            self.pin_input = ui.input(password=True).classes('w-full mb-10 text-center text-5xl font-mono tracking-[0.5em] text-white')
+            self.pin_input.props('borderless input-class="text-center placeholder-gray-400 text-white"')
+            self.pin_input.style('background: transparent; border-bottom: 2px solid rgba(255,255,255,0.3); border-radius: 0;')
             
-            with ui.grid(columns=3).classes('gap-4 w-full'):
+            with ui.grid(columns=3).classes('gap-6 w-full px-4'):
+                # Numeric Keys - Glass/Ghost Style
                 for i in range(1, 10):
                     ui.button(str(i), on_click=lambda x=i: self.pin_input.set_value(self.pin_input.value + str(x))) \
-                        .classes('w11-btn bg-white text-lg h-14 shadow-sm hover:shadow-md font-normal')
+                        .classes('w11-btn text-2xl h-16 shadow-lg font-light text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm')
                 
+                # Clear Button
                 ui.button('C', on_click=lambda: self.pin_input.set_value('')) \
-                    .classes('w11-btn bg-white text-red-500 text-lg h-14 shadow-sm hover:shadow-md font-normal')
+                    .classes('w11-btn text-red-300 text-2xl h-16 shadow-lg font-light bg-white/10 hover:bg-white/20 backdrop-blur-sm')
                 
+                # Zero Button
                 ui.button('0', on_click=lambda: self.pin_input.set_value(self.pin_input.value + '0')) \
-                    .classes('w11-btn bg-white text-lg h-14 shadow-sm hover:shadow-md font-normal')
+                    .classes('w11-btn text-2xl h-16 shadow-lg font-light text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm')
                 
-                ui.button('CONFIRMAR', on_click=self.verify_pin) \
-                    .classes('w11-btn bg-primary text-white text-base h-14 col-span-3 font-medium tracking-wide shadow-lg')
+                # Enter Button - Full Width Primary
+                ui.button('ENTRAR', on_click=self.verify_pin) \
+                    .classes('w11-btn bg-primary text-white text-xl h-16 col-span-3 mt-4 tracking-widest shadow-xl hover:scale-105')
 
     def open(self):
         self.pin_input.value = ''
@@ -41,6 +46,6 @@ class PinDialog:
             self.pin_input.value = ''
 
 def render_trigger_button(on_click):
-    # Ensure this bar sits at the bottom nicely
-    with ui.row().classes('w-full h-auto py-6 items-center justify-center px-6 shrink-0').style('background: var(--surface); border-top: 1px solid var(--border);'):
-         ui.button('Entrar com PIN', on_click=on_click).classes('w11-btn bg-white w-full max-w-sm')
+    # Floating glass bar at bottom
+    with ui.row().classes('w-full justify-center absolute bottom-10 z-20'):
+         ui.button('Entrar com PIN', on_click=on_click).classes('w11-btn bg-white px-12 py-4 text-lg backdrop-blur-md shadow-2xl')
