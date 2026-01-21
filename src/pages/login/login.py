@@ -56,7 +56,7 @@ def login_page():
 
     with ui.column().classes('w-full h-screen items-center justify-center p-4 relative bg-transparent'):
         theme.render_theme_toggle_button()
-        theme.render_close_button()
+        theme.render_window_controls()
         
         with ui.card().classes('w11-card w-full max-w-[1100px] h-[85vh] p-0 flex flex-col anim-enter delay-200 shadow-2xl overflow-hidden'):
             
