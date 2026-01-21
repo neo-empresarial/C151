@@ -1,10 +1,11 @@
 
 from src.common.database import DatabaseManager
+from src.common.config import VERIFICATION_THRESHOLD
 
 class AuthManager:
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
-        self.face_threshold = 0.40 
+        self.face_threshold = VERIFICATION_THRESHOLD
 
     def validate_access_by_pin(self, pin):
         user = self.db_manager.get_user_by_pin(pin)

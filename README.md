@@ -2,166 +2,124 @@
 
 Sistema visual de controle de acesso baseado em reconhecimento facial utilizando DeepFace, OpenCV e NiceGUI.
 
-## Funcionalidades
+## 🚀 Funcionalidades
 
 - **Reconhecimento Facial em Tempo Real**: Identificação de usuários cadastrados via webcam.
 - **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
 - **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
 - **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
+- **Múltiplas Fotos**: Suporte para múltiplas fotos por usuário para maior precisão.
+- **Internacionalização (i18n)**: Suporte completo para múltiplos idiomas (Português, Inglês e Espanhol).
+- **Interface Moderna**: Design com Glassmorphism, temas Claro/Escuro e controles de janela integrados.
+- **Serviço de Background**: Executável silencioso que monitora o acesso e bloqueia a tela se necessário.
 
-## Como Usar
+---
 
-1. **Configuração**: Na primeira execução, se não houver usuários, você será direcionado para `/setup`. Crie o Admin.
-2. **Login/Reconhecimento**: A tela inicial mostra o feed da câmera.
-    - Se o rosto for reconhecido, o acesso é liberado (ou admin logado).
-    - Se falhar, use o "Entrar com PIN".
-3. **Dashboard (Admin)**:
-    - **Adicionar Usuário**: Clique em "Adicionar Usuário", preencha os dados e capture a foto. É obrigatório **Confirmar** a foto.
-    - **Editar Usuário**: Altere nome/PIN ou clique em "Alterar Foto" para atualizar a biometria.
-    - **Remover**: Exclui o usuário permanentemente.
+## 🛠️ Build e Instalação (Windows)
 
-## Instalação e Build
+Para obter a **melhor performance de inicialização** (instantânea), recomendamos o **Modo Pasta**. O Executável Único é portátil, mas demora ~40s para abrir.
 
-### Dependências
-```bash
-sudo apt install libgirepository1.0-dev libcairo2-dev python3-dev
-pip install -r requirements.txt
+### 1. Build Modo Pasta (Recomendado - Rápido)
+Gera uma pasta com o aplicativo "instalado". Inicia em 3-5 segundos.
+
+```powershell
+.\build_scripts\windows\build_folder.ps1
+```
+Isso criará a pasta `dist/DeepFaceRec_Unified`.
+
+**Criar Atalho na Área de Trabalho**:
+```powershell
+.\build_scripts\windows\create_shortcut.ps1
+```
+Isso cria um ícone "Biometria" no seu Desktop.
+
+### 2. Build Arquivo Único (Modo Portátil - Lento)
+Gera `dist/DeepFaceRec_Unified.exe`. Ideal para pen-drives, mas demora cerca de **1 minuto** para extrair e iniciar.
+
+```powershell
+.\build_scripts\windows\build_unified.ps1
 ```
 
-### Rodar Localmente
-```bash
+---
+
+## 🚀 Executando a Aplicação (CLI)
+
+O executável unificado (`DeepFaceRec_Unified.exe`) suporta diferentes modos de inicialização via linha de comando:
+
+### Modos de Uso
+
+**1. Modo Padrão (Landing Page)**
+Abre a tela inicial com opções de navegação.
+```powershell
+.\DeepFaceRec_Unified.exe
+```
+
+**2. Gestão de Usuários (Dashboard)**
+Abre diretamente o painel administrativo.
+```powershell
+.\DeepFaceRec_Unified.exe --ManageUsers
+```
+
+**3. Reconhecimento Facial (Login)**
+Abre diretamente a tela de reconhecimento/login.
+```powershell
+.\DeepFaceRec_Unified.exe --FaceRecognition
+```
+
+**4. Serviço Oculto (Hidden Camera)**
+Monitoramento silencioso em background. A janela fica **invisível** e só aparece se detectar uma pessoa não autorizada.
+```powershell
+.\DeepFaceRec_Unified.exe --HiddenCam
+```
+
+### Configurações Extras
+
+**Timeout (Auto-Kill)**
+Fecha o aplicativo automaticamente após X segundos.
+```powershell
+.\DeepFaceRec_Unified.exe --HiddenCam --timeout 60
+```
+
+**Regra de Segurança (3 Strikes)**
+No modo `--HiddenCam`:
+- Se uma pessoa **não autorizada** (ou desconhecida) for detectada **3 vezes consecutivas**, a tela de ALERTA VERMELHO ("ACESSO NEGADO") abre em **Tela Cheia**.
+- Se um **Administrador** for detectado, o contador zera e a tela se esconde novamente.
+
+---
+
+## 📂 Estrutura de Pastas para Deploy
+
+Para rodar em outro computador **sem internet**:
+
+1. Copie o arquivo `DeepFaceRec_Unified.exe`.
+2. (Opcional) Copie o `users.db` se quiser manter os usuários já cadastrados.
+
+O executável já contém:
+- Python e bibliotecas.
+- Modelos de IA (DeepFace/FaceNet/MiniFASNet).
+- Interface Web (NiceGUI).
+
+**Nota**: Na primeira execução, o app pode levar até 1 minuto para extrair os arquivos temporários antes de exibir a **Tela de Carregamento**. Isso é normal para executáveis compactados.
+
+---
+
+## 🛠️ Ambiente de Desenvolvimento (Windows)
+
+### Instalação
+1. Clone o repositório.
+2. Crie um venv: `python -m venv venv`
+3. Ative: `.\venv\Scripts\activate`
+4. Instale: `pip install -r requirements.txt`
+
+### Rodando Localmente
+```powershell
 python main.py
 ```
 
-## 🔒 Serviço de Background (DeepFaceService)
-
-O sistema agora conta com um componente dedicado: **DeepFaceService**. Este é um serviço, execução em System Tray, independente da interface gráfica principal.
-
-### Funcionalidades do Serviço
-1.  **Monitoramento Contínuo**: Roda em background, acessando a câmera diretamente.
-2.  **API Local (Porta 8080)**: Oferece endpoints para verificação de identidade.
-3.  **System Tray**: Ícone na bandeja do sistema para controle básico (Sair).
-4.  **Segurança Ativa**:
-    - **Bloqueio Visual**: Se um usuário não identificado ou sem permissão for detectado, o serviço pode acionar um bloqueio visual de tela cheia ("ACESSO NEGADO") até que um Administrador seja reconhecido.
-    - **Integração**: Outros aplicativos podem simplesmente consultar a API para saber quem está na frente do PC.
-
-### API - Integração
-**Endpoint:** `GET http://localhost:8080/verificar_operador`
-
-**Resposta (JSON):**
-```json
-{
-  "status": "sucesso",
-  "usuario": "NomeDoUsuario",
-  "id": "uuid-do-usuario",
-  "funcao": "Admin",
-  "confianca": 0.98
-}
-```
-
-### Como Executar
-O serviço pode ser rodado de duas formas:
-
-**1. Via Python (Desenvolvimento):**
-```bash
-# Requer o ambiente virtual ativado
-./venv/bin/python3 src/background_service.py
-```
-
-**2. Via Executável Standalone (Produção):**
-Após o build, execute o arquivo gerado:
-```bash
-./dist/DeepFaceService/DeepFaceService
-```
-*Recomendado configurar este executável para iniciar com o sistema operacional.*
-
-> [!WARNING]
-> **Atenção com Caminhos/Diretórios**: 
-> Se o executável falhar com erro `ModuleNotFoundError: No module named 'encodings'`, é porque o caminho onde o app está salvo contém caracteres especiais (ex: "Área de trabalho").
-> **Solução**: Mova a pasta `dist/DeepFaceService` para um local simples, como `C:\DeepFaceRec` ou `/home/usuario/DeepFaceRec`.
-
 ---
 
-## 🔄 Integração com Outros Softwares
-
-O `DeepFaceService` foi desenhado para rodar como um **processo em background**.
-Você deve iniciá-lo assim que o computador ligar ou quando seu sistema principal abrir.
-
-**Exemplos de como chamar o executável:**
-
-### Python (subprocess)
+## 🧠 Configuração do Modelo
+O modelo padrão de IA é definido em `src/common/config.py`.
 ```python
-import subprocess
-
-# Inicia o serviço sem bloquear o script principal
-subprocess.Popen(["C:/DeepFaceRec/DeepFaceService.exe"])
+MODEL_NAME = 'ArcFace'
 ```
-
-### C# (.NET)
-```csharp
-using System.Diagnostics;
-
-Process.Start("C:\\DeepFaceRec\\DeepFaceService.exe");
-```
-
-### Shell / Bash (Linux)
-```bash
-# O '&' no final libera o terminal
-./DeepFaceService &
-```
-
-## 🔒 Segurança Ativa e Comportamento Oculto
-
-O `DeepFaceService` opera de forma **totalmente oculta**.
-1.  **Startup Silencioso**: Ao iniciar, **nenhuma janela** é exibida. O processo roda em background.
-2.  **Monitoramento**: Ele verifica silenciosamente quem está na frente da câmera.
-3.  **Proteção de Admin**: Se um **Administrador** (ex: "BRB") for detectado, o contador de segurança é **zerado**. O sistema entende que está tudo seguro.
-4.  **Bloqueio de Intruso**: Se uma pessoa **Desconhecida** ou **Sem Acesso** for detectada por **5 frames seguidos** (aprox. 5-10s), o sistema exibe uma **Tela Vermelha de ACESSO NEGADO** em tela cheia (modo quiosque), bloqueando o uso do PC.
-
-### Desbloqueio
-Para remover a tela de alerta:
-1.  Um **Administrador** deve olhar para a câmera.
-2.  OU digitar o **PIN de Administrador** na tela de bloqueio.
-
----
-
-## ⚠️ Solução de Problemas
-
-### Erro: `can't open camera by index`
-Se ao rodar o serviço você ver erros como `[WARN:0@...] can't open camera by index`, significa que **outra instância do programa já está rodando** e "segurando" a câmera.
-
-**Solução**:
-Execute o comando abaixo no terminal para matar todos os processos antigos:
-```bash
-pkill -f DeepFaceService
-```
-Em seguida, tente rodar novamente.
-
-## 🛠️ Build e Distribuição
-
-O projeto possui dois scripts de build separados para gerar executáveis independentes.
-
-### 1. Aplicação Principal (Interface de Gestão)
-Gera o `DeepFaceRec`, utilizado para cadastrar usuários e gerenciar o banco de dados.
-```bash
-./build.sh
-# Saída: dist/DeepFaceRec
-```
-
-### 2. Serviço de Background (DeepFaceService)
-Gera o `DeepFaceService`, o serviço silencioso que deve rodar sempre.
-```bash
-./build_service.sh
-# Saída: dist/DeepFaceService
-```
-
-### Notas de Deploy
-- O arquivo `users.db` é compartilhado. Se os executáveis estiverem na mesma pasta, eles compartilharão o banco de dados.
-- O `DeepFaceService` deve ser iniciado **antes** de qualquer aplicação que dependa da autenticação facial.
-
-## Estrutura do Projeto
-
-- `src/`: Código fonte da aplicação
-- `src/pages/`: Interfaces (Login, Dashboard, Setup)
-- `src/common/`: Utilitários (Câmera, Banco de Dados, Config)
-- `src/features/`: Lógica de negócios (Auth, Inferência)
