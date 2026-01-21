@@ -1,9 +1,13 @@
 from nicegui import ui
+from src.common import theme
 
-def render():
-    with ui.row().classes('w-full h-[60px] items-center px-6 justify-between shrink-0').style('background-color: var(--surface); border-bottom: 1px solid var(--border); color: var(--text-primary);'):
+def render(on_pin_click=None, on_back=None):
+    with ui.row().classes('w-full h-[80px] items-center px-8 justify-between shrink-0').style('background: transparent; border-bottom: 1px solid var(--border);'):
+        with ui.row().classes('items-center gap-6'):
+             action = on_back if on_back else lambda: ui.navigate.to('/')
+             ui.button(icon='arrow_back', on_click=action).props('round flat').classes('text-2xl text-primary opacity-80 hover:opacity-100')
+             ui.label('Reconhecimento Facial').classes('text-2xl font-light tracking-wide text-primary')
+        
         with ui.row().classes('items-center gap-4'):
-                ui.image('/src/public/images/certi/logo-certi.png').classes('h-12 w-auto object-contain')
-                ui.label('Reconhecimento Facial').classes('text-xl font-semibold')
-        with ui.row().classes('gap-2'):
-            ui.button(icon='home', on_click=lambda: ui.navigate.to('/')).props('flat round dense')
+             if on_pin_click:
+                ui.button('Entrar com PIN', on_click=on_pin_click).classes('w11-btn bg-white/10 text-white hover:bg-white/20 backdrop-blur-md text-sm px-6 py-2')

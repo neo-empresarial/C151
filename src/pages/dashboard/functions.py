@@ -44,7 +44,6 @@ async def verify_enrollment_logic(frame):
     engine.paused = True
     try:
         await run.io_bound(lambda: time.sleep(0.001))
-        # Set a timeout (e.g., 10 seconds) to prevent infinite hanging
         result = await asyncio.wait_for(
             run.io_bound(engine.verify_enrollment_face, frame),
             timeout=10.0

@@ -12,5 +12,5 @@ def render(users, on_edit, on_delete):
             ui.label(u['access_level'])
             ui.label(u['id'][:8] + '...')
             with ui.row():
-                ui.button(icon='edit', color='primary', on_click=lambda _, user=u: on_edit(user)).props('flat dense')
-                ui.button(icon='delete', color='negative', on_click=lambda _, uid=u['id']: on_delete(uid)).props('flat dense')
+                ui.button(icon='edit', on_click=lambda _, user=u: on_edit(user)).props('round flat dense').classes('text-blue-500 hover:bg-blue-500/10')
+                ui.button(icon='delete', on_click=lambda _, uid=u['id']: on_delete(uid)).props('round flat dense').classes('text-red-500 hover:bg-red-500/10')

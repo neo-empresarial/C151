@@ -7,11 +7,9 @@ class AddDialog:
         self.dialog = ui.dialog().props('maximized')
         self.on_user_added = on_user_added
         
-        # State
-        self.captured_photos = [] # List of tuples: (frame, embedding)
+        self.captured_photos = []
         self.capture_state = {'frame': None, 'paused': False, 'confirmed': False}
         
-        # UI Structure
         with self.dialog, ui.card().classes('w-full h-full p-8 overflow-hidden'):
              self.render_header()
              with ui.row().classes('w-full h-full flex-nowrap max-w-full gap-8'):
@@ -31,7 +29,8 @@ class AddDialog:
             with ui.card().classes('w11-card w-full p-6 gap-4'):
                 self.name_input = ui.input('Nome Completo').classes('w-full')
                 self.pin_setup = ui.input('PIN (Numérico)', password=True, password_toggle_button=True).classes('w-full')
-                self.access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label='Nível de Acesso').classes('w-full')
+                self.access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label='Nível de Acesso') \
+                    .classes('w-full')
 
             with ui.row().classes('w-full gap-4 mt-6'):
                 ui.button('Cancelar', on_click=self.dialog.close).classes('flex-1 w11-btn')
@@ -45,7 +44,6 @@ class AddDialog:
                     ui.label('Fotos Capturadas').classes('text-sm font-bold opacity-60')
                     ui.button('Capturar Foto', icon='add_a_photo', on_click=self.open_capture_dialog).classes('px-4 w11-btn bg-primary')
                 
-                # Gallery Container
                 self.gallery_container = ui.element('div').classes('w-full flex-1 overflow-y-auto p-4 rounded border flex flex-wrap content-start gap-4 transition-all')
                 self.gallery_container.style('border-color: var(--border)')
 

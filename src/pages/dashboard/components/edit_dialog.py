@@ -56,7 +56,7 @@ class EditDialog:
                  self.edit_cam_view = ui.interactive_image().classes('w-full h-full object-cover')
                  camera.render_overlay()
                  with ui.column().classes('absolute bottom-6 left-0 right-0 items-center gap-3 z-10 w-full'):
-                      self.e_capture_btn = ui.button('Capturar', icon='camera_alt', on_click=self.edit_capture).classes('w11-btn scale-125')
+                      self.e_capture_btn = ui.button('Capturar', icon='camera_alt', on_click=self.edit_capture).classes('w11-btn scale-125 bg-white text-black')
                       with ui.row().classes('gap-3 hidden') as row:
                          self.e_confirm_row = row
                          ui.button('Refazer', icon='refresh', color='white', on_click=self.edit_reset).props('text-color=black')

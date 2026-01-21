@@ -196,32 +196,28 @@ class InferenceEngine:
 
         while self.running:
             if self._paused:
-                time.sleep(0.5)
+                time.sleep(0.1)
                 continue
 
             frame = None
             with self.lock:
                 if self.latest_frame is not None:
                     frame = self.latest_frame.copy()
-                    self.latest_frame = None # Consume the frame so we don't re-process it
+                    self.latest_frame = None
             
             if frame is None:
-                time.sleep(0.05)
+                time.sleep(0.01)
                 continue
 
             try:
-                current_time = time.time()
-                if (current_time - self.last_recognition_time) < 0.5:
-                    time.sleep(0.1)
-                    continue
-
+                
                 face_objs = []
                 try:
-                    with self.df_lock:
+                     with self.df_lock:
                         current_index = self.faiss_index
                         current_known_ids = self.known_ids
                         h_orig, w_orig = frame.shape[:2]
-                        target_w = 480
+                        target_w = 320 
                         scale_factor = 1.0
                         process_frame = frame
                         if w_orig > target_w:
@@ -229,7 +225,6 @@ class InferenceEngine:
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
                         
-                        logging.debug(f"Attempting face detection with model={self.model_name}, detector={self.detector_backend}")
                         face_objs = DeepFace.represent(
                             img_path=process_frame,
                             model_name=self.model_name,
@@ -238,13 +233,11 @@ class InferenceEngine:
                             align=True,
                             anti_spoofing=False
                         )
-                        logging.debug(f"{len(face_objs)} face(s) detected")
                         self.last_recognition_time = time.time()
-                except Exception as e:
-                    logging.debug(f"Face detection error: {e}")
+                except Exception:
+                    pass 
 
                 results = []
-                
                 for face in face_objs:
                     target_embedding = face["embedding"]
                     area = face["facial_area"]
@@ -258,58 +251,55 @@ class InferenceEngine:
                     best_id = None
                     best_access = "Visitante"
                     confidence = 0.0
-
-                    is_real = True
+                    is_real = True 
                     liveness_score = 0.0
                     
-                    # Calculate expanded crop (Scale 2.7 for MiniFASNet)
-                    scale = 2.7
-                    center_x = x + w / 2
-                    center_y = y + h / 2
-                    h_new = int(h * scale)
-                    w_new = int(w * scale)
-                    
-                    x1 = int(center_x - w_new / 2)
-                    y1 = int(center_y - h_new / 2)
-                    x2 = x1 + w_new
-                    y2 = y1 + h_new
-                    
-                    x1 = max(0, x1)
-                    y1 = max(0, y1)
-                    x2 = min(w_orig, x2)
-                    y2 = min(h_orig, y2)
-                    
-                    if (x2 > x1) and (y2 > y1):
-                        face_crop = frame[y1:y2, x1:x2]
-                        is_real, liveness_score = self.liveness_detector.check_liveness(face_crop)
-                        logging.info(f"Liveness Check: Score={liveness_score:.4f}, Real={is_real}")
-                        if not is_real:
-                            logging.warning(f"Spoof detected! Score: {liveness_score:.4f}")
-                    
-                    if not is_real:
-                        best_name = "Fake/Spoof"
-                        best_access = "Negado"
-                    elif current_index and current_index.ntotal > 0:
+                    if current_index and current_index.ntotal > 0:
                         query = np.array([target_embedding]).astype('float32')
                         faiss.normalize_L2(query)
                         
-                        logging.debug(f"Query shape: {query.shape}, Index dimension: {current_index.d}")
                         D, I = current_index.search(query, 1)
-                        
                         score = D[0][0] 
-                        logging.debug(f"Face detected. Similarity score: {score:.4f}, Threshold: {(1 - self.threshold):.4f}")
+                        
                         if score > (1 - self.threshold):
-                            idx = I[0][0]
-                            if idx < len(current_known_ids):
-                                user_data = current_known_ids[idx]
-                                best_name = user_data["name"]
-                                best_id = user_data["id"]
-                                best_access = user_data.get("access_level", "Visitante")
-                                found_match = True
-                                confidence = float(score)
-                                logging.info(f"MATCH FOUND! User: {best_name}, Confidence: {confidence:.4f}")
+                            scale = 2.7
+                            center_x = x + w / 2
+                            center_y = y + h / 2
+                            h_new = int(h * scale)
+                            w_new = int(w * scale)
+                            
+                            x1 = int(center_x - w_new / 2)
+                            y1 = int(center_y - h_new / 2)
+                            x2 = x1 + w_new
+                            y2 = y1 + h_new
+                            
+                            x1 = max(0, x1)
+                            y1 = max(0, y1)
+                            x2 = min(w_orig, x2)
+                            y2 = min(h_orig, y2)
+                            
+                            if (x2 > x1) and (y2 > y1):
+                                face_crop = frame[y1:y2, x1:x2]
+                                is_real, liveness_score = self.liveness_detector.check_liveness(face_crop)
+                                logging.debug(f"Matches user. Liveness Check: {is_real} ({liveness_score:.4f})")
+                            
+                            if is_real:
+                                idx = I[0][0]
+                                if idx < len(current_known_ids):
+                                    user_data = current_known_ids[idx]
+                                    best_name = user_data["name"]
+                                    best_id = user_data["id"]
+                                    best_access = user_data.get("access_level", "Visitante")
+                                    found_match = True
+                                    confidence = float(score)
+                                    logging.info(f"MATCH FOUND! User: {best_name}, Confidence: {confidence:.4f}")
+                            else:
+                                best_name = "Fake/Spoof"
+                                best_access = "Negado"
+                                logging.warning(f"Spoof detected for potential match! Score: {liveness_score:.4f}")
+                        
                         else:
-                            logging.debug(f"No match - score {score:.4f} not greater than threshold {(1 - self.threshold):.4f}")
+                            logging.debug(f"No match (score {score:.4f}). Skipping liveness.")
                     
                     h_frame, w_frame, _ = frame.shape
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
@@ -340,4 +330,4 @@ class InferenceEngine:
                 import traceback
                 logging.error(f"Engine Loop Error: {e} - {traceback.format_exc()}")
             
-            time.sleep(0.005)
+            time.sleep(0.001)
