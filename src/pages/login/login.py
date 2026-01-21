@@ -8,6 +8,7 @@ from src.common.styles import Colors
 from . import functions as f
 from .components import header, camera
 from .components.pin_dialog import PinDialog, render_trigger_button
+from src.language.manager import language_manager as lm
 
 MIN_FACE_WIDTH = 0.15
 REQUIRED_HITS = 3
@@ -31,9 +32,9 @@ def login_page():
         state.current_user = user
         if user.get('access_level') == 'Admin':
             state.is_admin = True
-            ui.notify('Admin Identificado', type='positive')
+            ui.notify(lm.t('admin_identified'), type='positive')
         else:
-            ui.notify('Acesso Liberado', type='positive')
+            ui.notify(lm.t('access_granted'), type='positive')
             ui.timer(3.0, lambda: reset_state(), once=True)
 
     def trigger_access(user):
@@ -66,14 +67,14 @@ def login_page():
             with ui.column().classes('w-full flex-grow relative overflow-hidden bg-black'):
                  video_image, feedback_label, face_overlay = camera.render_view()
             
-        ui.label("Demo Version | © Fundação Certi 2026").classes('absolute bottom-4 left-6 text-white text-xs opacity-40')
+        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-6 text-white text-xs opacity-40')
 
     async def loop():
         if not ui.context.client.has_socket_connection:
              return
         ret, frame = camera_manager.read()
         if not ret:
-            face_overlay.set_state("Câmera desconectada", 'var(--error)')
+            face_overlay.set_state(lm.t('camera_disconnected'), 'var(--error)')
             return
             
         display_frame = cv2.flip(frame, 1)
@@ -81,7 +82,7 @@ def login_page():
         video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
         
         if logic_state['in_cooldown']:
-             face_overlay.set_state("ACESSO PERMITIDO", Colors.SUCCESS)
+             face_overlay.set_state(lm.t('access_granted'), Colors.SUCCESS)
              return
 
         f.update_engine_frame(frame)
@@ -102,7 +103,7 @@ def login_page():
                 overlay_res = res.copy()
                 overlay_res['box'] = (x_pct, y_pct, w_pct, h_pct)
                 
-                final_text = "Posicione a face no centro"
+                final_text = lm.t('position_face_center')
                 final_color = Colors.WARNING 
                 
                 
@@ -115,19 +116,19 @@ def login_page():
                 MAX_OFFSET = 0.15 
                 
                 if dist_from_center > MAX_OFFSET:
-                     final_text = "Posicione a face no centro"
+                     final_text = lm.t('position_face_center')
                      final_color = Colors.WARNING
                      logic_state['consecutive_hits'] = 0
                      logic_state['last_timestamp'] = 0
 
                 elif w_pct < MIN_FACE_WIDTH:
-                     final_text = "Aproximar face"
+                     final_text = lm.t('move_face_closer')
                      final_color = Colors.WARNING
                      logic_state['consecutive_hits'] = 0
                      logic_state['last_timestamp'] = 0
                      
                 elif not res.get('is_real', True):
-                     final_text = "Rosto Falso Detectado"
+                     final_text = lm.t('fake_face_detected')
                      final_color = Colors.ERROR
                      logic_state['consecutive_hits'] = 0
                      logic_state['last_timestamp'] = 0
@@ -145,18 +146,18 @@ def login_page():
                          
                          if logic_state['consecutive_hits'] >= REQUIRED_HITS:
                              trigger_access(res)
-                             final_text = f"Olá, {res.get('name')}"
+                             final_text = lm.t('hello', name=res.get('name'))
                              final_color = Colors.SUCCESS
                          else:
                              pct = int((logic_state['consecutive_hits'] / REQUIRED_HITS) * 100)
-                             final_text = f"Identificando... {pct}%"
+                             final_text = lm.t('identifying', pct=pct)
                              final_color = Colors.INFO 
                      else:
                          if res.get('in_roi', False):
-                             final_text = "Não Reconhecido"
+                             final_text = lm.t('not_recognized')
                              final_color = Colors.ERROR
                          else:
-                             final_text = "Posicione a face no centro"
+                             final_text = lm.t('position_face_center')
                              final_color = Colors.WARNING
                          
                          logic_state['consecutive_hits'] = 0
@@ -166,7 +167,7 @@ def login_page():
                 face_overlay.update(overlay_res, text=final_text, color=final_color, mirror=True)
                 
         else:
-            face_overlay.update(None, text="Posicione a face no centro", color=Colors.WARNING) 
+            face_overlay.update(None, text=lm.t('position_face_center'), color=Colors.WARNING) 
             logic_state['consecutive_hits'] = 0
             logic_state['last_timestamp'] = 0
             logic_state['last_user_id'] = None

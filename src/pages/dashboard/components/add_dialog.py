@@ -1,6 +1,7 @@
 from nicegui import ui
 from .. import functions as f
 from . import camera
+from src.language.manager import language_manager as lm
 
 class AddDialog:
     def __init__(self, on_user_added):
@@ -20,29 +21,29 @@ class AddDialog:
 
     def render_header(self):
         with ui.row().classes('w-full items-center justify-between mb-6'):
-            ui.label('Novo Usuário').classes('text-2xl font-bold')
+            ui.label(lm.t('new_user')).classes('text-2xl font-bold')
             ui.button(icon='close', on_click=self.dialog.close).props('round dense flat')
 
     def render_left_column(self):
         with ui.column().classes('w-1/3 min-w-[350px] h-full gap-6'):
-            ui.label('Dados Pessoais').classes('text-xl font-semibold opacity-80')
+            ui.label(lm.t('personal_data')).classes('text-xl font-semibold opacity-80')
             with ui.card().classes('w11-card w-full p-6 gap-4'):
-                self.name_input = ui.input('Nome Completo').classes('w-full')
-                self.pin_setup = ui.input('PIN (Numérico)', password=True, password_toggle_button=True).classes('w-full')
-                self.access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label='Nível de Acesso') \
+                self.name_input = ui.input(lm.t('full_name')).classes('w-full')
+                self.pin_setup = ui.input(lm.t('pin_numeric'), password=True, password_toggle_button=True).classes('w-full')
+                self.access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label=lm.t('access_level')) \
                     .classes('w-full')
 
             with ui.row().classes('w-full gap-4 mt-6'):
-                ui.button('Cancelar', on_click=self.dialog.close).classes('flex-1 w11-btn')
-                ui.button('Criar Usuário', on_click=self.save_new_user).classes('flex-1 w11-btn bg-primary')
+                ui.button(lm.t('cancel'), on_click=self.dialog.close).classes('flex-1 w11-btn')
+                ui.button(lm.t('create_user'), on_click=self.save_new_user).classes('flex-1 w11-btn bg-primary')
 
     def render_right_column(self):
          with ui.column().classes('flex-1 h-full gap-4 overflow-hidden'):
-            ui.label('Biometria e Fotos').classes('text-xl font-semibold opacity-80')
+            ui.label(lm.t('biometrics_photos')).classes('text-xl font-semibold opacity-80')
             with ui.card().classes('w11-card w-full h-full p-6 flex flex-col gap-4 overflow-hidden'):
                 with ui.row().classes('w-full justify-between items-center'):
-                    ui.label('Fotos Capturadas').classes('text-sm font-bold opacity-60')
-                    ui.button('Capturar Foto', icon='add_a_photo', on_click=self.open_capture_dialog).classes('px-4 w11-btn bg-primary')
+                    ui.label(lm.t('captured_photos')).classes('text-sm font-bold opacity-60')
+                    ui.button(lm.t('capture_photo'), icon='add_a_photo', on_click=self.open_capture_dialog).classes('px-4 w11-btn bg-primary')
                 
                 self.gallery_container = ui.element('div').classes('w-full flex-1 overflow-y-auto p-4 rounded border flex flex-wrap content-start gap-4 transition-all')
                 self.gallery_container.style('border-color: var(--border)')
@@ -51,7 +52,7 @@ class AddDialog:
         self.gallery_container.clear()
         with self.gallery_container:
             if not self.captured_photos:
-                 ui.label('Nenhuma foto capturada.').classes('w-full text-center opacity-50 italic mt-10')
+                 ui.label(lm.t('no_photos_captured')).classes('w-full text-center opacity-50 italic mt-10')
             
             for index, (frame, _) in enumerate(self.captured_photos):
                 with ui.card().classes('w11-card p-2 flex flex-col gap-2 items-center'):
@@ -68,7 +69,7 @@ class AddDialog:
         self.capture_dialog = ui.dialog()
         with self.capture_dialog, ui.card().classes('w-[500px] p-0 overflow-hidden flex flex-col w11-card'):
             with ui.row().classes('w-full bg-black p-2 justify-between items-center'):
-                ui.label('Capturar Foto').classes('text-white font-bold ml-2')
+                ui.label(lm.t('capture_photo')).classes('text-white font-bold ml-2')
                 ui.button(icon='close', on_click=self.capture_dialog.close).props('round dense flat color=white')
 
             with ui.element('div').classes('relative w-full h-[400px] bg-black overflow-hidden justify-center items-center'):
@@ -130,25 +131,25 @@ class AddDialog:
 
                 matched_user = result.get('matched_user')
                 if matched_user:
-                    ui.notify(f"Erro: Rosto já pertence a {matched_user['name']}", type='negative')
+                    ui.notify(lm.t('error_face_exists', name=matched_user['name']), type='negative')
                     self.reset_capture()
                     return
 
                 emb = result['embedding']
                 self.captured_photos.append((self.capture_state['frame'], emb))
                 
-                ui.notify('Foto validada e adicionada!', type='positive')
+                ui.notify(lm.t('photo_validated'), type='positive')
                 self.update_gallery()
                 self.capture_dialog.close()
                 
             except Exception as e:
-                ui.notify(f'Erro interno: {e}', type='negative')
+                ui.notify(lm.t('internal_error', error=str(e)), type='negative')
 
     async def save_new_user(self):
         if not self.name_input.value or not self.pin_setup.value:
-            ui.notify('Preencha Nome e PIN', type='negative'); return
+            ui.notify(lm.t('fill_name_pin'), type='negative'); return
         if not self.captured_photos:
-            ui.notify('Capture pelo menos uma foto.', type='warning'); return
+            ui.notify(lm.t('capture_one_photo'), type='warning'); return
         
         success, user_id = f.create_user_db(
             name=self.name_input.value,
@@ -163,7 +164,7 @@ class AddDialog:
             ok, _ = f.add_user_photo_db(user_id, frame, emb)
             if ok: count += 1
         
-        ui.notify(f'Usuário criado com {count} fotos!')
+        ui.notify(lm.t('user_created', count=count))
         await f.reload_model_logic()
         self.dialog.close()
         self.on_user_added()

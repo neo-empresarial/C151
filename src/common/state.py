@@ -7,6 +7,7 @@ class AppState:
             cls._instance = super(AppState, cls).__new__(cls)
             cls._instance.current_user = None
             cls._instance.is_admin = False
+            cls._instance.language = 'pt'
         return cls._instance
 
     def reset(self):
