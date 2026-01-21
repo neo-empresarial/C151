@@ -203,7 +203,7 @@ class InferenceEngine:
             with self.lock:
                 if self.latest_frame is not None:
                     frame = self.latest_frame.copy()
-                    self.latest_frame = None # Consume the frame so we don't re-process it
+                    self.latest_frame = None
             
             if frame is None:
                 time.sleep(0.05)
@@ -211,7 +211,6 @@ class InferenceEngine:
 
             try:
                 current_time = time.time()
-                # Optimized FPS: check every 0.15s
                 if (current_time - self.last_recognition_time) < 0.15:
                     time.sleep(0.05)
                     continue
@@ -222,7 +221,7 @@ class InferenceEngine:
                         current_index = self.faiss_index
                         current_known_ids = self.known_ids
                         h_orig, w_orig = frame.shape[:2]
-                        target_w = 320 # Reduced resolution for speed
+                        target_w = 320 
                         scale_factor = 1.0
                         process_frame = frame
                         if w_orig > target_w:

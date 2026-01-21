@@ -47,12 +47,12 @@ def load_theme():
             overflow: hidden;
             transition: background 0.5s ease;
             
-            /* Light Mode Gradient Mesh - Moving Aurora */
+            /* Light Mode Gradient Mesh - Moving Aurora (ENHANCED VISIBILITY) */
             background-image: 
-                radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.8) 0, transparent 50%), 
-                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.15) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.15) 0, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(34, 197, 94, 0.1) 0, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.5) 0, transparent 50%), 
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.4) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.4) 0, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(34, 197, 94, 0.3) 0, transparent 50%);
             background-size: 150% 150%;
             animation: gradient-move 20s ease infinite;
         }}
@@ -164,17 +164,21 @@ def load_theme():
             transform: scale(0.92);
         }}
         
-        /* Primary - Gradient/Solid BG */
+        /* Primary - GLASS GRADIENT Style */
         .w11-btn.bg-primary {{
-            background: var(--primary) !important;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.8), rgba(67, 56, 202, 0.6)) !important; /* Glassy Gradient */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: white !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
         }}
         
         .w11-btn.bg-primary:hover {{
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.5);
             transform: translateY(-2px);
-            filter: brightness(1.1);
+            filter: brightness(1.2);
+            border-color: rgba(255, 255, 255, 0.4) !important;
         }}
         
         /* Secondary / White - Ghost Style */
@@ -265,7 +269,6 @@ def render_theme_toggle_button():
     icon_name = 'light_mode' if is_dark else 'dark_mode'
     tooltip_text = "Modo Claro" if is_dark else "Modo Escuro"
 
-    # Floating Action Button - Glassy & Borderless
     with ui.button(icon=icon_name, on_click=toggle_mode).classes('fixed bottom-8 right-8 z-50 rounded-full anim-enter delay-300').props('round flat type=a') as btn:
         btn.style('width: 64px; height: 64px; background: rgba(125,125,125,0.1); backdrop-filter: blur(20px); color: var(--text-primary); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: transform 0.3s ease;')
         tooltip = ui.tooltip(tooltip_text)

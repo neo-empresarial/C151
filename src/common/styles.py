@@ -1,8 +1,7 @@
 
 class Colors:
-    MICA_BG = "#FFFFFF" # Pure white for light mode
+    MICA_BG = "#FFFFFF" 
     MICA_ALT = "#F8F9FA" 
-    # Translucent Surface for Glassmorphism
     SURFACE = "rgba(255, 255, 255, 0.65)" 
     
     PRIMARY = "#121317" 
@@ -19,7 +18,6 @@ class Colors:
     TEXT_SECONDARY = "#5F6368"
     TEXT_DISABLED = "#BDC1C6"
     
-    # Very subtle, hairline borders
     BORDER = "rgba(0, 0, 0, 0.08)"
     BORDER_FOCUS = "#1A73E8"
     
@@ -29,16 +27,14 @@ class Colors:
     ACRYLIC_BG = "rgba(255, 255, 255, 0.65)"
 
 class DarkColors:
-    MICA_BG = "#101010" # Deeper black for high contrast
+    MICA_BG = "#101010" 
     MICA_ALT = "#1C1C1C"
-    # Translucent Dark Surface
     SURFACE = "rgba(30, 30, 30, 0.60)" 
     
     TEXT_PRIMARY = "#FFFFFF"
     TEXT_SECONDARY = "#E8EAED"
     TEXT_DISABLED = "#9AA0A6"
     
-    # Subtle dark mode border
     BORDER = "rgba(255, 255, 255, 0.08)"
     
     ACRYLIC_BG = "rgba(20, 20, 20, 0.7)"
@@ -47,7 +43,6 @@ class DarkColors:
     GLASS_BLACK = "rgba(0, 0, 0, 0.8)"
 
 class Fonts:
-    # Prefer Google Sans if available, then Inter, then Segoe UI
     MAIN = '"Google Sans", "Inter", "Segoe UI Variable Display", "Segoe UI", sans-serif'
     MONO = '"Roboto Mono", "Consolas", monospace'
     
@@ -55,7 +50,7 @@ class Fonts:
     SIZE_MD = "14px"
     SIZE_LG = "18px"
     SIZE_XL = "24px"
-    SIZE_XXL = "48px" # Even Larger headers
+    SIZE_XXL = "48px" 
     SIZE_DISPLAY = "80px"
 
 class Shapes:

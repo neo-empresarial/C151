@@ -30,7 +30,7 @@ class AddDialog:
                 self.name_input = ui.input('Nome Completo').classes('w-full')
                 self.pin_setup = ui.input('PIN (Numérico)', password=True, password_toggle_button=True).classes('w-full')
                 self.access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label='Nível de Acesso') \
-                    .classes('w-full').props('outlined rounded item-aligned input-class="text-primary"')
+                    .classes('w-full')
 
             with ui.row().classes('w-full gap-4 mt-6'):
                 ui.button('Cancelar', on_click=self.dialog.close).classes('flex-1 w11-btn')
