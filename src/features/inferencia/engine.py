@@ -4,9 +4,9 @@ import time
 import numpy as np
 import faiss
 import logging
-from deepface import DeepFace
+# from deepface import DeepFace (Lazy import)
 from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD
-from src.features.inferencia.liveness.detector import LivenessDetector
+# from src.features.inferencia.liveness.detector import LivenessDetector (Lazy import)
 
 class InferenceEngine:
     def __init__(self, db_manager):
@@ -27,7 +27,7 @@ class InferenceEngine:
         self.known_ids = []
         self.faiss_index = None
         self.is_loaded = False
-        self.liveness_detector = LivenessDetector()
+        self.liveness_detector = None # Lazy init
 
     @property
     def paused(self):
@@ -39,8 +39,24 @@ class InferenceEngine:
             logging.info(f"Engine paused state changed: {self._paused} -> {value}")
             self._paused = value
 
+    def _ensure_resources(self):
+        if self.is_loaded and self.liveness_detector is not None:
+            return
+
+        from deepface import DeepFace
+        from src.features.inferencia.liveness.detector import LivenessDetector
+        
+        if self.liveness_detector is None:
+             # Double check lock to prevent race condition
+            with self.lock:
+                 if self.liveness_detector is None:
+                     self.liveness_detector = LivenessDetector()
+
     def load_model(self):
         try:
+            self._ensure_resources()
+            from deepface import DeepFace # Needed for local scope usage below if not global
+
             with self.df_lock:
                 DeepFace.build_model(self.model_name)
                 all_embeddings_data = self.db_manager.get_all_embeddings()
@@ -67,6 +83,8 @@ class InferenceEngine:
 
     def generate_embedding(self, frame):
         logging.debug("generate_embedding called. Requesting df_lock...")
+        self._ensure_resources()
+        from deepface import DeepFace
         with self.df_lock:
             logging.debug("df_lock acquired. Starting DeepFace.represent...")
             start_time = time.time()
@@ -89,6 +107,7 @@ class InferenceEngine:
 
     def verify_enrollment_face(self, frame):
         logging.debug("verify_enrollment_face called.")
+        self._ensure_resources()
         try:
              results = self.generate_embedding(frame)
              
@@ -192,6 +211,7 @@ class InferenceEngine:
             return self.latest_results
 
     def _process_loop(self):
+        self._ensure_resources()
         self.load_model()
 
         while self.running:
@@ -225,6 +245,7 @@ class InferenceEngine:
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
                         
+                        from deepface import DeepFace
                         face_objs = DeepFace.represent(
                             img_path=process_frame,
                             model_name=self.model_name,
@@ -305,8 +326,8 @@ class InferenceEngine:
                     cx_frame, cy_frame = w_frame // 2, h_frame // 2
                     cx_face = x + w // 2
                     cy_face = y + h // 2
-                    roi_threshold_x = w_frame * 0.15
-                    roi_threshold_y = h_frame * 0.20 
+                    roi_threshold_x = w_frame * 0.35
+                    roi_threshold_y = h_frame * 0.40 
                     in_roi = (abs(cx_face - cx_frame) < roi_threshold_x) and (abs(cy_face - cy_frame) < roi_threshold_y)
                     
                     results.append({

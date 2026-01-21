@@ -15,16 +15,30 @@ Sistema visual de controle de acesso baseado em reconhecimento facial utilizando
 
 ---
 
-## 🛠️ Build Offline (Executável Único)
+## 🛠️ Build e Instalação (Windows)
 
-O projeto gera um **único executável unificado** (`DeepFaceRec_Unified.exe`) que contém todas as dependências (TensorFlow, OpenCV, Pesos dos Modelos) para rodar **100% Offline** e sem console visível.
+Para obter a **melhor performance de inicialização** (instantânea), recomendamos o **Modo Pasta**. O Executável Único é portátil, mas demora ~40s para abrir.
 
-### Gerar Executável
-Execute o script de build unificado:
+### 1. Build Modo Pasta (Recomendado - Rápido)
+Gera uma pasta com o aplicativo "instalado". Inicia em 3-5 segundos.
+
+```powershell
+.\build_scripts\windows\build_folder.ps1
+```
+Isso criará a pasta `dist/DeepFaceRec_Unified`.
+
+**Criar Atalho na Área de Trabalho**:
+```powershell
+.\build_scripts\windows\create_shortcut.ps1
+```
+Isso cria um ícone "Biometria" no seu Desktop.
+
+### 2. Build Arquivo Único (Modo Portátil - Lento)
+Gera `dist/DeepFaceRec_Unified.exe`. Ideal para pen-drives, mas demora cerca de **1 minuto** para extrair e iniciar.
+
 ```powershell
 .\build_scripts\windows\build_unified.ps1
 ```
-*Isso criará o arquivo `dist/DeepFaceRec_Unified.exe`. O processo pode levar alguns minutos pois ele empacota todos os modelos de IA.*
 
 ---
 
