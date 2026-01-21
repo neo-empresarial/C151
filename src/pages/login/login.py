@@ -11,7 +11,7 @@ from .components.pin_dialog import PinDialog, render_trigger_button
 from src.language.manager import language_manager as lm
 
 MIN_FACE_WIDTH = 0.15
-REQUIRED_HITS = 3
+REQUIRED_HITS = 1
 
 def login_page():
     print(f"DEBUG: login_page loaded. REQUIRED_HITS = {REQUIRED_HITS}")

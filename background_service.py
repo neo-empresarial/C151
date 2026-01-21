@@ -18,6 +18,7 @@ def face_processing_loop():
     AppLogger.log("Loop de processamento iniciado.", "info")
     try:
         engine.start()
+        engine.paused = False
         AppLogger.log("Engine iniciada.", "info")
         camera_manager.start()
         if camera_manager.cap is None or not camera_manager.cap.isOpened():
@@ -59,7 +60,7 @@ def main_page():
     layout.build()
     ui.timer(0.5, layout.update_visibility)
 
-def main():
+def main(timeout=None):
     AppLogger.setup()
     proc_thread = threading.Thread(target=face_processing_loop, daemon=True)
     proc_thread.start()
@@ -71,6 +72,26 @@ def main():
             await alert_manager.manage_window(access_controller.denied)
 
     app.on_startup(window_loop)
+
+    if timeout:
+        def auto_shutdown():
+            import os
+            # Only shutdown if the alert window is NOT showing
+            if alert_manager.local_state_fullscreen:
+                AppLogger.log(f"Timeout reached ({timeout}s) but ALERT IS ACTIVE. Extension granted. Retrying in 5s...", "warning")
+                # Reschedule check in 5 seconds
+                reschedule_t = threading.Timer(5.0, auto_shutdown)
+                reschedule_t.daemon = True
+                reschedule_t.start()
+                return
+
+            AppLogger.log(f"Timeout reached ({timeout}s). FORCING EXIT via threading.Timer", "info")
+            os._exit(0)
+        
+        # Use threading.Timer to ensure it runs regardless of asyncio loop state
+        t = threading.Timer(timeout, auto_shutdown)
+        t.daemon = True # Daemon thread so it doesn't block exit if app closes early
+        t.start()
 
     try:
         port = find_free_port()

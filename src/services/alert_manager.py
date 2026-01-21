@@ -28,40 +28,37 @@ class AlertManager:
             if is_denied:
                 if not self.local_state_fullscreen:
                     print("DEBUG: AlertManager - ACCESS DENIED detected. Initiating window show sequence.", flush=True)
+                    
                     try:
-                        print("DEBUG: AlertManager - Restoring window...", flush=True)
-                        window.restore() 
-                    except Exception as e:
-                        print(f"DEBUG: AlertManager - Restore failed (might not be needed): {e}", flush=True)
+                        window.restore()
+                    except:
+                        pass
+                        
+                    try:
+                        window.show()
+                    except:
+                        pass
+                    window.on_top = True
                     
                     try:
                         screens = webview.screens
                         if screens:
                             screen = screens[0]
-                            print(f"DEBUG: AlertManager - Resizing to Screen: {screen.width}x{screen.height}", flush=True)
                             window.resize(screen.width, screen.height)
                             window.move(0, 0)
-                    except Exception as e:
-                        print(f"DEBUG: AlertManager - Manual resize failed: {e}", flush=True)
-
-                    print("DEBUG: AlertManager - Setting ON TOP.", flush=True)
-                    window.on_top = True
-                    
-                    print("DEBUG: AlertManager - Showing window.", flush=True)
-                    window.show()
-                    
-                    print("DEBUG: AlertManager - Maximizing window.", flush=True)
-                    try:
-                         window.maximize()
                     except:
-                         pass
-
-                    await asyncio.sleep(0.5)
+                        pass
                     
-                    print("DEBUG: AlertManager - Setting FULLSCREEN.", flush=True)
+                    try:
+                        window.maximize()
+                    except:
+                        pass
+                        
+                    await asyncio.sleep(0.2)
+                    
                     window.fullscreen = True
                     self.local_state_fullscreen = True
-                    print("DEBUG: AlertManager - Window sequence complete. Should be visible and fullscreen.", flush=True)
+                    print("DEBUG: AlertManager - Window sequence complete. Fullscreen enforced.", flush=True)
             else:
                 if self.local_state_fullscreen:
                     print("DEBUG: AlertManager - ACCESS GRANTED/RESET. Hiding window.", flush=True)

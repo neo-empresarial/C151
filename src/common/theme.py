@@ -58,6 +58,22 @@ def render_window_controls():
 
 render_close_button = render_window_controls
 
+def loading_overlay():
+    with ui.element('div').classes('fixed inset-0 z-[9999] flex items-center justify-center bg-white transition-opacity duration-700 pointer-events-none') as overlay:
+        overlay.style('opacity: 1;') 
+        ui.image('/public/images/certi/logo-certi.png').classes('w-64 animate-pulse')
+
+    def fade_out():
+        overlay.style('opacity: 0;')
+        def safe_delete():
+            try:
+                overlay.delete()
+            except Exception:
+                pass
+        ui.timer(0.7, safe_delete)
+
+    ui.timer(2.0, fade_out)
+
 
 
 

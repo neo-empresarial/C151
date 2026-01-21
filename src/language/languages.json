@@ -9,7 +9,7 @@
         "position_face_center": "Posicione a face no centro",
         "move_face_closer": "Aproximar face",
         "fake_face_detected": "Rosto Falso Detectado",
-        "hello": "Olá, {name}",
+        "hello": "Acesso Liberado: {name}",
         "identifying": "Identificando... {pct}%",
         "not_recognized": "Não Reconhecido",
         "camera_disconnected": "Câmera desconectada",
