@@ -85,7 +85,7 @@ O executável já contém:
 - Modelos de IA (DeepFace/FaceNet/MiniFASNet).
 - Interface Web (NiceGUI).
 
-**Nota**: Na primeira execução em uma nova máquina, ele pode demorar alguns segundos para descompactar os arquivos temporários internos.
+**Nota**: Na primeira execução, o app pode levar até 1 minuto para extrair os arquivos temporários antes de exibir a **Tela de Carregamento**. Isso é normal para executáveis compactados.
 
 ---
 

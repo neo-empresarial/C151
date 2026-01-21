@@ -31,7 +31,7 @@ class AddDialog:
                 self.name_input = ui.input(lm.t('full_name')).classes('w-full')
                 self.pin_setup = ui.input(lm.t('pin_numeric'), password=True, password_toggle_button=True).classes('w-full')
                 self.access_select = ui.select(['Admin', 'Funcionario', 'Visitante'], value='Visitante', label=lm.t('access_level')) \
-                    .classes('w-full')
+                    .classes('w-full').props('outlined behavior=menu')
 
             with ui.row().classes('w-full gap-4 mt-6'):
                 ui.button(lm.t('cancel'), on_click=self.dialog.close).classes('flex-1 w11-btn')

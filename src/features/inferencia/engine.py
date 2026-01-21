@@ -15,7 +15,7 @@ class InferenceEngine:
         self.detector_backend = DETECTOR_BACKEND
         self.threshold = VERIFICATION_THRESHOLD
         self.running = False
-        self._paused = False
+        self._paused = True
         self.last_recognition_time = 0
         self.last_result_time = 0
         self.thread = None

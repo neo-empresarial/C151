@@ -30,7 +30,8 @@ class EditDialog:
             with ui.card().classes('w11-card w-full p-6 gap-4'):
                 self.edit_name = ui.input(lm.t('full_name')).classes('w-full')
                 self.edit_pin = ui.input(lm.t('access_pin'), password=True, password_toggle_button=True).classes('w-full')
-                self.edit_access = ui.select(['Admin', 'Funcionario', 'Visitante'], label=lm.t('access_level')).classes('w-full')
+                self.edit_access = ui.select(['Admin', 'Funcionario', 'Visitante'], label=lm.t('access_level')) \
+                    .classes('w-full').props('outlined behavior=menu')
 
             with ui.row().classes('w-full gap-4 mt-6'):
                 ui.button(lm.t('cancel'), on_click=self.dialog.close).classes('flex-1 w11-btn')

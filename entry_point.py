@@ -14,16 +14,6 @@ sys.path.append(".")
 
 def main():
     multiprocessing.freeze_support()
-    
-    # Close the PyInstaller splash screen if it exists
-    if getattr(sys, 'frozen', False):
-        try:
-            import pyi_splash
-            pyi_splash.update_text("Carregando Sistema de Biometria...")
-            pyi_splash.close()
-        except ImportError:
-            pass
-
     parser = argparse.ArgumentParser(description="DeepFace Access Control Application")
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--ManageUsers', action='store_true', help='Open directly to the Dashboard')
