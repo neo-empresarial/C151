@@ -135,6 +135,12 @@ def render():
                  if not save_secret_key(secret_key_input.value):
                      ui.notify(lm.t('secret_key_invalid'), type='negative')
                      return
+                 
+                 # Force reload of inference engine (clears stale memory)
+                 from src.services.services import engine
+                 ui.notify('Recarregando Motor de IA...', type='info')
+                 engine.load_model()
+
 
 
             from src.common.database import DatabaseManager

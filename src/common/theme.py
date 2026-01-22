@@ -88,13 +88,23 @@ def render_back_button(target_url: str):
 render_close_button = render_window_controls
 
 def loading_overlay():
-    with ui.element('div').classes('fixed inset-0 z-[9999] flex items-center justify-center bg-white transition-opacity duration-700 pointer-events-none') as overlay:
+    # Use a very high z-index and ensure opacity
+    with ui.element('div').classes('fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-slate-50 transition-opacity duration-1000') as overlay:
         overlay.style('opacity: 1;') 
         
-        img = ui.image().classes('w-64 animate-pulse')
+        # Logo with pulse animation
+        img = ui.image().classes('w-64 animate-pulse mb-4')
+        
+        # Loading text
+        ui.label('Carregando...').classes('text-gray-500 font-medium animate-pulse')
         
         def update_logo_overlay(is_dark):
-            img.source = 'src/public/images/certi/logo-certi-2.png' if is_dark else 'src/public/images/certi/logo-certi.png'
+            # Paths relative to the static mount '/src'
+            img.source = '/src/public/images/certi/logo-certi-2.png' if is_dark else '/src/public/images/certi/logo-certi.png'
+            if is_dark:
+                overlay.classes(remove='bg-slate-50', add='bg-gray-900')
+            else:
+                overlay.classes(remove='bg-gray-900', add='bg-slate-50')
             img.update()
             
         theme_state.add_listener(update_logo_overlay)
