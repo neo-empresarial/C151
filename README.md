@@ -1,4 +1,4 @@
-# Sistema de Controle de Acesso Facial - Certi Foundation
+# Sistema de Controle de Acesso Facial
 
 ![Logo Certi](src/public/images/certi/logo-certi-2.png)
 
@@ -31,28 +31,21 @@ Este fluxo ocorre em tempo real (loop da thread de inferência):
 ```mermaid
 sequenceDiagram
     participant Cam as Camera Service
-    participant Engine as Inference Engine
-    participant Liveness as Liveness Detector
+    participant Engine as Engine (IA)
     participant DeepFace as DeepFace Model
-    participant RAM as In-Memory Index
+    participant RAM as Memoria (Embeddings)
 
-    Cam->>Engine: Novo Frame
-    Engine->>DeepFace: Detectar Rosto
-    alt Rosto Detectado
-        DeepFace->>Engine: Coordenadas do Rosto
-        Engine->>Liveness: Verificar Vivacidade (Anti-Spoofing)
-        alt É Real (Não é foto/tela)
-            Engine->>DeepFace: Gerar Embedding (Vetor)
-            Engine->>RAM: Comparar Vetor (Busca de Similaridade)
-            alt Match Encontrado
-                RAM->>Engine: ID do Usuário e Score
-                Engine->>Cam: Retorna Resultado (Nome, Acesso)
-            else Desconhecido
-                Engine->>Cam: Retorna "Desconhecido"
-            end
-        else Fake Detectado
-            Liveness->>Engine: Alerta de Spoofing
-            Engine->>Cam: Bloquear Acesso
+    Cam->>Engine: Envia Frame
+    Engine->>DeepFace: 1. Detecta Rosto
+    alt Rosto Encontrado
+        Engine->>Engine: 2. Verifica Liveness (Spoofing)
+        alt Se Real
+            Engine->>DeepFace: 3. Gera Vetor (Embedding)
+            Engine->>RAM: 4. Busca Vetor Similar
+            RAM-->>Engine: Retorna ID Usuario (Match)
+            Engine-->>Cam: Acesso Liberado
+        else Se Fake
+            Engine-->>Cam: ALERTA DE FRAUDE
         end
     end
 ```
@@ -130,6 +123,49 @@ O projeto é organizado para facilitar a manutenção e escalabilidade:
     ```powershell
     python main.py
     ```
+
+---
+
+## Executando (Modos de Uso)
+
+O executável unificado (`DeepFaceRec_Unified.exe`) suporta diferentes modos de incialização via linha de comando:
+
+### 1. Modo Padrão (Landing Page)
+Abre a tela inicial com opções de navegação.
+```powershell
+.\DeepFaceRec_Unified.exe
+```
+
+### 2. Gestão de Usuários (Dashboard)
+Abre diretamente o painel administrativo.
+```powershell
+.\DeepFaceRec_Unified.exe --ManageUsers
+```
+
+### 3. Reconhecimento Facial (Login)
+Abre diretamente a tela de reconhecimento/login.
+```powershell
+.\DeepFaceRec_Unified.exe --FaceRecognition
+```
+
+### 4. Serviço Oculto (Hidden Camera)
+Monitoramento silencioso em background. A janela fica **invisível** e só aparece se detectar uma pessoa não autorizada.
+```powershell
+.\DeepFaceRec_Unified.exe --HiddenCam
+```
+
+#### Configurações Extras do Serviço Oculto
+
+**Timeout (Auto-Kill)**
+Fecha o aplicativo automaticamente após X segundos.
+```powershell
+.\DeepFaceRec_Unified.exe --HiddenCam --timeout 60
+```
+
+**Regra de Segurança (3 Strikes)**
+No modo `--HiddenCam`:
+- Se uma pessoa **não autorizada** (ou desconhecida) for detectada **3 vezes consecutivas**, a tela de ALERTA VERMELHO ("ACESSO NEGADO") abre em **Tela Cheia**.
+- Se um **Administrador** for detectado, o contador zera e a tela se esconde novamente.
 
 ---
 
