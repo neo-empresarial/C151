@@ -56,6 +56,10 @@ def render_window_controls():
         with ui.button(icon='close', on_click=app.shutdown).classes('rounded-full').props('round flat'):
              ui.tooltip('Sair do Sistema')
 
+def render_back_button(target_url: str):
+    with ui.button(icon='arrow_back', on_click=lambda: ui.navigate.to(target_url)).classes('fixed top-6 left-6 z-50 rounded-full w-12 h-12 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors'):
+        ui.tooltip('Voltar')
+
 render_close_button = render_window_controls
 
 def loading_overlay():

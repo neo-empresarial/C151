@@ -1,10 +1,16 @@
 
 import cv2
 import threading
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
+                             QLineEdit, QDialog, QMessageBox, QProgressDialog, QListWidget, 
+                             QListWidgetItem, QComboBox, QGraphicsOpacityEffect)
+from PyQt5.QtCore import Qt, QTimer, QSize, QPropertyAnimation, QEasingCurve, QObject, pyqtSignal as Signal
+from PyQt5.QtGui import QImage, QPixmap
 from deepface import DeepFace
 from src.common.database import DatabaseManager
 from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager
+from src.common.config import db_config
 
 class FlashOverlay(QWidget):
     def __init__(self, parent=None):
@@ -135,6 +141,13 @@ class UserFormDialog(QDialog):
             self.name_input.setText(self.user_data['name'])
             self.name_input.textChanged.connect(self.on_input_change)
         form_layout.addWidget(self.name_input)
+
+        form_layout.addWidget(QLabel("Nível de Acesso:"))
+        self.access_input = QComboBox()
+        self.access_input.addItems(db_config.config.get('access_levels', ["Visitante"]))
+        if self.edit_mode:
+            self.access_input.setCurrentText(self.user_data.get('access_level', 'Visitante'))
+        form_layout.addWidget(self.access_input)
         
         body_layout.addWidget(form_container)
         main_layout.addLayout(body_layout)
@@ -292,9 +305,22 @@ class UserFormDialog(QDialog):
         name = self.name_input.text().strip()
         
         if self.edit_mode:
-             success_db, msg_db = self.db_manager.update_user(self.user_data['id'], name, self.captured_frame, embedding)
+             success_db, msg_db = self.db_manager.update_user(
+                 user_id=self.user_data['id'], 
+                 name=name, 
+                 access_level=self.access_input.currentText()
+             )
+             # Update photo if new frame captured
+             if self.captured_frame is not None:
+                 self.db_manager.add_user_photo(self.user_data['id'], self.captured_frame, embedding)
+
         else:
-             success_db, msg_db = self.db_manager.create_user(name, self.captured_frame, embedding)
+             success_db, msg_db = self.db_manager.create_user(
+                 name=name, 
+                 access_level=self.access_input.currentText(),
+                 frame=self.captured_frame, 
+                 embedding=embedding
+             )
         
         if success_db:
             QMessageBox.information(self, "Sucesso", msg_db)

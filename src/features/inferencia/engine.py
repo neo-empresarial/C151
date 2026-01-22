@@ -5,7 +5,7 @@ import numpy as np
 import faiss
 import logging
 # from deepface import DeepFace (Lazy import)
-from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD
+from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD, db_config
 # from src.features.inferencia.liveness.detector import LivenessDetector (Lazy import)
 
 class InferenceEngine:
@@ -13,7 +13,7 @@ class InferenceEngine:
         self.db_manager = db_manager
         self.model_name = MODEL_NAME
         self.detector_backend = DETECTOR_BACKEND
-        self.threshold = VERIFICATION_THRESHOLD
+        # self.threshold is now a property to allow dynamic updates
         self.running = False
         self._paused = True
         self.last_recognition_time = 0
@@ -32,6 +32,10 @@ class InferenceEngine:
     @property
     def paused(self):
         return self._paused
+
+    @property
+    def threshold(self):
+        return db_config.config.get('face_tech', {}).get('threshold', VERIFICATION_THRESHOLD)
 
     @paused.setter
     def paused(self, value):

@@ -10,10 +10,20 @@ from .components import header, camera
 from .components.pin_dialog import PinDialog, render_trigger_button
 from src.language.manager import language_manager as lm
 
-MIN_FACE_WIDTH = 0.15
-REQUIRED_HITS = 1
+from src.common.config import db_config
+
+# Default fallbacks if config is missing
+DEFAULT_MIN_FACE_WIDTH = 0.15
+DEFAULT_REQUIRED_HITS = 1
+DEFAULT_MAX_OFFSET = 0.15
 
 def login_page():
+    # Load config values
+    face_config = db_config.config.get('face_tech', {})
+    REQUIRED_HITS = face_config.get('required_hits', DEFAULT_REQUIRED_HITS)
+    MIN_FACE_WIDTH = face_config.get('min_face_width', DEFAULT_MIN_FACE_WIDTH)
+    MAX_OFFSET = face_config.get('max_offset', DEFAULT_MAX_OFFSET)
+
     print(f"DEBUG: login_page loaded. REQUIRED_HITS = {REQUIRED_HITS}")
     f.resume_engine()
     if not f.check_users_exist():
@@ -72,6 +82,16 @@ def login_page():
     async def loop():
         if not ui.context.client.has_socket_connection:
              return
+        
+        # Reload config in loop (optional, but good for real-time updates if performance allows)
+        # For better performance, maybe only reload occasionally or use a reactive state.
+        # But reading dict from memory is fast.
+        
+        # cfg = db_config.config.get('face_tech', {})
+        # Dynamic update of thresholds if they change? For now, let's keep page load static 
+        # OR just use the variables defined at page scope which are static per page visit.
+        # Re-visiting the page will update them.
+        
         ret, frame = camera_manager.read()
         if not ret:
             face_overlay.set_state(lm.t('camera_disconnected'), 'var(--error)')
@@ -112,8 +132,6 @@ def login_page():
                 diff_x = cx - 0.5
                 diff_y = cy - 0.5
                 dist_from_center = (diff_x**2 + diff_y**2)**0.5
-                
-                MAX_OFFSET = 0.15 
                 
                 if dist_from_center > MAX_OFFSET:
                      final_text = lm.t('position_face_center')

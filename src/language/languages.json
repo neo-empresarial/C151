@@ -62,7 +62,19 @@
         "name": "Nome",
         "level": "Nível",
         "id": "ID",
-        "actions": "Ações"
+        "actions": "Ações",
+        "settings": "Configurações",
+        "configure_database": "Configurar Banco de Dados",
+        "general": "Geral",
+        "advanced": "Avançado",
+        "required_hits": "Acertos Necessários",
+        "min_face_width": "Largura Mínima da Face",
+        "max_offset": "Desvio Máximo de Centro",
+        "threshold": "Limiar de Confiança",
+        "metric": "Métrica de Distância",
+        "model_name": "Modelo de Reconhecimento",
+        "appearance": "Aparência",
+        "save_settings": "Salvar Configurações"
     },
     "en": {
         "face_recognition": "Face Recognition",
@@ -127,7 +139,19 @@
         "name": "Name",
         "level": "Level",
         "id": "ID",
-        "actions": "Actions"
+        "actions": "Actions",
+        "settings": "Settings",
+        "configure_database": "Configure Database",
+        "general": "General",
+        "advanced": "Advanced",
+        "required_hits": "Required Hits",
+        "min_face_width": "Min Face Width",
+        "max_offset": "Max Center Offset",
+        "threshold": "Confidence Threshold",
+        "metric": "Distance Metric",
+        "model_name": "Recognition Model",
+        "appearance": "Appearance",
+        "save_settings": "Save Settings"
     },
     "es": {
         "face_recognition": "Reconocimiento Facial",
@@ -192,6 +216,18 @@
         "name": "Nombre",
         "level": "Nivel",
         "id": "ID",
-        "actions": "Acciones"
+        "actions": "Acciones",
+        "settings": "Configuraciones",
+        "configure_database": "Configurar Base de Datos",
+        "general": "General",
+        "advanced": "Avanzado",
+        "required_hits": "Aciertos Necesarios",
+        "min_face_width": "Ancho Mínimo del Rostro",
+        "max_offset": "Desviación Máxima del Centro",
+        "threshold": "Umbral de Confianza",
+        "metric": "Métrica de Distancia",
+        "model_name": "Modelo de Reconocimiento",
+        "appearance": "Apariencia",
+        "save_settings": "Guardar Configuraciones"
     }
 }

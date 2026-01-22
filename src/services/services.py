@@ -6,13 +6,8 @@ from src.features.inferencia.engine import InferenceEngine
 import sys
 import os
 
-if getattr(sys, 'frozen', False):
-    base_dir = os.path.dirname(sys.executable)
-    db_path = os.path.join(base_dir, "users.db")
-else:
-    db_path = "users.db"
 
-db_manager = DatabaseManager(db_path)
+db_manager = DatabaseManager()
 camera_manager = CameraManager(CAMERA_INDEX)
 engine = InferenceEngine(db_manager)
 

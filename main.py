@@ -28,6 +28,7 @@ from src.pages.login.login import login_page
 from src.pages.dashboard.dashboard import dashboard_page
 from src.pages.setup.setup import setup_page
 from src.pages.landing.landing import landing_page
+from src.pages.settings.settings import settings_page
 
 def startup_wrapper():
     start_services()
@@ -57,6 +58,11 @@ def index_page():
 def recognition():
     loading_overlay()
     login_page()
+
+@ui.page('/settings')
+def settings():
+    loading_overlay()
+    settings_page()
 
 @ui.page('/dashboard')
 def dashboard():
