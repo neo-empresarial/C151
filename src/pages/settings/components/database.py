@@ -1,8 +1,9 @@
 from nicegui import ui
 from src.common.config import db_config
+from src.language.manager import language_manager as lm
 
 def render():
-    with ui.column().classes('w-full p-2 pb-24'): # Added pb-24
+    with ui.column().classes('w-full p-2 pb-24'):
         ui.label('Banco de Dados').classes('text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6')
         
         from src.services.services import db_manager
@@ -94,5 +95,5 @@ def render():
             else:
                 ui.notify(f'Erro: {msg}', type='negative', multi_line=True, close_button=True)
 
-        with ui.row().classes('fixed bottom-0 left-64 right-0 p-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 shadow-xl z-50 justify-center items-center'):
-            ui.button('Salvar Banco de Dados', on_click=save_db_settings, icon='save').classes('bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 shadow-lg').props('rounded')
+        with ui.row().classes('fixed bottom-0 left-64 right-0 p-4 bg-transparent backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 shadow-xl z-50 justify-center items-center'):
+            ui.button(lm.t('save_database'), on_click=save_db_settings, icon='save').classes('bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 shadow-lg').props('rounded')

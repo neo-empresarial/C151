@@ -75,7 +75,8 @@
         "metric": "Métrica de Distância",
         "model_name": "Modelo de Reconhecimento",
         "appearance": "Aparência",
-        "save_settings": "Salvar Configurações"
+        "save_settings": "Salvar Configurações",
+        "save_database": "Salvar Banco de Dados"
     },
     "en": {
         "face_recognition": "Face Recognition",
@@ -153,7 +154,8 @@
         "metric": "Distance Metric",
         "model_name": "Recognition Model",
         "appearance": "Appearance",
-        "save_settings": "Save Settings"
+        "save_settings": "Save Settings",
+        "save_database": "Save Database"
     },
     "es": {
         "face_recognition": "Reconocimiento Facial",
@@ -231,6 +233,7 @@
         "metric": "Métrica de Distancia",
         "model_name": "Modelo de Reconocimiento",
         "appearance": "Apariencia",
-        "save_settings": "Guardar Configuraciones"
+        "save_settings": "Guardar Configuraciones",
+        "save_database": "Guardar Base de Datos"
     }
 }
