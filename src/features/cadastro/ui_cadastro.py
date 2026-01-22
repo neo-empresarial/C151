@@ -11,6 +11,7 @@ from src.common.database import DatabaseManager
 from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager
 from src.common.config import db_config
+from src.common.logger import AppLogger
 import numpy as np
 
 class FlashOverlay(QWidget):
@@ -305,16 +306,25 @@ class UserFormDialog(QDialog):
 
         name = self.name_input.text().strip()
         
+        AppLogger.log(f"DEBUG: finish_save called. Edit Mode: {self.edit_mode}")
+        AppLogger.log(f"DEBUG: Current Config: {db_config.config}")
+        check_sim_val = db_config.config.get('face_tech', {}).get('check_similarity', False)
+        AppLogger.log(f"DEBUG: check_similarity value: {check_sim_val}")
+        
         if self.edit_mode:
+            # Force reload config from disk to ensure we have latest settings (handles multiprocess issues)
+            db_config._config = db_config.load_config()
+            AppLogger.log(f"DEBUG: Config reloaded from disk: {db_config.config}")
+
             # SIMILARITY CHECK
             check_similarity = db_config.config.get('face_tech', {}).get('check_similarity', False)
             
             if check_similarity and self.captured_frame is not None:
-                print(f"DEBUG: Checking similarity for User ID: {self.user_data['id']}")
+                AppLogger.log(f"DEBUG: Checking similarity for User ID: {self.user_data['id']}")
                 try:
                     existing_embeddings = self.db_manager.get_user_embeddings(self.user_data['id'])
                     if existing_embeddings:
-                        print(f"DEBUG: Found {len(existing_embeddings)} existing embeddings for user.")
+                        AppLogger.log(f"DEBUG: Found {len(existing_embeddings)} existing embeddings for user.")
                         # Convert new embedding to numpy array
                         new_emb = np.array(embedding)
                         
@@ -337,10 +347,10 @@ class UserFormDialog(QDialog):
                         
                         # Use same threshold as verification
                         threshold = db_config.config.get('face_tech', {}).get('threshold', 0.28)
-                        print(f"DEBUG: Similarity Result - Min Dist: {min_distance:.4f}, Threshold: {threshold}")
+                        AppLogger.log(f"DEBUG: Similarity Result - Min Dist: {min_distance:.4f}, Threshold: {threshold}")
                         
                         if min_distance > threshold:
-                            print(f"DEBUG: Similarity Check Failed.")
+                            AppLogger.log(f"DEBUG: Similarity Check Failed.")
                             QMessageBox.critical(self, "Bloqueio de Segurança", 
                                                 f"A foto não corresponde ao usuário atual.\n\n"
                                                 f"Diferença detectada: {min_distance:.3f}\n"
@@ -348,12 +358,12 @@ class UserFormDialog(QDialog):
                                                 "Certifique-se de que é a mesma pessoa.")
                             return
                         else:
-                             print(f"DEBUG: Similarity Check Passed.")
+                             AppLogger.log(f"DEBUG: Similarity Check Passed.")
                     else:
-                        print(f"DEBUG: No existing embeddings found. Allowing update (First photo).")
+                        AppLogger.log(f"DEBUG: No existing embeddings found. Allowing update (First photo).")
 
                 except Exception as e:
-                    print(f"Error in similarity check: {e}")
+                    AppLogger.log(f"Error in similarity check: {e}")
                     # Fail open or closed? Here we fail open (log error but allow save) to avoid blocking valid updates on error 
                     # OR we could warn the user. Let's just log for now to be safe.
 

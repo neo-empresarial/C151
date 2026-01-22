@@ -3,6 +3,9 @@ from .. import functions as f
 from . import gallery
 from . import camera
 from src.language.manager import language_manager as lm
+from src.common.config import db_config
+from src.common.logger import AppLogger
+import numpy as np
 
 class EditDialog:
     def __init__(self, on_user_updated):
@@ -135,6 +138,39 @@ class EditDialog:
                         return
                 
                 emb = result['embedding']
+                db_config._config = db_config.load_config()
+                check_similarity = db_config.config.get('face_tech', {}).get('check_similarity', False)
+                AppLogger.log(f"DEBUG: [EditDialog] Similarity Check Enabled: {check_similarity}")
+
+                if check_similarity:
+                    existing_embeddings = f.get_user_embeddings(self.current_edit_id[0]) 
+                    
+                    if existing_embeddings:
+                         AppLogger.log(f"DEBUG: Found {len(existing_embeddings)} existing embeddings.")
+                         new_emb = np.array(emb)
+                         min_distance = float('inf')
+
+                         for old_emb in existing_embeddings:
+                            old_emb_np = np.array(old_emb)
+                            dot_product = np.dot(new_emb, old_emb_np)
+                            norm_new = np.linalg.norm(new_emb)
+                            norm_old = np.linalg.norm(old_emb_np)
+                            cosine_similarity = dot_product / (norm_new * norm_old)
+                            distance = 1.0 - cosine_similarity
+                            if distance < min_distance:
+                                min_distance = distance
+                         
+                         update_safety_threshold = 0.30
+                         AppLogger.log(f"DEBUG: Min Dist: {min_distance:.4f}, Update Safety Threshold: {update_safety_threshold}")
+
+                         if min_distance > update_safety_threshold:
+                             ui.notify(lm.t('similarity_error') + f" (Dist: {min_distance:.2f})", type='negative', multi_line=True)
+                             AppLogger.log("DEBUG: Similarity Check FAILED. Blocked.")
+                             self.edit_reset()
+                             return
+                    else:
+                        AppLogger.log("DEBUG: No existing embeddings. Allowing first photo.")
+
                 success, _ = f.add_user_photo_db(self.current_edit_id[0], self.edit_capture_state['frame'], emb)
                 
                 if success: 

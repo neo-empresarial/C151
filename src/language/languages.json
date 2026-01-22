@@ -9,6 +9,7 @@
         "position_face_center": "Posicione a face no centro",
         "move_face_closer": "Aproximar face",
         "fake_face_detected": "Rosto Falso Detectado",
+        "similarity_error": "O rosto não corresponde às fotos existentes do usuário. Tente melhorar a iluminação ou ângulo.",
         "hello": "Acesso Liberado: {name}",
         "identifying": "Identificando... {pct}%",
         "not_recognized": "Não Reconhecido",

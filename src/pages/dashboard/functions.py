@@ -13,6 +13,9 @@ def delete_user_from_db(uid):
 def get_user_photos(user_id):
     return db_manager.get_user_photos(user_id)
 
+def get_user_embeddings(user_id):
+    return db_manager.get_user_embeddings(user_id)
+
 def delete_photo_from_db(photo_id):
     return db_manager.delete_user_photo(photo_id)
 
