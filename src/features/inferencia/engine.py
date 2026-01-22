@@ -4,16 +4,12 @@ import time
 import numpy as np
 import faiss
 import logging
-# from deepface import DeepFace (Lazy import)
-from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD
-# from src.features.inferencia.liveness.detector import LivenessDetector (Lazy import)
-
+from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD, db_config
 class InferenceEngine:
     def __init__(self, db_manager):
         self.db_manager = db_manager
         self.model_name = MODEL_NAME
         self.detector_backend = DETECTOR_BACKEND
-        self.threshold = VERIFICATION_THRESHOLD
         self.running = False
         self._paused = True
         self.last_recognition_time = 0
@@ -27,11 +23,15 @@ class InferenceEngine:
         self.known_ids = []
         self.faiss_index = None
         self.is_loaded = False
-        self.liveness_detector = None # Lazy init
+        self.liveness_detector = None
 
     @property
     def paused(self):
         return self._paused
+
+    @property
+    def threshold(self):
+        return db_config.config.get('face_tech', {}).get('threshold', VERIFICATION_THRESHOLD)
 
     @paused.setter
     def paused(self, value):
@@ -47,15 +47,14 @@ class InferenceEngine:
         from src.features.inferencia.liveness.detector import LivenessDetector
         
         if self.liveness_detector is None:
-             # Double check lock to prevent race condition
             with self.lock:
-                 if self.liveness_detector is None:
-                     self.liveness_detector = LivenessDetector()
+                if self.liveness_detector is None:
+                    self.liveness_detector = LivenessDetector()
 
     def load_model(self):
         try:
             self._ensure_resources()
-            from deepface import DeepFace # Needed for local scope usage below if not global
+            from deepface import DeepFace
 
             with self.df_lock:
                 DeepFace.build_model(self.model_name)

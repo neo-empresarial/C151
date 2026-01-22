@@ -11,3 +11,4 @@ weights/
 .vscode/
 .gemini/
 .idea/
+db_config.json

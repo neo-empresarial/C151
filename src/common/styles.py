@@ -278,9 +278,9 @@ ANTIGRAVITY_THEME = f'''
             background-color: #050505;
             
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.25), transparent 40%),
-                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.2), transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.15), transparent 45%);
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.45), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.35), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.30), transparent 40%);
         }}
 
         @keyframes gradient-move {{

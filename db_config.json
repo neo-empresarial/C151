@@ -1,0 +1,21 @@
+{
+    "type": "postgres",
+    "host": "ep-icy-field-acmwrw3y-pooler.sa-east-1.aws.neon.tech",
+    "access_levels": [
+        "Admin",
+        "Funcion\u00e1rio",
+        "Visitante"
+    ],
+    "port": 5432,
+    "database": "neondb",
+    "user": "neondb_owner",
+    "password": "npg_Uy2ML0gxPZcu",
+    "face_tech": {
+        "required_hits": 5,
+        "threshold": 0.31,
+        "min_face_width": 0.15,
+        "max_offset": 0.15,
+        "metric": "cosine",
+        "model_name": "ArcFace"
+    }
+}
