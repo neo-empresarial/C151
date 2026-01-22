@@ -3,7 +3,7 @@ from src.common.config import db_config
 from src.language.manager import language_manager as lm
 
 def render():
-    with ui.column().classes('w-full p-2'):
+    with ui.column().classes('w-full p-2 pb-24'):
         config = db_config.config
         face_tech = config.get('face_tech', {})
         
@@ -24,20 +24,22 @@ def render():
         with ui.row().classes('w-full flex justify-between items-center mb-6'):
             ui.label(lm.t('face_recognition')).classes('text-2xl font-bold text-gray-800 dark:text-gray-100')
         
+        select_props = 'outlined dense rounded options-dense behavior=menu input-class="text-gray-800 dark:text-gray-100" popup-content-class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"'
+        
         with ui.row().classes('w-full gap-4 mb-6'):
             with ui.column().classes('flex-1'):
                 ui.select(
                     options=['ArcFace', 'FaceNet', 'VGG-Face', 'OpenFace'],
                     value=face_tech.get('model_name', 'ArcFace'),
                     label=lm.t('model_name')
-                ).classes('w-full').bind_value_to(face_tech, 'model_name').props('outlined dense rounded options-dense behavior=menu input-class="text-gray-800 dark:text-gray-100" popup-content-class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"').disable()
+                ).classes('w-full').bind_value_to(face_tech, 'model_name').props(select_props).disable()
                 
             with ui.column().classes('flex-1'):
                 ui.select(
                     options=['cosine', 'euclidean', 'euclidean_l2'],
                     value=face_tech.get('metric', 'cosine'),
                     label=lm.t('metric')
-                ).classes('w-full').bind_value_to(face_tech, 'metric').props('outlined dense rounded options-dense behavior=menu input-class="text-gray-800 dark:text-gray-100" popup-content-class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"').disable()
+                ).classes('w-full').bind_value_to(face_tech, 'metric').props(select_props).disable()
 
         ui.separator().classes('mb-6 opacity-30')
 
@@ -88,7 +90,7 @@ def render():
         render_levels()
 
         with ui.row().classes('w-full gap-2 items-center mb-6'):
-            level_input = ui.input(placeholder='Novo Nível').classes('flex-grow').props('outlined dense rounded')
+            level_input = ui.input(placeholder=lm.t('access_levels')).classes('flex-grow').props('outlined dense rounded input-class="text-gray-800 dark:text-gray-100"')
             
             def add_level():
                 val = level_input.value.strip()
@@ -99,6 +101,5 @@ def render():
             
             ui.button(icon='add', on_click=add_level).classes('bg-green-600 text-white').props('round dense un-elevated')
 
-        # Fixed Footer for Save Button
-        with ui.row().classes('fixed bottom-0 left-64 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-xl z-50 justify-end items-center'):
-            ui.button(lm.t('save_settings'), on_click=save_settings, icon='save').classes('bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2').props('rounded')
+        with ui.row().classes('fixed bottom-0 left-64 right-0 p-4 bg-transparent backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 shadow-xl z-50 justify-center items-center'):
+            ui.button(lm.t('save_settings'), on_click=save_settings, icon='save').classes('bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 shadow-lg').props('rounded')

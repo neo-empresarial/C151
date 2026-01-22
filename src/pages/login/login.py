@@ -77,20 +77,11 @@ def login_page():
 
             ui.button(lm.t('enter_with_pin'), on_click=lambda: pin_dialog.open()).classes('w11-btn bg-surface border border-white/10 text-primary px-8 py-3 rounded-xl hover:bg-white/5 backdrop-blur-md transition-all shadow-lg text-lg tracking-wide')
             
-        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-6 opacity-40 text-xs')
+        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-6 opacity-40 text-white')
 
     async def loop():
         if not ui.context.client.has_socket_connection:
              return
-        
-        # Reload config in loop (optional, but good for real-time updates if performance allows)
-        # For better performance, maybe only reload occasionally or use a reactive state.
-        # But reading dict from memory is fast.
-        
-        # cfg = db_config.config.get('face_tech', {})
-        # Dynamic update of thresholds if they change? For now, let's keep page load static 
-        # OR just use the variables defined at page scope which are static per page visit.
-        # Re-visiting the page will update them.
         
         ret, frame = camera_manager.read()
         if not ret:
