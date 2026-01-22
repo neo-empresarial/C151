@@ -1,78 +1,164 @@
-from sqlalchemy import create_engine, Column, String, ForeignKey, LargeBinary, Integer
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import QueuePool
-import uuid
-import datetime
-import cv2
 import pickle
 import numpy as np
+import cv2
 from contextlib import contextmanager
+import sys
 
 from src.common.config import db_config
 from src.common.security import encrypt_data, decrypt_data, encrypt_bytes, decrypt_bytes
-
-Base = declarative_base()
-
-class User(Base):
-    __tablename__ = 'users'
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String, nullable=False, unique=True)
-    created_at = Column(String, default=lambda: datetime.datetime.now().isoformat())
-    pin = Column(String, nullable=True) # Encrypted
-    access_level = Column(String, default='Visitante')
-
-    face_embeddings = relationship("FaceEmbedding", back_populates="user", cascade="all, delete-orphan")
-
-class FaceEmbedding(Base):
-    __tablename__ = 'face_embeddings'
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    embedding = Column(LargeBinary) 
-    image_blob = Column(LargeBinary) 
-    created_at = Column(String, default=lambda: datetime.datetime.now().isoformat())
-
-    user = relationship("User", back_populates="face_embeddings")
+from src.common.models import Base, User, FaceEmbedding
 
 class DatabaseManager:
     def __init__(self):
+        print(f"DEBUG: Initializing DatabaseManager. Loaded Config: {db_config.config}")
         self.engine = self._create_engine()
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        self.active_db_type = 'unknown'
+        try:
+             self.active_db_type = db_config.config.get("type", "sqlite")
+        except: 
+             pass
         self.init_db()
+
+    def reload_engine(self):
+        """Reloads the database engine based on current config."""
+        print("DEBUG: Reloading database engine...")
+        print(f"DEBUG: Current Config for Reload: {db_config.config}")
+        try:
+            self.engine.dispose()
+        except:
+            pass
+            
+        self.engine = self._create_engine()
+        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        
+        try:
+            self.active_db_type = db_config.config.get("type", "sqlite")
+        except:
+            self.active_db_type = 'unknown'
+            
+        print(f"DEBUG: Database reloaded. Active type: {self.active_db_type}")
 
     def _create_engine(self):
         config = db_config.config
-        db_type = config.get("type", "sqlite")
-        
-        if db_type == "sqlite":
-            db_file = config.get("host", "users.db")
-            return create_engine(f"sqlite:///{db_file}", connect_args={"check_same_thread": False})
-        
-        elif db_type == "postgres":
-            user = config.get("user")
-            password = config.get("password")
-            host = config.get("host")
-            port = config.get("port")
-            db_name = config.get("database")
-            return create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db_name}", poolclass=QueuePool)
-        
-        else:
-            raise ValueError(f"Unsupported database type: {db_type}")
+        try:
+            db_type = config.get("type", "sqlite")
+            print(f"DEBUG: Creating engine for type: {db_type}")
+            
+            if db_type == "sqlite":
+                db_file = config.get("host", "users.db")
+                print(f"DEBUG: SQLite Host: {db_file}")
+                self.active_db_type = "sqlite"
+                return create_engine(f"sqlite:///{db_file}", echo=True, connect_args={"check_same_thread": False})
+            
+            elif db_type == "postgres":
+                user = config.get("user")
+                password = config.get("password")
+                host = config.get("host")
+                port = config.get("port")
+                db_name = config.get("database")
+                print(f"DEBUG: Postgres Host: {host}, DB: {db_name}, User: {user}")
+                self.active_db_type = "postgres"
+                return create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db_name}", 
+                                     echo=True,
+                                     poolclass=QueuePool,
+                                     connect_args={'connect_timeout': 5, 'sslmode': 'require'})
+            else:
+                 raise ValueError(f"Unsupported database type: {db_type}")
+            
+        except Exception as e:
+            print(f"CRITICAL: DB Engine Creation Error: {e}")
+            print("Falling back to local SQLite due to config error.")
+            return create_engine("sqlite:///fallback_users.db", echo=True, connect_args={"check_same_thread": False})
+
+    @staticmethod
+    def test_connection(config):
+        print(f"DEBUG: Testing connection with config: {config}")
+        try:
+            db_type = config.get("type", "sqlite")
+            if db_type == "sqlite":
+                db_file = config.get("host", "users.db")
+                engine = create_engine(f"sqlite:///{db_file}", echo=True)
+                with engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+                return True, "Conexão SQLite bem-sucedida!"
+            
+            elif db_type == "postgres":
+                user = config.get("user")
+                password = config.get("password")
+                host = config.get("host")
+                port = config.get("port")
+                db_name = config.get("database")
+                engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db_name}", 
+                                       echo=True, # Enable logging for connection test
+                                       connect_args={'connect_timeout': 3, 'sslmode': 'require'})
+                with engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+                return True, "Conexão PostgreSQL bem-sucedida!"
+            
+            return False, f"Tipo de banco desconhecido: {db_type}"
+        except Exception as e:
+            return False, f"Falha na conexão: {str(e)}"
+
+    @staticmethod
+    def verify_and_setup_database(config):
+        print(f"DEBUG: Verifying and Setting up DB with: {config}")
+        try:
+            db_type = config.get("type", "sqlite")
+            engine = None
+            
+            if db_type == "sqlite":
+                db_file = config.get("host", "users.db")
+                engine = create_engine(f"sqlite:///{db_file}", echo=True, connect_args={"check_same_thread": False})
+            
+            elif db_type == "postgres":
+                user = config.get("user")
+                password = config.get("password")
+                host = config.get("host")
+                port = config.get("port")
+                db_name = config.get("database")
+                engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db_name}", 
+                                     echo=True,
+                                     poolclass=QueuePool,
+                                     connect_args={'connect_timeout': 5, 'sslmode': 'require'})
+            else:
+                 return False, f"Tipo de banco desconhecido: {db_type}"
+
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            
+            Base.metadata.create_all(bind=engine)
+            DatabaseManager._migrate_schema_static(engine, db_type)
+            
+            return True, "Conexão e Schema verificados com sucesso!"
+
+        except Exception as e:
+            return False, f"Erro na verificação/setup: {str(e)}"
 
     def init_db(self):
-        Base.metadata.create_all(bind=self.engine)
-        self._migrate_schema()
-
-    def _migrate_schema(self):
-        """Simple migration to add missing columns for existing SQLite databases."""
         try:
-            config = db_config.config
-            if config.get("type", "sqlite") == "sqlite":
-                # For SQLite, we can inspect PRAGMA
-                with self.engine.connect() as conn:
-                    # Check users table
-                    from sqlalchemy import text
+            Base.metadata.create_all(bind=self.engine)
+            current_type = db_config.config.get("type", "sqlite")
+            self._migrate_schema_static(self.engine, current_type)
+        except Exception as e:
+            print(f"CRITICAL DB ERROR: {e}")
+            print("Falling back to local SQLite 'fallback_users.db' to allow application startup.")
+            
+            self.active_db_type = "sqlite_fallback"
+            self.engine = create_engine("sqlite:///fallback_users.db", echo=True, connect_args={"check_same_thread": False})
+            self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+            
+            Base.metadata.create_all(bind=self.engine)
+            self._migrate_schema_static(self.engine, "sqlite")
+
+    @staticmethod
+    def _migrate_schema_static(engine, db_type):
+        try:
+            if db_type == "sqlite":
+                with engine.connect() as conn:
                     result = conn.execute(text("PRAGMA table_info(users)")).fetchall()
                     columns = [row[1] for row in result]
                     
@@ -83,6 +169,10 @@ class DatabaseManager:
                         print("Migration complete.")
         except Exception as e:
             print(f"Migration warning: {e}")
+
+    def _migrate_schema(self):
+        current_type = db_config.config.get("type", "sqlite")
+        self._migrate_schema_static(self.engine, current_type)
 
     @contextmanager
     def get_session(self):
@@ -178,7 +268,7 @@ class DatabaseManager:
             
             new_user = User(name=name, pin=encrypted_pin, access_level=access_level)
             session.add(new_user)
-            session.flush() # To get ID
+            session.flush() 
 
             if frame is not None and embedding is not None:
                 self._add_user_photo_session(session, new_user.id, frame, embedding)

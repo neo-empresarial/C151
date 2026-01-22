@@ -83,5 +83,5 @@ def decrypt_bytes(data: bytes) -> bytes:
     try:
         return cipher_suite.decrypt(data)
     except Exception as e:
-        print(f"Decryption error: {e}")
+        # print(f"Decryption error: {e}")
         return b""

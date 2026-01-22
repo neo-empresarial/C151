@@ -1,21 +1,13 @@
 {
-    "type": "sqlite",
-    "host": "users.db",
-    "port": 5432,
-    "user": "postgres",
-    "password": "",
-    "database": "face_recognition_db",
+    "type": "postgres",
+    "host": "ep-icy-field-acmwrw3y-pooler.sa-east-1.aws.neon.tech",
     "access_levels": [
         "Admin",
         "Funcion\u00e1rio",
         "Visitante"
     ],
-    "face_tech": {
-        "required_hits": 2,
-        "threshold": 0.25,
-        "min_face_width": 0.1,
-        "max_offset": 0.5,
-        "metric": "cosine",
-        "model_name": "ArcFace"
-    }
+    "port": 5432,
+    "database": "neondb",
+    "user": "neondb_owner",
+    "password": "npg_Uy2ML0gxPZcu"
 }
