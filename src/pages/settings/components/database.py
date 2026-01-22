@@ -24,8 +24,27 @@ def render():
         input_props = 'outlined dense rounded input-class="text-gray-800 dark:text-gray-100"'
         select_props = 'outlined dense rounded options-dense behavior=menu input-class="text-gray-800 dark:text-gray-100" popup-content-class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"'
 
+
+        from src.common.security import load_key
+        try:
+            current_key = load_key().decode()
+        except:
+             current_key = ""
+
+        with ui.row().classes('items-center gap-2 mb-1 mt-4'):
+             ui.label(lm.t('secret_key'))
+             with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                    ui.tooltip(lm.t('desc_secret_key')).classes('bg-gray-800 text-white text-xs')
+        
+        secret_key_input = ui.input(
+            value=current_key,
+            password=True,
+            password_toggle_button=True
+        ).classes('w-full mb-6').props(input_props)
+
         with ui.row().classes('items-center gap-2 mb-1'):
              ui.label(lm.t('db_type'))
+
              with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
                     ui.tooltip(lm.t('desc_db_type')).classes('bg-gray-800 text-white text-xs')
         db_type = ui.select(
@@ -99,6 +118,7 @@ def render():
             new_config = config.copy()
             new_config['type'] = db_type.value
             
+
             if db_type.value == 'sqlite':
                 new_config['host'] = host_input.value
             else:
@@ -107,6 +127,15 @@ def render():
                 new_config['database'] = pg_db.value
                 new_config['user'] = pg_user.value
                 new_config['password'] = pg_password.value
+
+
+            # Save Secret Key
+            from src.common.security import save_secret_key
+            if secret_key_input.value:
+                 if not save_secret_key(secret_key_input.value):
+                     ui.notify(lm.t('secret_key_invalid'), type='negative')
+                     return
+
 
             from src.common.database import DatabaseManager
             ui.notify('Verificando conexão e schema...', type='info')
