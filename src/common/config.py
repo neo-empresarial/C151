@@ -25,7 +25,8 @@ DEFAULT_CONFIG = {
         "max_offset": 0.15,
         "threshold": 0.28,
         "metric": "cosine",
-        "model_name": "ArcFace"
+        "model_name": "ArcFace",
+        "check_similarity": False
     },
     "access_levels": ["Admin", "Funcionário", "Visitante"],
     "style": {

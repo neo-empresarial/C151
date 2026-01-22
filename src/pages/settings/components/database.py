@@ -24,40 +24,65 @@ def render():
         input_props = 'outlined dense rounded input-class="text-gray-800 dark:text-gray-100"'
         select_props = 'outlined dense rounded options-dense behavior=menu input-class="text-gray-800 dark:text-gray-100" popup-content-class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"'
 
+        with ui.row().classes('items-center gap-2 mb-1'):
+             ui.label(lm.t('db_type'))
+             with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                    ui.tooltip(lm.t('desc_db_type')).classes('bg-gray-800 text-white text-xs')
         db_type = ui.select(
             options=['sqlite', 'postgres'],
             value=config.get('type', 'sqlite'),
-            label='Tipo de Banco'
         ).classes('w-full mb-4').props(select_props)
         
         sqlite_container = ui.column().classes('w-full')
         with sqlite_container:
+            with ui.row().classes('items-center gap-2 mb-1'):
+                ui.label(lm.t('db_file'))
+                with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                        ui.tooltip(lm.t('desc_db_file')).classes('bg-gray-800 text-white text-xs')
             host_input = ui.input(
-                label='Arquivo do Banco',
                 value=config.get('host', 'users.db')
             ).classes('w-full').props(input_props)
 
         postgres_container = ui.column().classes('w-full').bind_visibility_from(db_type, 'value', value='postgres')
         with postgres_container:
+            with ui.row().classes('items-center gap-2 mb-1'):
+                ui.label(lm.t('db_host'))
+                with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                        ui.tooltip(lm.t('desc_db_host')).classes('bg-gray-800 text-white text-xs')
             pg_host = ui.input(
-                label='Host',
                 value=config.get('host', 'localhost')
             ).classes('w-full').props(input_props)
+            
+            with ui.row().classes('items-center gap-2 mb-1'):
+                ui.label(lm.t('db_port'))
+                with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                        ui.tooltip(lm.t('desc_db_port')).classes('bg-gray-800 text-white text-xs')
             pg_port = ui.number(
-                label='Porta',
                 value=config.get('port', 5432),
                 format='%.0f'
             ).classes('w-full').props(input_props)
+            
+            with ui.row().classes('items-center gap-2 mb-1'):
+                ui.label(lm.t('db_name'))
+                with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                        ui.tooltip(lm.t('desc_db_name')).classes('bg-gray-800 text-white text-xs')
             pg_db = ui.input(
-                label='Database',
                 value=config.get('database', 'face_recognition_db')
             ).classes('w-full').props(input_props)
+
+            with ui.row().classes('items-center gap-2 mb-1'):
+                ui.label(lm.t('db_user'))
+                with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                        ui.tooltip(lm.t('desc_db_user')).classes('bg-gray-800 text-white text-xs')
             pg_user = ui.input(
-                label='Usuário',
                 value=config.get('user', 'postgres')
             ).classes('w-full').props(input_props)
+
+            with ui.row().classes('items-center gap-2 mb-1'):
+                ui.label(lm.t('db_pass'))
+                with ui.icon('help', size='xs').classes('text-gray-400 cursor-help'):
+                        ui.tooltip(lm.t('desc_db_pass')).classes('bg-gray-800 text-white text-xs')
             pg_password = ui.input(
-                label='Senha',
                 password=True,
                 value=config.get('password', '')
             ).classes('w-full').props(input_props)

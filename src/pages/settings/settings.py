@@ -1,7 +1,7 @@
 from nicegui import ui
 from src.common import theme
 from src.language.manager import language_manager as lm
-from src.pages.settings.components import database, face_recognition
+from src.pages.settings.components import database, face_recognition, users_config
 
 def settings_page():
     lm.set_language('pt-br')
@@ -36,4 +36,5 @@ def settings_page():
             if default:
                 ui.timer(0.0, lambda: show_content(component, btn.id), once=True)
         create_menu_item(lm.t('face_recognition'), 'face', face_recognition, default=True)
+        create_menu_item(lm.t('user_management'), 'manage_accounts', users_config)
         create_menu_item(lm.t('configure_database'), 'dns', database)    

@@ -224,6 +224,24 @@ class DatabaseManager:
                     pass
             return results
 
+    def get_user_embeddings(self, user_id):
+        """Retrieves all face embeddings for a specific user ID."""
+        with self.get_session() as session:
+            embeddings_records = session.query(FaceEmbedding).filter(FaceEmbedding.user_id == user_id).all()
+            
+            results = []
+            for record in embeddings_records:
+                try:
+                    decrypted_emb_bytes = decrypt_bytes(record.embedding)
+                    if not decrypted_emb_bytes:
+                        continue
+                    embedding = pickle.loads(decrypted_emb_bytes)
+                    results.append(embedding)
+                except Exception as e:
+                    print(f"Error loading embedding for user {user_id}: {e}")
+                    pass
+            return results
+
     def get_user_by_name(self, name):
         with self.get_session() as session:
             user = session.query(User).filter(User.name == name).first()

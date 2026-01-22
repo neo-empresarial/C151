@@ -11,6 +11,7 @@ from src.common.database import DatabaseManager
 from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager
 from src.common.config import db_config
+import numpy as np
 
 class FlashOverlay(QWidget):
     def __init__(self, parent=None):
@@ -305,17 +306,70 @@ class UserFormDialog(QDialog):
         name = self.name_input.text().strip()
         
         if self.edit_mode:
-             success_db, msg_db = self.db_manager.update_user(
-                 user_id=self.user_data['id'], 
-                 name=name, 
-                 access_level=self.access_input.currentText()
-             )
-             # Update photo if new frame captured
-             if self.captured_frame is not None:
-                 self.db_manager.add_user_photo(self.user_data['id'], self.captured_frame, embedding)
+            # SIMILARITY CHECK
+            check_similarity = db_config.config.get('face_tech', {}).get('check_similarity', False)
+            
+            if check_similarity and self.captured_frame is not None:
+                print(f"DEBUG: Checking similarity for User ID: {self.user_data['id']}")
+                try:
+                    existing_embeddings = self.db_manager.get_user_embeddings(self.user_data['id'])
+                    if existing_embeddings:
+                        print(f"DEBUG: Found {len(existing_embeddings)} existing embeddings for user.")
+                        # Convert new embedding to numpy array
+                        new_emb = np.array(embedding)
+                        
+                        # Calculate distances to all existing embeddings
+                        min_distance = float('inf')
+                        
+                        for old_emb in existing_embeddings:
+                            old_emb_np = np.array(old_emb)
+                            
+                            # Cosine Distance = 1 - Cosine Similarity
+                            dot_product = np.dot(new_emb, old_emb_np)
+                            norm_new = np.linalg.norm(new_emb)
+                            norm_old = np.linalg.norm(old_emb_np)
+                            
+                            cosine_similarity = dot_product / (norm_new * norm_old)
+                            distance = 1.0 - cosine_similarity
+                            
+                            if distance < min_distance:
+                                min_distance = distance
+                        
+                        # Use same threshold as verification
+                        threshold = db_config.config.get('face_tech', {}).get('threshold', 0.28)
+                        print(f"DEBUG: Similarity Result - Min Dist: {min_distance:.4f}, Threshold: {threshold}")
+                        
+                        if min_distance > threshold:
+                            print(f"DEBUG: Similarity Check Failed.")
+                            QMessageBox.critical(self, "Bloqueio de Segurança", 
+                                                f"A foto não corresponde ao usuário atual.\n\n"
+                                                f"Diferença detectada: {min_distance:.3f}\n"
+                                                f"Limite máximo: {threshold}\n\n"
+                                                "Certifique-se de que é a mesma pessoa.")
+                            return
+                        else:
+                             print(f"DEBUG: Similarity Check Passed.")
+                    else:
+                        print(f"DEBUG: No existing embeddings found. Allowing update (First photo).")
+
+                except Exception as e:
+                    print(f"Error in similarity check: {e}")
+                    # Fail open or closed? Here we fail open (log error but allow save) to avoid blocking valid updates on error 
+                    # OR we could warn the user. Let's just log for now to be safe.
+
+
+
+            success_db, msg_db = self.db_manager.update_user(
+                user_id=self.user_data['id'], 
+                name=name, 
+                access_level=self.access_input.currentText()
+            )
+            # Update photo if new frame captured
+            if self.captured_frame is not None:
+                self.db_manager.add_user_photo(self.user_data['id'], self.captured_frame, embedding)
 
         else:
-             success_db, msg_db = self.db_manager.create_user(
+            success_db, msg_db = self.db_manager.create_user(
                  name=name, 
                  access_level=self.access_input.currentText(),
                  frame=self.captured_frame, 

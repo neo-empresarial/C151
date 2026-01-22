@@ -253,6 +253,18 @@ class InferenceEngine:
                             align=True,
                             anti_spoofing=False
                         )
+                        
+                        # PRIORITIZE CLOSEST FACE (Largest Area)
+                        if face_objs:
+                            # Calculate area for each face and sort descending
+                            face_objs.sort(key=lambda x: x['facial_area']['w'] * x['facial_area']['h'], reverse=True)
+                            
+                            # Keep only the largest face (closest to camera)
+                            # This ignores background faces
+                            face_objs = [face_objs[0]]
+                            
+                            logging.debug(f"Processing largest face with area: {face_objs[0]['facial_area']['w'] * face_objs[0]['facial_area']['h']}")
+
                         self.last_recognition_time = time.time()
                 except Exception:
                     pass 
