@@ -4,21 +4,39 @@ from src.common.styles import Colors, DarkColors, Fonts, Shapes, ANTIGRAVITY_THE
 def load_theme():
     ui.add_head_html(ANTIGRAVITY_THEME, shared=True)
 
-_is_dark_mode = False
+class ThemeState:
+    def __init__(self):
+        self._is_dark = False
+        self._listeners = []
+
+    @property
+    def is_dark(self):
+        return self._is_dark
+
+    @is_dark.setter
+    def is_dark(self, value):
+        if self._is_dark != value:
+            self._is_dark = value
+            for listener in list(self._listeners):
+                try:
+                    listener(value)
+                except Exception:
+                    pass 
+
+    def add_listener(self, listener):
+        self._listeners.append(listener)
+        listener(self._is_dark)
+
+    def remove_listener(self, listener):
+        if listener in self._listeners:
+            self._listeners.remove(listener)
+
+theme_state = ThemeState()
 
 def render_theme_toggle_button():
-    global _is_dark_mode
-    is_dark = _is_dark_mode
-    if is_dark:
-        ui.run_javascript("document.body.classList.add('body--dark')")
-    else:
-        ui.run_javascript("document.body.classList.remove('body--dark')")
-
     def toggle_mode():
-        global _is_dark_mode
-        _is_dark_mode = not _is_dark_mode
-        new_state = _is_dark_mode
-        if new_state:
+        theme_state.is_dark = not theme_state.is_dark
+        if theme_state.is_dark:
             ui.run_javascript("document.body.classList.add('body--dark')")
             btn.props('icon=light_mode')
             tooltip.text = "Modo Claro"
@@ -26,9 +44,16 @@ def render_theme_toggle_button():
             ui.run_javascript("document.body.classList.remove('body--dark')")
             btn.props('icon=dark_mode')
             tooltip.text = "Modo Escuro"
+        
+        btn.update()
 
-    icon_name = 'light_mode' if is_dark else 'dark_mode'
-    tooltip_text = "Modo Claro" if is_dark else "Modo Escuro"
+    if theme_state.is_dark:
+        ui.run_javascript("document.body.classList.add('body--dark')")
+    else:
+        ui.run_javascript("document.body.classList.remove('body--dark')")
+
+    icon_name = 'light_mode' if theme_state.is_dark else 'dark_mode'
+    tooltip_text = "Modo Claro" if theme_state.is_dark else "Modo Escuro"
 
     with ui.button(icon=icon_name, on_click=toggle_mode).classes('fixed bottom-8 right-8 z-50 rounded-full anim-enter delay-300').props('round flat type=a') as btn:
         btn.style('width: 64px; height: 64px; background: rgba(125,125,125,0.1); backdrop-filter: blur(20px); color: var(--text-primary); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: transform 0.3s ease;')
@@ -65,12 +90,20 @@ render_close_button = render_window_controls
 def loading_overlay():
     with ui.element('div').classes('fixed inset-0 z-[9999] flex items-center justify-center bg-white transition-opacity duration-700 pointer-events-none') as overlay:
         overlay.style('opacity: 1;') 
-        ui.image('/public/images/certi/logo-certi.png').classes('w-64 animate-pulse')
-
+        
+        img = ui.image().classes('w-64 animate-pulse')
+        
+        def update_logo_overlay(is_dark):
+            img.source = 'src/public/images/certi/logo-certi-2.png' if is_dark else 'src/public/images/certi/logo-certi.png'
+            img.update()
+            
+        theme_state.add_listener(update_logo_overlay)
+        
     def fade_out():
         overlay.style('opacity: 0;')
         def safe_delete():
             try:
+                theme_state.remove_listener(update_logo_overlay)
                 overlay.delete()
             except Exception:
                 pass

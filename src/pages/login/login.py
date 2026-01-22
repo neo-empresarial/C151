@@ -12,13 +12,11 @@ from src.language.manager import language_manager as lm
 
 from src.common.config import db_config
 
-# Default fallbacks if config is missing
 DEFAULT_MIN_FACE_WIDTH = 0.15
 DEFAULT_REQUIRED_HITS = 1
 DEFAULT_MAX_OFFSET = 0.15
 
 def login_page():
-    # Load config values
     face_config = db_config.config.get('face_tech', {})
     REQUIRED_HITS = face_config.get('required_hits', DEFAULT_REQUIRED_HITS)
     MIN_FACE_WIDTH = face_config.get('min_face_width', DEFAULT_MIN_FACE_WIDTH)

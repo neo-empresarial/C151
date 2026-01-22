@@ -13,8 +13,8 @@ from typing import Dict, Any
 CONFIG_FILE = "db_config.json"
 
 DEFAULT_CONFIG = {
-    "type": "sqlite",  # 'sqlite' or 'postgres'
-    "host": "users.db", # Filename for sqlite, host address for postgres
+    "type": "sqlite",  
+    "host": "users.db",
     "port": 5432,
     "user": "postgres",
     "password": "",
