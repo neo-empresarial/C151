@@ -28,9 +28,16 @@ from src.pages.login.login import login_page
 from src.pages.dashboard.dashboard import dashboard_page
 from src.pages.setup.setup import setup_page
 from src.pages.landing.landing import landing_page
+from src.pages.settings.settings import settings_page
 
 def startup_wrapper():
     start_services()
+    if getattr(sys, 'frozen', False):
+        try:
+            import pyi_splash
+            pyi_splash.close()
+        except ImportError:
+            pass
 
 app.on_startup(startup_wrapper)
 app.on_shutdown(stop_services)
@@ -42,8 +49,42 @@ app.add_static_files('/public', os.path.join(static_src_path, 'public'))
 
 START_MODE = 'default'
 
+
+def ensure_security():
+    from src.common.security import is_key_configured, save_secret_key
+    from src.language.manager import language_manager as lm
+
+    if is_key_configured():
+        return True
+
+    loading_overlay()
+    with ui.dialog().props('persistent') as dialog, ui.card().classes('w-96 p-6'):
+        ui.label(lm.t('security_config_title')).classes('text-xl font-bold mb-4 text-red-600')
+        ui.label(lm.t('security_config_desc')).classes('mb-4 text-gray-700')
+        
+        ui.label(lm.t('enter_secret_key')).classes('text-sm font-bold text-gray-600')
+        key_input = ui.input(placeholder='Ex: min-ha-cha-ve-se-cre-ta-123').classes('w-full mb-6').props('outlined dense')
+        
+        def save_key():
+            if not key_input.value:
+                ui.notify(lm.t('key_cannot_be_empty'), type='warning')
+                return
+            
+            if save_secret_key(key_input.value):
+                ui.notify(lm.t('key_saved_success'), type='positive')
+                dialog.close()
+                ui.run_javascript('window.location.href = "/"')
+            else:
+                ui.notify(lm.t('error_saving_key'), type='negative')
+
+        ui.button(lm.t('save_and_start'), on_click=save_key).classes('w-full bg-red-600 text-white font-bold')
+    
+    dialog.open()
+    return False
+
 @ui.page('/')
 def index_page():
+    if not ensure_security(): return
     loading_overlay()
     
     if START_MODE == 'dashboard':
@@ -55,16 +96,25 @@ def index_page():
 
 @ui.page('/recognition')
 def recognition():
+    if not ensure_security(): return
     loading_overlay()
     login_page()
 
+@ui.page('/settings')
+def settings():
+    if not ensure_security(): return
+    loading_overlay()
+    settings_page()
+
 @ui.page('/dashboard')
 def dashboard():
+    if not ensure_security(): return
     loading_overlay()
     dashboard_page()
 
 @ui.page('/setup')
 def setup():
+    if not ensure_security(): return
     setup_page()
 
 def find_free_port(start_port=8080, max_tries=100):

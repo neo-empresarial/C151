@@ -1,10 +1,18 @@
 
 import cv2
 import threading
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
+                             QLineEdit, QDialog, QMessageBox, QProgressDialog, QListWidget, 
+                             QListWidgetItem, QComboBox, QGraphicsOpacityEffect)
+from PyQt5.QtCore import Qt, QTimer, QSize, QPropertyAnimation, QEasingCurve, QObject, pyqtSignal as Signal
+from PyQt5.QtGui import QImage, QPixmap
 from deepface import DeepFace
 from src.common.database import DatabaseManager
 from src.common.styles import STYLESHEET
 from src.common.camera import CameraManager
+from src.common.config import db_config
+from src.common.logger import AppLogger
+import numpy as np
 
 class FlashOverlay(QWidget):
     def __init__(self, parent=None):
@@ -63,10 +71,52 @@ class UserFormDialog(QDialog):
         self.user_data = user_data 
         self.edit_mode = user_data is not None
         
-        self.setWindowTitle("Cadastrar Usuário" if not self.edit_mode else f"Editar: {user_data['name']}")
-        self.setModal(True)
-        self.resize(900, 650)
-        self.setStyleSheet(STYLESHEET)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.resize(500, 680)
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #1e1e1e;
+                border: 1px solid #333;
+                border-radius: 12px;
+            }
+            QLabel { color: #e0e0e0; font-family: 'Segoe UI', sans-serif; }
+            QLineEdit, QComboBox {
+                background-color: #2d2d2d;
+                border: 1px solid #3e3e3e;
+                border-radius: 6px;
+                padding: 8px;
+                color: #fff;
+                font-size: 14px;
+            }
+            QLineEdit:focus, QComboBox:focus { border: 1px solid #0078d4; }
+            QPushButton {
+                background-color: #333;
+                border: 1px solid #444;
+                border-radius: 6px;
+                color: #fff;
+                padding: 8px 16px;
+                font-weight: 600;
+            }
+            QPushButton:hover { background-color: #444; }
+            QPushButton#primary {
+                background-color: #0078d4;
+                border: 1px solid #0078d4;
+            }
+            QPushButton#primary:hover { background-color: #106ebe; }
+            QPushButton#danger {
+                background-color: #d83b01;
+                border: 1px solid #d83b01;
+            }
+            QPushButton#danger:hover { background-color: #ea4a1f; }
+            QPushButton#close {
+                background-color: transparent;
+                border: none;
+                color: #888;
+                font-size: 16px;
+            }
+            QPushButton#close:hover { color: #fff; background-color: #c42b1c; border-radius: 0 12px 0 0; }
+        """)
         
         self.db_manager = db_manager
         self.captured_frame = None
@@ -82,82 +132,124 @@ class UserFormDialog(QDialog):
 
     def init_ui(self):
         main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         self.setLayout(main_layout)
 
-        body_layout = QHBoxLayout()
+        title_bar = QWidget()
+        title_bar.setFixedHeight(40)
+        title_bar.setStyleSheet("background-color: #252525; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom: 1px solid #333;")
+        title_layout = QHBoxLayout(title_bar)
+        title_layout.setContentsMargins(15, 0, 0, 0)
+        
+        title_lbl = QLabel("Cadastrar Usuário" if not self.edit_mode else f"Editar: {self.user_data['name']}")
+        title_lbl.setStyleSheet("font-size: 14px; font-weight: bold; border: none;")
+        
+        btn_close = QPushButton("✕")
+        btn_close.setObjectName("close")
+        btn_close.setFixedSize(40, 40)
+        btn_close.clicked.connect(self.reject)
+        
+        title_layout.addWidget(title_lbl)
+        title_layout.addStretch()
+        title_layout.addWidget(btn_close)
+        
+        main_layout.addWidget(title_bar)
+
+        content = QWidget()
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(20, 20, 20, 20)
+        content_layout.setSpacing(15)
         
         cam_container = QWidget()
+        cam_container.setFixedHeight(300)
+        cam_container.setStyleSheet("background-color: #000; border-radius: 8px; border: 1px solid #333;")
         cam_layout = QVBoxLayout(cam_container)
         cam_layout.setContentsMargins(0,0,0,0)
         
-        lbl_cam = QLabel("Foto do Usuário")
-        lbl_cam.setStyleSheet("font-weight: bold; font-size: 16px;")
-        cam_layout.addWidget(lbl_cam)
-        
-        self.video_label = QLabel("Inicializando Câmera...")
+        self.video_label = QLabel("Inicializando...")
         self.video_label.setAlignment(Qt.AlignCenter)
-        self.video_label.setStyleSheet("background-color: black; border: 1px solid #ccc; border-radius: 4px;")
-        self.video_label.setFixedSize(480, 360)
+        self.video_label.setStyleSheet("color: #666; font-size: 12px; border: none;")
         cam_layout.addWidget(self.video_label)
         
         self.flash_overlay = FlashOverlay(self.video_label)
+        content_layout.addWidget(cam_container)
         
+        cam_controls = QHBoxLayout()
         self.btn_capture = QPushButton("📸 Capturar Foto")
         self.btn_capture.setObjectName("primary")
+        self.btn_capture.setCursor(Qt.PointingHandCursor)
         self.btn_capture.clicked.connect(self.toggle_capture)
-        cam_layout.addWidget(self.btn_capture)
+        cam_controls.addWidget(self.btn_capture)
+        content_layout.addLayout(cam_controls)
         
         self.lbl_status = QLabel("")
         self.lbl_status.setAlignment(Qt.AlignCenter)
-        self.lbl_status.setStyleSheet("color: #107c10; font-weight: bold; font-size: 14px;")
-        cam_layout.addWidget(self.lbl_status)
+        self.lbl_status.setStyleSheet("color: #107c10; font-weight: bold; font-size: 12px; margin-top: 5px;")
+        content_layout.addWidget(self.lbl_status)
+
+        form_layout = QVBoxLayout()
+        form_layout.setSpacing(10)
         
-        body_layout.addWidget(cam_container)
-        
-        form_container = QWidget()
-        form_layout = QVBoxLayout(form_container)
-        form_layout.setAlignment(Qt.AlignTop)
-        
-        form_layout.addWidget(QLabel("ID do Usuário (Auto-gerado):"))
-        self.id_input = QLineEdit()
-        self.id_input.setReadOnly(True)
-        self.id_input.setStyleSheet("background-color: #f3f3f3; color: #555;")
-        if self.edit_mode:
-            self.id_input.setText(self.user_data['id'])
-        else:
-            self.id_input.setText("Gerado ao Salvar")
-        form_layout.addWidget(self.id_input)
-        
-        form_layout.addWidget(QLabel("Nome Completo:"))
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Ex: João Silva")
+        self.name_input.setPlaceholderText("Nome Completo")
         if self.edit_mode:
             self.name_input.setText(self.user_data['name'])
             self.name_input.textChanged.connect(self.on_input_change)
+            
+        self.access_input = QComboBox()
+        self.access_input.addItems(db_config.config.get('access_levels', ["Visitante"]))
+        if self.edit_mode:
+            self.access_input.setCurrentText(self.user_data.get('access_level', 'Visitante'))
+
+        form_layout.addWidget(QLabel("Nome do Usuário"))
         form_layout.addWidget(self.name_input)
+        form_layout.addWidget(QLabel("Nível de Acesso"))
+        form_layout.addWidget(self.access_input)
         
-        body_layout.addWidget(form_container)
-        main_layout.addLayout(body_layout)
-        
+        content_layout.addLayout(form_layout)
+        content_layout.addStretch()
+
+        # Action Buttons
         btn_layout = QHBoxLayout()
-        btn_layout.addStretch()
-        
         self.btn_save = QPushButton("Salvar Registro")
         self.btn_save.setObjectName("primary")
-        self.btn_save.setMinimumWidth(150)
+        self.btn_save.setFixedHeight(36)
+        self.btn_save.setCursor(Qt.PointingHandCursor)
         self.btn_save.clicked.connect(self.prepare_save)
         self.btn_save.setEnabled(False) 
         if self.edit_mode:
              self.btn_save.setText("Salvar Alterações")
              self.btn_save.setEnabled(False) 
 
+        btn_cancel = QPushButton("Cancelar")
+        btn_cancel.setFixedHeight(36)
+        btn_cancel.setCursor(Qt.PointingHandCursor)
+        btn_cancel.clicked.connect(self.reject)
+        
+        btn_layout.addWidget(btn_cancel)
         btn_layout.addWidget(self.btn_save)
         
-        btn_cancel = QPushButton("Cancelar")
-        btn_cancel.clicked.connect(self.reject)
-        btn_layout.addWidget(btn_cancel)
+        content_layout.addLayout(btn_layout)
+        main_layout.addWidget(content)
         
-        main_layout.addLayout(btn_layout)
+        self.dragging = False
+        self.offset = None
+        title_bar.mousePressEvent = self.mousePressEvent
+        title_bar.mouseMoveEvent = self.mouseMoveEvent
+        title_bar.mouseReleaseEvent = self.mouseReleaseEvent
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.dragging = True
+            self.offset = event.globalPos() - self.pos()
+
+    def mouseMoveEvent(self, event):
+        if self.dragging:
+            self.move(event.globalPos() - self.offset)
+
+    def mouseReleaseEvent(self, event):
+        self.dragging = False
 
     def on_input_change(self):
         if self.edit_mode and self.name_input.text().strip() != self.user_data['name']:
@@ -200,6 +292,7 @@ class UserFormDialog(QDialog):
 
     def on_camera_error(self, err_msg):
         self.lbl_status.setText(f"Erro Câmera: {err_msg}")
+        self.lbl_status.setStyleSheet("color: #ff5252; font-weight: bold;")
         if not self.edit_mode:
             self.video_label.setText(err_msg)
 
@@ -235,6 +328,7 @@ class UserFormDialog(QDialog):
             
             self.flash_overlay.flash()
             self.lbl_status.setText("✅ FOTO CAPTURADA")
+            self.lbl_status.setStyleSheet("color: #107c10; font-weight: bold; font-size: 12px; margin-top: 5px;")
             
             self.btn_capture.setText("🔄 Refazer Foto")
             self.btn_save.setEnabled(True)
@@ -291,10 +385,76 @@ class UserFormDialog(QDialog):
 
         name = self.name_input.text().strip()
         
+        AppLogger.log(f"DEBUG: finish_save called. Edit Mode: {self.edit_mode}")
+        AppLogger.log(f"DEBUG: Current Config: {db_config.config}")
+        check_sim_val = db_config.config.get('face_tech', {}).get('check_similarity', False)
+        AppLogger.log(f"DEBUG: check_similarity value: {check_sim_val}")
+        
         if self.edit_mode:
-             success_db, msg_db = self.db_manager.update_user(self.user_data['id'], name, self.captured_frame, embedding)
+            db_config._config = db_config.load_config()
+            AppLogger.log(f"DEBUG: Config reloaded from disk: {db_config.config}")
+
+            check_similarity = db_config.config.get('face_tech', {}).get('check_similarity', False)
+            
+            if check_similarity and self.captured_frame is not None:
+                AppLogger.log(f"DEBUG: Checking similarity for User ID: {self.user_data['id']}")
+                try:
+                    existing_embeddings = self.db_manager.get_user_embeddings(self.user_data['id'])
+                    if existing_embeddings:
+                        AppLogger.log(f"DEBUG: Found {len(existing_embeddings)} existing embeddings for user.")
+                        new_emb = np.array(embedding)
+                        min_distance = float('inf')
+                        
+                        for old_emb in existing_embeddings:
+                            old_emb_np = np.array(old_emb)
+                            
+                            dot_product = np.dot(new_emb, old_emb_np)
+                            norm_new = np.linalg.norm(new_emb)
+                            norm_old = np.linalg.norm(old_emb_np)
+                            
+                            cosine_similarity = dot_product / (norm_new * norm_old)
+                            distance = 1.0 - cosine_similarity
+                            
+                            if distance < min_distance:
+                                min_distance = distance
+                        
+                        threshold = db_config.config.get('face_tech', {}).get('threshold', 0.28)
+                        AppLogger.log(f"DEBUG: Similarity Result - Min Dist: {min_distance:.4f}, Threshold: {threshold}")
+                        
+                        if min_distance > threshold:
+                            AppLogger.log(f"DEBUG: Similarity Check Failed.")
+                            QMessageBox.critical(self, "Bloqueio de Segurança", 
+                                                f"A foto não corresponde ao usuário atual.\n\n"
+                                                f"Diferença detectada: {min_distance:.3f}\n"
+                                                f"Limite máximo: {threshold}\n\n"
+                                                "Certifique-se de que é a mesma pessoa.")
+                            return
+                        else:
+                             AppLogger.log(f"DEBUG: Similarity Check Passed.")
+                    else:
+                        AppLogger.log(f"DEBUG: No existing embeddings found. Allowing update (First photo).")
+
+                except Exception as e:
+                    AppLogger.log(f"Error in similarity check: {e}")
+
+
+
+            success_db, msg_db = self.db_manager.update_user(
+                user_id=self.user_data['id'], 
+                name=name, 
+                access_level=self.access_input.currentText()
+            )
+            # Update photo if new frame captured
+            if self.captured_frame is not None:
+                self.db_manager.add_user_photo(self.user_data['id'], self.captured_frame, embedding)
+
         else:
-             success_db, msg_db = self.db_manager.create_user(name, self.captured_frame, embedding)
+            success_db, msg_db = self.db_manager.create_user(
+                 name=name, 
+                 access_level=self.access_input.currentText(),
+                 frame=self.captured_frame, 
+                 embedding=embedding
+             )
         
         if success_db:
             QMessageBox.information(self, "Sucesso", msg_db)

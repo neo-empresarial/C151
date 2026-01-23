@@ -1,78 +1,160 @@
-# DeepFace Recognition Access Control
+# Sistema de Controle de Acesso Facial
 
-Sistema visual de controle de acesso baseado em reconhecimento facial utilizando DeepFace, OpenCV e NiceGUI.
+![Logo Certi](src/public/images/certi/logo-certi-2.png)
 
-## 🚀 Funcionalidades
-
-- **Reconhecimento Facial em Tempo Real**: Identificação de usuários cadastrados via webcam.
-- **Painel Administrativo**: Gestão completa de usuários (adicionar, editar, remover) com fotos e níveis de acesso.
-- **Configuração Inicial**: Assistente de primeiro uso para criar o usuário Administrador.
-- **Controles de Biometria**: Fluxo de captura, visualização e confirmação de fotos para garantir qualidade no reconhecimento.
-- **Múltiplas Fotos**: Suporte para múltiplas fotos por usuário para maior precisão.
-- **Internacionalização (i18n)**: Suporte completo para múltiplos idiomas (Português, Inglês e Espanhol).
-- **Interface Moderna**: Design com Glassmorphism, temas Claro/Escuro e controles de janela integrados.
-- **Serviço de Background**: Executável silencioso que monitora o acesso e bloqueia a tela se necessário.
+Sistema robusto de controle de acesso biométrico desenvolvido em Python, utilizando **DeepFace** para reconhecimento facial de alta precisão e **NiceGUI** para uma interface moderna e responsiva. O sistema suporta criptografia de dados sensíveis e detecção de vivacidade (Liveness) para prevenir fraudes.
 
 ---
 
-## 🛠️ Build e Instalação (Windows)
+## Arquitetura do Sistema
 
-Para obter a **melhor performance de inicialização** (instantânea), recomendamos o **Modo Pasta**. O Executável Único é portátil, mas demora ~40s para abrir.
+O sistema segue uma arquitetura modular baseada em serviços e eventos. Abaixo estão os fluxos principais de funcionamento.
 
-### 1. Build Modo Pasta (Recomendado - Rápido)
-Gera uma pasta com o aplicativo "instalado". Inicia em 3-5 segundos.
+### Visão Geral dos Componentes
 
-```powershell
-.\build_scripts\windows\build_folder.ps1
+```mermaid
+graph TD
+    A[Frontend UI - NiceGUI] <--> B[Services Layer]
+    B <--> C[Inference Engine / IA]
+    B <--> D[Database Manager]
+    B <--> E[Camera Manager]
+    C --> F[DeepFace Model]
+    C --> G[Liveness Detector]
+    D <--> H[(SQLite/Postgres DB)]
+    D <--> I[Secret Key Encryption]
 ```
-Isso criará a pasta `dist/DeepFaceRec_Unified`.
 
-**Criar Atalho na Área de Trabalho**:
-```powershell
-.\build_scripts\windows\create_shortcut.ps1
+### Fluxo de Reconhecimento Facial
+
+Este fluxo ocorre em tempo real (loop da thread de inferência):
+
+```mermaid
+sequenceDiagram
+    participant Cam as Camera Service
+    participant Engine as Engine (IA)
+    participant DeepFace as DeepFace Model
+    participant RAM as Memoria (Embeddings)
+
+    Cam->>Engine: Envia Frame
+    Engine->>DeepFace: 1. Detecta Rosto
+    alt Rosto Encontrado
+        Engine->>Engine: 2. Verifica Liveness (Spoofing)
+        alt Se Real
+            Engine->>DeepFace: 3. Gera Vetor (Embedding)
+            Engine->>RAM: 4. Busca Vetor Similar
+            RAM-->>Engine: Retorna ID Usuario (Match)
+            Engine-->>Cam: Acesso Liberado
+        else Se Fake
+            Engine-->>Cam: ALERTA DE FRAUDE
+        end
+    end
 ```
-Isso cria um ícone "Biometria" no seu Desktop.
 
-### 2. Build Arquivo Único (Modo Portátil - Lento)
-Gera `dist/DeepFaceRec_Unified.exe`. Ideal para pen-drives, mas demora cerca de **1 minuto** para extrair e iniciar.
+### Fluxo de Cadastro e Criptografia
 
-```powershell
-.\build_scripts\windows\build_unified.ps1
+Como os dados são protegidos ao salvar um novo usuário:
+
+```mermaid
+flowchart LR
+    User[Usuário UI] -->|Dados + Foto| Service[Cadastro Service]
+    Service -->|Texto Puro| Encrypt[Módulo de Segurança]
+    
+    subgraph Criptografia
+    Encrypt -->|Fernet| Cipher[Dados Cifrados]
+    SecretKey[.env SECRET_KEY] --> Encrypt
+    end
+    
+    Cipher --> DB[(Banco de Dados)]
+    
+    style SecretKey fill:#f96,stroke:#333
+    style DB fill:#9cf,stroke:#333
 ```
 
 ---
 
-## 🚀 Executando a Aplicação (CLI)
+## Segurança e Criptografia
+Todos os dados sensíveis (biometria, PINs e fotos) são criptografados antes de serem salvos no banco de dados.
 
-O executável unificado (`DeepFaceRec_Unified.exe`) suporta diferentes modos de inicialização via linha de comando:
+-   **Algoritmo**: Fernet (Simétrico) da biblioteca `cryptography`.
+-   **Chave Secreta (`SECRET_KEY`)**:
+    -   Armazenada no arquivo `.env`.
+    -   **Crítico**: Se a chave for perdida, os dados no banco tornam-se irrecuperáveis.
+    -   **Compartilhamento**: Para acessar o mesmo banco de dados (ex: PostgreSQL) de múltiplos computadores, a **mesma SECRET_KEY** deve ser configurada em todos os clientes.
+-   **Memória Volátil**: O motor de IA descriptografa os embeddings apenas para a memória RAM durante a inicialização. Se a chave for alterada, o motor recarrega automaticamente para garantir consistência.
 
-### Modos de Uso
+---
 
-**1. Modo Padrão (Landing Page)**
+## Estrutura de Diretórios
+
+O projeto é organizado para facilitar a manutenção e escalabilidade:
+
+| Diretório | Descrição |
+| :--- | :--- |
+| **`src/`** | Código fonte principal da aplicação. |
+| &nbsp;&nbsp;`common/` | Utilitários globais: Banco de dados, Config, Logger, Segurança (`security.py`), Temas. |
+| &nbsp;&nbsp;`features/` | Módulos principais de lógica: `inferencia` (IA) e `cadastro`. |
+| &nbsp;&nbsp;`language/` | Gerenciamento de internacionalização (`languages.json`). |
+| &nbsp;&nbsp;`pages/` | Telas da interface: Login, Dashboard, Configurações, Setup. |
+| &nbsp;&nbsp;`public/` | Arquivos estáticos (Imagens, Ícones). |
+| &nbsp;&nbsp;`services/` | Gerenciadores de estado (Camera, DB, Engine). |
+| **`build_scripts/`** | Scripts PowerShell para gerar executáveis e atalhos. |
+| **`tests/`** | Testes unitários e scripts de verificação. |
+
+---
+
+## Como Executar
+
+### Pré-requisitos
+-   Python 3.10+
+-   Dependências listadas em `requirements.txt`
+
+### Ambiente de Desenvolvimento
+1.  **Clone o repositório**
+2.  **Crie o ambiente virtual**:
+    ```powershell
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
+3.  **Instale as dependências**:
+    ```powershell
+    pip install -r requirements.txt
+    ```
+4.  **Execute**:
+    ```powershell
+    python main.py
+    ```
+
+---
+
+## Executando (Modos de Uso)
+
+O executável unificado (`DeepFaceRec_Unified.exe`) suporta diferentes modos de incialização via linha de comando:
+
+### 1. Modo Padrão (Landing Page)
 Abre a tela inicial com opções de navegação.
 ```powershell
 .\DeepFaceRec_Unified.exe
 ```
 
-**2. Gestão de Usuários (Dashboard)**
+### 2. Gestão de Usuários (Dashboard)
 Abre diretamente o painel administrativo.
 ```powershell
 .\DeepFaceRec_Unified.exe --ManageUsers
 ```
 
-**3. Reconhecimento Facial (Login)**
+### 3. Reconhecimento Facial (Login)
 Abre diretamente a tela de reconhecimento/login.
 ```powershell
 .\DeepFaceRec_Unified.exe --FaceRecognition
 ```
 
-**4. Serviço Oculto (Hidden Camera)**
+### 4. Serviço Oculto (Hidden Camera)
 Monitoramento silencioso em background. A janela fica **invisível** e só aparece se detectar uma pessoa não autorizada.
 ```powershell
 .\DeepFaceRec_Unified.exe --HiddenCam
 ```
 
-### Configurações Extras
+#### Configurações Extras do Serviço Oculto
 
 **Timeout (Auto-Kill)**
 Fecha o aplicativo automaticamente após X segundos.
@@ -87,39 +169,38 @@ No modo `--HiddenCam`:
 
 ---
 
-## 📂 Estrutura de Pastas para Deploy
+## Gerando Executáveis (Build)
 
-Para rodar em outro computador **sem internet**:
+O projeto possui scripts automatizados em `build_scripts/windows` para criar o distribuível.
 
-1. Copie o arquivo `DeepFaceRec_Unified.exe`.
-2. (Opcional) Copie o `users.db` se quiser manter os usuários já cadastrados.
-
-O executável já contém:
-- Python e bibliotecas.
-- Modelos de IA (DeepFace/FaceNet/MiniFASNet).
-- Interface Web (NiceGUI).
-
-**Nota**: Na primeira execução, o app pode levar até 1 minuto para extrair os arquivos temporários antes de exibir a **Tela de Carregamento**. Isso é normal para executáveis compactados.
-
----
-
-## 🛠️ Ambiente de Desenvolvimento (Windows)
-
-### Instalação
-1. Clone o repositório.
-2. Crie um venv: `python -m venv venv`
-3. Ative: `.\venv\Scripts\activate`
-4. Instale: `pip install -r requirements.txt`
-
-### Rodando Localmente
+### 1. Modo Pasta (Recomendado para Performance)
+Cria uma pasta com o executável e dependências descompactadas. Inicialização instantânea.
 ```powershell
-python main.py
+.\build_scripts\windows\build_folder.ps1
 ```
+*Gera: `dist/DeepFaceRec_Unified/`*
+
+**Atalho na Área de Trabalho**:
+```powershell
+.\build_scripts\windows\create_shortcut.ps1
+```
+
+### 2. Modo Arquivo Único
+Cria um único arquivo `.exe`. Mais fácil de compartilhar, mas demora ~20s para iniciar (descompactação temporária).
+```powershell
+.\build_scripts\windows\build_unified.ps1
+```
+*Gera: `dist/DeepFaceRec_Unified.exe`*
 
 ---
 
-## 🧠 Configuração do Modelo
-O modelo padrão de IA é definido em `src/common/config.py`.
-```python
-MODEL_NAME = 'ArcFace'
-```
+## Configurações Avançadas
+
+Todas as configurações de IA e Banco de Dados podem ser alteradas diretamente na interface em **Configurações > Banco de Dados** ou **Configurações > Reconhecimento**.
+
+-   **Verify Similarity**: Impede que a foto de um usuário seja substituída por uma foto muito diferente, prevenindo erros de cadastro.
+-   **Liveness Check**: Analisa micro-expressões e variações de textura para diferenciar uma foto real de uma tela/papel (Spoofing).
+
+---
+
+© 2026 Fundação Certi - Todos os direitos reservados.

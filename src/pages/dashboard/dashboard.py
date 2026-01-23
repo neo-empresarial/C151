@@ -12,7 +12,7 @@ def dashboard_page():
     with ui.column().classes('w-full h-screen p-0 relative overflow-y-auto bg-surface'):
         theme.render_theme_toggle_button()
         theme.render_window_controls()
-        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-8 opacity-50 text-xs')
+        ui.label(lm.t('demo_footer')).classes('absolute bottom-4 left-8 opacity-50 text-white')
 
         header.render(lambda: ui.navigate.to('/'))
 

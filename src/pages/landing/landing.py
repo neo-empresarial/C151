@@ -10,6 +10,8 @@ def landing_page():
 
     with ui.column().classes('w-full h-screen relative overflow-hidden bg-transparent justify-between'):
         theme.render_theme_toggle_button()
+        with ui.button(icon='settings', on_click=lambda: ui.navigate.to('/settings')).classes('absolute top-6 left-6 z-50 rounded-full w-12 h-12 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors'):
+            ui.tooltip(lm.t('settings')).classes('bg-gray-800 text-white')
         theme.render_close_button()
         
         selector.render()

@@ -23,6 +23,11 @@ class CameraManager:
                 if not self.cap.isOpened():
                      self.cap = cv2.VideoCapture(self.index)
                 
+                # Set Resolution to HD (1280x720) to prevent blur
+                if self.cap.isOpened():
+                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+                
                 if self.is_working():
                     self.running = True
                     logging.info(f"Câmera {self.index} iniciada com sucesso.")
@@ -38,12 +43,24 @@ class CameraManager:
                 self.cap = cv2.VideoCapture(self.index, cv2.CAP_DSHOW)
                 if not self.cap.isOpened():
                     self.cap = cv2.VideoCapture(self.index)
+                
+                # Set Resolution
+                if self.cap.isOpened():
+                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
                 self.running = True
                 logging.info(f"Câmera encontrada e iniciada no index {self.index}.")
             else:
                 logging.error("Nenhuma câmera funcional encontrada nos primeiros 10 índices.")
                 self.index = 0
-                self.cap = cv2.VideoCapture(0) 
+                self.cap = cv2.VideoCapture(0)
+                
+                # Set Resolution
+                if self.cap.isOpened():
+                    self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
                 self.running = True
 
     def is_working(self):

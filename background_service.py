@@ -76,10 +76,8 @@ def main(timeout=None):
     if timeout:
         def auto_shutdown():
             import os
-            # Only shutdown if the alert window is NOT showing
             if alert_manager.local_state_fullscreen:
                 AppLogger.log(f"Timeout reached ({timeout}s) but ALERT IS ACTIVE. Extension granted. Retrying in 5s...", "warning")
-                # Reschedule check in 5 seconds
                 reschedule_t = threading.Timer(5.0, auto_shutdown)
                 reschedule_t.daemon = True
                 reschedule_t.start()
@@ -88,9 +86,8 @@ def main(timeout=None):
             AppLogger.log(f"Timeout reached ({timeout}s). FORCING EXIT via threading.Timer", "info")
             os._exit(0)
         
-        # Use threading.Timer to ensure it runs regardless of asyncio loop state
         t = threading.Timer(timeout, auto_shutdown)
-        t.daemon = True # Daemon thread so it doesn't block exit if app closes early
+        t.daemon = True
         t.start()
 
     try:
