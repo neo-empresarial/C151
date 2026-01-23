@@ -12,8 +12,9 @@ def settings_page():
                 ui.label(lm.t('settings')).classes('text-xl font-bold text-gray-800 dark:text-white ml-2')
             menu_container = ui.column().classes('w-full gap-2')
             ui.space()
-            with ui.row().classes('w-full justify-center mb-4'):
-                theme.render_theme_toggle_button()
+            
+            theme.apply_theme()
+
                 
         content_area = ui.column().classes('flex-1 h-full overflow-y-auto p-8 relative scroll-smooth')
         menu_buttons = []

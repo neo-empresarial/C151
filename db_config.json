@@ -1,6 +1,6 @@
 {
-    "type": "postgres",
-    "host": "ep-icy-field-acmwrw3y-pooler.sa-east-1.aws.neon.tech",
+    "type": "sqlite",
+    "host": "new-db.db",
     "access_levels": [
         "Admin",
         "Funcion\u00e1rio",
@@ -11,7 +11,7 @@
     "user": "neondb_owner",
     "password": "npg_Uy2ML0gxPZcu",
     "face_tech": {
-        "required_hits": 3,
+        "required_hits": 1,
         "threshold": 0.19,
         "min_face_width": 0.15,
         "max_offset": 0.11,

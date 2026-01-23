@@ -50,7 +50,7 @@ def render():
         db_type = ui.select(
             options=['sqlite', 'postgres'],
             value=config.get('type', 'sqlite'),
-        ).classes('w-full mb-4').props(select_props)
+        ).classes('w-full mb-4 text-gray-800').props(select_props)
         
         sqlite_container = ui.column().classes('w-full')
         with sqlite_container:

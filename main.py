@@ -32,6 +32,12 @@ from src.pages.settings.settings import settings_page
 
 def startup_wrapper():
     start_services()
+    if getattr(sys, 'frozen', False):
+        try:
+            import pyi_splash
+            pyi_splash.close()
+        except ImportError:
+            pass
 
 app.on_startup(startup_wrapper)
 app.on_shutdown(stop_services)

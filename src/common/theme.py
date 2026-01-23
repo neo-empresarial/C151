@@ -33,24 +33,26 @@ class ThemeState:
 
 theme_state = ThemeState()
 
-def render_theme_toggle_button():
-    def toggle_mode():
-        theme_state.is_dark = not theme_state.is_dark
-        if theme_state.is_dark:
-            ui.run_javascript("document.body.classList.add('body--dark')")
-            btn.props('icon=light_mode')
-            tooltip.text = "Modo Claro"
-        else:
-            ui.run_javascript("document.body.classList.remove('body--dark')")
-            btn.props('icon=dark_mode')
-            tooltip.text = "Modo Escuro"
-        
-        btn.update()
-
+def apply_theme():
     if theme_state.is_dark:
         ui.run_javascript("document.body.classList.add('body--dark')")
     else:
         ui.run_javascript("document.body.classList.remove('body--dark')")
+
+def render_theme_toggle_button():
+    def toggle_mode():
+        theme_state.is_dark = not theme_state.is_dark
+        if theme_state.is_dark:
+            btn.props('icon=light_mode')
+            tooltip.text = "Modo Claro"
+        else:
+            btn.props('icon=dark_mode')
+            tooltip.text = "Modo Escuro"
+        
+        apply_theme()
+        btn.update()
+
+    apply_theme()
 
     icon_name = 'light_mode' if theme_state.is_dark else 'dark_mode'
     tooltip_text = "Modo Claro" if theme_state.is_dark else "Modo Escuro"

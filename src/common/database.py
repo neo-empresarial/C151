@@ -24,7 +24,6 @@ class DatabaseManager:
         self.init_db()
 
     def reload_engine(self):
-        """Reloads the database engine based on current config."""
         print("DEBUG: Reloading database engine...")
         print(f"DEBUG: Current Config for Reload: {db_config.config}")
         try:

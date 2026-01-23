@@ -4,7 +4,7 @@ if (Test-Path "dist\DeepFaceRec_Unified") { Remove-Item -Recurse -Force "dist\De
 if (Test-Path "DeepFaceRec_Unified.spec") { Remove-Item -Force "DeepFaceRec_Unified.spec" }
 
 
-.\venv\Scripts\pyinstaller --noconfirm --onedir --noconsole --icon "$PWD\src\public\icons\certi-icon.ico" --name "DeepFaceRec_Unified" `
+.\venv\Scripts\pyinstaller --noconfirm --onedir --noconsole --icon "$PWD\src\public\icons\certi-icon.ico" --splash "$PWD\src\public\images\certi\splash-screen.png" --name "DeepFaceRec_Unified" `
     --specpath "build" `
     --add-data "$PWD\src;src" `
     --add-data "$env:USERPROFILE\.deepface\weights;.deepface\weights" `
