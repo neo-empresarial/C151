@@ -1,3 +1,4 @@
+import os
 from nicegui import ui
 from src.common.state import state
 from src.language.manager import language_manager as lm
@@ -8,13 +9,32 @@ def set_lang(lang):
     ui.navigate.reload()
 
 def render():
-    languages = [
-        {'code': 'pt', 'name': 'Português', 'flag': 'src/public/images/country flags/Brazil.png'},
-        {'code': 'en', 'name': 'English', 'flag': 'src/public/images/country flags/USA.svg'},
-        {'code': 'es', 'name': 'Español', 'flag': 'src/public/images/country flags/Mexico.png'}
-    ]
+    languages = []
+    base_flag_path = 'src/public/images/country flags'
+    
+    for code, data in lm.languages.items():
+        # Check for png
+        flag_path = f'{base_flag_path}/{code}.png'
+        if not os.path.exists(flag_path):
+             # Check for svg
+             flag_path = f'{base_flag_path}/{code}.svg'
+             if not os.path.exists(flag_path):
+                 # Fallback to default
+                 flag_path = f'{base_flag_path}/default.png'
+        
+        languages.append({
+            'code': code,
+            'name': data.get('language', code.upper()),
+            'flag': flag_path
+        })
 
-    current_flag = next((l['flag'] for l in languages if l['code'] == state.language), languages[0]['flag'])
+    # Sort if needed, or keep json order.
+    # Ensure current state language is valid or fallback
+    current_lang_obj = next((l for l in languages if l['code'] == state.language), None)
+    if current_lang_obj:
+        current_flag = current_lang_obj['flag']
+    else:
+        current_flag = languages[0]['flag'] if languages else f'{base_flag_path}/default.png'
 
     with ui.row().classes('fixed top-6 right-32 z-50 items-center'):
         with ui.button(icon='expand_more').props('flat round').classes('text-white opacity-80 hover:opacity-100 transition-opacity'):
