@@ -10,26 +10,32 @@ def set_lang(lang):
 
 def render():
     languages = []
-    # Use /public mount point which maps to src/public
-    base_flag_path = '/public/images/country_flags'
+    url_base_path = '/public/images/country_flags'
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    fs_base_path = os.path.join(os.path.dirname(current_dir), 'public', 'images', 'country_flags')
     
     for code, data in lm.languages.items():
-        flag_path = f'{base_flag_path}/{code}.png'
-        if not os.path.exists(flag_path):
-             flag_path = f'{base_flag_path}/{code}.svg'
-             if not os.path.exists(flag_path):
-                 flag_path = f'{base_flag_path}/default.png'
+        fs_path = os.path.join(fs_base_path, f'{code}.png')
+        flag_url = f'{url_base_path}/{code}.png'
+        
+        if not os.path.exists(fs_path):
+             fs_path = os.path.join(fs_base_path, f'{code}.svg')
+             flag_url = f'{url_base_path}/{code}.svg'
+             
+             if not os.path.exists(fs_path):
+                 flag_url = f'{url_base_path}/default.png'
         
         languages.append({
             'code': code,
             'name': data.get('language', code.upper()),
-            'flag': flag_path
+            'flag': flag_url
         })
+
     current_lang_obj = next((l for l in languages if l['code'] == state.language), None)
     if current_lang_obj:
         current_flag = current_lang_obj['flag']
     else:
-        current_flag = languages[0]['flag'] if languages else f'{base_flag_path}/default.png'
+        current_flag = languages[0]['flag'] if languages else f'{url_base_path}/default.png'
 
     with ui.row().classes('fixed top-6 right-32 z-50 items-center'):
         with ui.button(icon='expand_more').props('flat round').classes('text-white opacity-80 hover:opacity-100 transition-opacity'):
