@@ -1,4 +1,5 @@
 from nicegui import ui
+import asyncio
 from .. import functions as f
 from . import camera
 from src.language.manager import language_manager as lm
@@ -10,12 +11,17 @@ class AddDialog:
         
         self.captured_photos = []
         self.capture_state = {'frame': None, 'paused': False, 'confirmed': False}
+        self.loading_visible = False
         
-        with self.dialog, ui.card().classes('w-full h-full p-8 overflow-hidden'):
+        with self.dialog, ui.card().classes('w-full h-full p-8 overflow-hidden relative'):
              self.render_header()
              with ui.row().classes('w-full h-full flex-nowrap max-w-full gap-8'):
                 self.render_left_column()
                 self.render_right_column()
+
+             with ui.column().classes('absolute inset-0 z-[9999] bg-black/80 justify-center items-center backdrop-blur-sm').bind_visibility_from(self, 'loading_visible') as self.loading_overlay:
+                 ui.spinner(size='4rem').classes('text-primary')
+                 ui.label('Criando sistema...').classes('text-white text-2xl font-bold mt-4 animate-pulse')
 
         self.setup_capture_dialog()
 
@@ -67,20 +73,19 @@ class AddDialog:
 
     def setup_capture_dialog(self):
         self.capture_dialog = ui.dialog()
-        with self.capture_dialog, ui.card().classes('w-[500px] p-0 overflow-hidden flex flex-col w11-card'):
-            with ui.row().classes('w-full bg-black p-2 justify-between items-center'):
-                ui.label(lm.t('capture_photo')).classes('text-white font-bold ml-2')
-                ui.button(icon='close', on_click=self.capture_dialog.close).props('round dense flat color=white')
+        with self.capture_dialog, ui.card().classes('w-[800px] max-w-full p-0 overflow-hidden flex flex-col w11-card'):
+            with ui.row().classes('w-full p-3 justify-between items-center z-20 absolute top-0 left-0'):
+                ui.label(lm.t('capture_photo')).classes('text-white font-bold ml-2 shadow-black drop-shadow-md')
+                ui.button(icon='close', on_click=self.capture_dialog.close).props('round dense flat color=white').classes('shadow-black drop-shadow-md')
 
-            with ui.element('div').classes('relative w-full h-[400px] bg-black overflow-hidden justify-center items-center'):
-                 self.cam_view = ui.interactive_image().classes('w-full h-full object-cover')
-                 camera.render_overlay()
-                 with ui.column().classes('absolute bottom-6 left-0 right-0 items-center gap-3 z-10 w-full'):
-                      self.c_btn = ui.button('Capturar', icon='camera_alt', on_click=self.do_capture_frame).classes('w11-btn scale-125 bg-white text-black')
-                      with ui.row().classes('gap-3 hidden') as row:
+            self.cam_card, self.cam_view = camera.render_view()
+            with self.cam_card:
+                 with ui.row().classes('absolute bottom-0 w-full p-6 justify-center items-center gap-6 z-30'):
+                      self.c_btn = ui.button('Capturar', icon='camera_alt', on_click=self.do_capture_frame).classes('w11-btn scale-110 bg-white text-black shadow-xl')
+                      with ui.row().classes('gap-4 hidden') as row:
                          self.c_confirm_row = row
-                         ui.button('Refazer', icon='refresh', color='white', on_click=self.reset_capture).props('text-color=black')
-                         ui.button('Confirmar', icon='check', color='positive', on_click=self.confirm_capture)
+                         ui.button('Refazer', icon='refresh', color='white', on_click=self.reset_capture).props('outline text-color=white').classes('w11-btn')
+                         ui.button('Confirmar', icon='check', color='positive', on_click=self.confirm_capture).classes('w11-btn shadow-lg')
 
         self.cam_timer = ui.timer(0.05, self.cam_loop, active=False)
         self.capture_dialog.on_value_change(lambda e: self.cam_timer.deactivate() if not e.value else None)
@@ -120,30 +125,31 @@ class AddDialog:
             self.c_confirm_row.visible = True
 
     async def confirm_capture(self):
-        if self.capture_state['frame'] is not None:
-            try:
-                result = await f.verify_enrollment_logic(self.capture_state['frame'])
-                
-                if not result['success']:
-                    ui.notify(result['message'], type='negative')
-                    self.reset_capture()
-                    return
+        async with f.loading_state():
+            if self.capture_state['frame'] is not None:
+                try:
+                    result = await f.verify_enrollment_logic(self.capture_state['frame'])
+                    
+                    if not result['success']:
+                        ui.notify(result['message'], type='negative')
+                        self.reset_capture()
+                        return
 
-                matched_user = result.get('matched_user')
-                if matched_user:
-                    ui.notify(lm.t('error_face_exists', name=matched_user['name']), type='negative')
-                    self.reset_capture()
-                    return
+                    matched_user = result.get('matched_user')
+                    if matched_user:
+                        ui.notify(lm.t('error_face_exists', name=matched_user['name']), type='negative')
+                        self.reset_capture()
+                        return
 
-                emb = result['embedding']
-                self.captured_photos.append((self.capture_state['frame'], emb))
-                
-                ui.notify(lm.t('photo_validated'), type='positive')
-                self.update_gallery()
-                self.capture_dialog.close()
-                
-            except Exception as e:
-                ui.notify(lm.t('internal_error', error=str(e)), type='negative')
+                    emb = result['embedding']
+                    self.captured_photos.append((self.capture_state['frame'], emb))
+                    
+                    ui.notify(lm.t('photo_validated'), type='positive')
+                    self.update_gallery()
+                    self.capture_dialog.close()
+                    
+                except Exception as e:
+                    ui.notify(lm.t('internal_error', error=str(e)), type='negative')
 
     async def save_new_user(self):
         if not self.name_input.value or not self.pin_setup.value:
@@ -151,20 +157,31 @@ class AddDialog:
         if not self.captured_photos:
             ui.notify(lm.t('capture_one_photo'), type='warning'); return
         
-        success, user_id = f.create_user_db(
-            name=self.name_input.value,
-            pin=self.pin_setup.value,
-            access_level=self.access_select.value
-        )
-        if not success:
-            ui.notify(f'Erro: {user_id}', type='negative'); return
+        self.loading_visible = True
+        await asyncio.sleep(0.1)
+
+        try:
+            success, user_id = await f.run.io_bound(f.create_user_db, 
+                name=self.name_input.value,
+                pin=self.pin_setup.value,
+                access_level=self.access_select.value
+            )
             
-        count = 0
-        for frame, emb in self.captured_photos:
-            ok, _ = f.add_user_photo_db(user_id, frame, emb)
-            if ok: count += 1
-        
-        ui.notify(lm.t('user_created', count=count))
-        await f.reload_model_logic()
-        self.dialog.close()
-        self.on_user_added()
+            if not success:
+                ui.notify(f'Erro: {user_id}', type='negative')
+                self.loading_visible = False
+                return
+                
+            count = 0
+            for frame, emb in self.captured_photos:
+                ok, _ = await f.run.io_bound(f.add_user_photo_db, user_id, frame, emb)
+                if ok: count += 1
+            
+            ui.notify(lm.t('user_created', count=count))
+            await f.reload_model_logic()
+            self.dialog.close()
+            self.on_user_added()
+        except Exception as e:
+            ui.notify(f'Error: {str(e)}', type='negative')
+        finally:
+            self.loading_visible = False

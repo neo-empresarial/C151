@@ -1,8 +1,17 @@
 from src.services.services import db_manager, engine, camera_manager
 import cv2
 import base64
-from nicegui import run
+from nicegui import run, ui
+from contextlib import asynccontextmanager
 import time
+
+@asynccontextmanager
+async def loading_state():
+    await ui.run_javascript('document.body.style.cursor = "wait"')
+    try:
+        yield
+    finally:
+        await ui.run_javascript('document.body.style.cursor = "default"')
 
 def get_all_users():
     return db_manager.get_users()

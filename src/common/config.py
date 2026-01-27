@@ -8,13 +8,32 @@ LIVENESS_MODEL_PATH = 'src/public/weights/2.7_80x80_MiniFASNetV2.pth'
 
 import json
 import os
+import sys
 from typing import Dict, Any
 
 CONFIG_FILE = "db_config.json"
 
+def get_app_data_dir():
+    try:
+        if sys.platform == 'win32':
+            app_data = os.getenv('APPDATA')
+        else:
+            app_data = os.path.expanduser('~/.config')
+        
+        data_dir = os.path.join(app_data, 'FaceRecon')
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+        return data_dir
+    except Exception as e:
+        print(f"Error creating data dir: {e}")
+        return "."
+
+DATA_DIR = get_app_data_dir()
+CONFIG_FILE = os.path.join(DATA_DIR, "db_config.json")
+
 DEFAULT_CONFIG = {
     "type": "sqlite",  
-    "host": "users.db",
+    "host": os.path.join(DATA_DIR, "users.db"),
     "port": 5432,
     "user": "postgres",
     "password": "",

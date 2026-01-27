@@ -1,13 +1,12 @@
 from cryptography.fernet import Fernet
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
+from src.common.config import DATA_DIR
 
-load_dotenv()
+KEY_FILE = os.path.join(DATA_DIR, "secret.key")
+ENV_FILE = os.path.join(DATA_DIR, ".env")
 
-from dotenv import set_key
-
-KEY_FILE = "secret.key"
-ENV_FILE = ".env"
+load_dotenv(ENV_FILE)
 
 def is_key_configured():
     return os.getenv("SECRET_KEY") is not None

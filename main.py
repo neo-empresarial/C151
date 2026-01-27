@@ -133,7 +133,6 @@ def run_app(start_mode='default'):
 
     port = find_free_port()
     print(f"Starting UI on port {port} with mode {start_mode}")
-    # Use absolute path for window icon (native mode often requires file path)
     favicon_path = os.path.join(static_src_path, 'public', 'icons', 'certi-icon.ico')
 
     ui.run(title='DeepFace Access Control', 
