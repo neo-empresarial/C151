@@ -52,20 +52,20 @@ class EditDialog:
 
     def setup_capture_dialog(self):
         self.capture_dialog = ui.dialog()
-        with self.capture_dialog, ui.card().classes('w-[500px] p-0 overflow-hidden flex flex-col w11-card'):
-            with ui.row().classes('w-full bg-black p-2 justify-between items-center'):
-                ui.label(lm.t('capture_photo')).classes('text-white font-bold ml-2')
-                ui.button(icon='close', on_click=self.capture_dialog.close).props('round dense flat color=white')
+        with self.capture_dialog, ui.card().classes('w-[800px] max-w-full p-0 overflow-hidden flex flex-col w11-card'):
+            with ui.row().classes('w-full p-3 justify-between items-center z-20 absolute top-0 left-0'):
+                ui.label(lm.t('capture_photo')).classes('text-white font-bold ml-2 shadow-black drop-shadow-md')
+                ui.button(icon='close', on_click=self.capture_dialog.close).props('round dense flat color=white').classes('shadow-black drop-shadow-md')
 
-            with ui.element('div').classes('relative w-full h-[400px] bg-black overflow-hidden justify-center items-center'):
-                 self.edit_cam_view = ui.interactive_image().classes('w-full h-full object-cover')
-                 camera.render_overlay()
-                 with ui.column().classes('absolute bottom-6 left-0 right-0 items-center gap-3 z-10 w-full'):
-                      self.e_capture_btn = ui.button(lm.t('capture'), icon='camera_alt', on_click=self.edit_capture).classes('w11-btn scale-125 bg-white text-black')
-                      with ui.row().classes('gap-3 hidden') as row:
+            self.cam_card, self.edit_cam_view = camera.render_view()
+            # self.edit_cam_view.classes('opacity-90')
+            with self.cam_card:
+                 with ui.row().classes('absolute bottom-0 w-full p-6 justify-center items-center gap-6 z-30'):
+                      self.e_capture_btn = ui.button(lm.t('capture'), icon='camera_alt', on_click=self.edit_capture).classes('w11-btn scale-110 bg-white text-black shadow-xl')
+                      with ui.row().classes('gap-4 hidden') as row:
                          self.e_confirm_row = row
-                         ui.button(lm.t('retake'), icon='refresh', color='white', on_click=self.edit_reset).props('text-color=black')
-                         ui.button(lm.t('save'), icon='check', color='positive', on_click=self.edit_confirm_add)
+                         ui.button(lm.t('retake'), icon='refresh', color='white', on_click=self.edit_reset).props('outline text-color=white').classes('w11-btn')
+                         ui.button(lm.t('save'), icon='check', color='positive', on_click=self.edit_confirm_add).classes('w11-btn shadow-lg')
 
         self.edit_cam_timer = ui.timer(0.05, self.edit_cam_loop, active=False)
         self.capture_dialog.on_value_change(lambda e: self.edit_cam_timer.deactivate() if not e.value else None)
@@ -85,13 +85,14 @@ class EditDialog:
         gallery.render(self.photos_container, user_photos, self.delete_photo)
 
     async def delete_photo(self, photo_id):
-        success, msg = f.delete_photo_from_db(photo_id)
-        if success:
-            ui.notify(lm.t('photo_removed'))
-            self.refresh_edit_gallery(self.current_edit_id[0])
-            await f.reload_model_logic()
-        else:
-            ui.notify(f'Erro: {msg}', type='negative')
+        async with f.loading_state():
+            success, msg = f.delete_photo_from_db(photo_id)
+            if success:
+                ui.notify(lm.t('photo_removed'))
+                self.refresh_edit_gallery(self.current_edit_id[0])
+                await f.reload_model_logic()
+            else:
+                ui.notify(f'Erro: {msg}', type='negative')
 
     def open_capture_dialog(self):
         self.edit_reset()
@@ -121,82 +122,84 @@ class EditDialog:
             self.e_confirm_row.visible = True
 
     async def edit_confirm_add(self):
-        if self.edit_capture_state['frame'] is not None:
-            try:
-                result = await f.verify_enrollment_logic(self.edit_capture_state['frame'])
-                
-                if not result['success']:
-                    ui.notify(result['message'], type='negative')
-                    self.edit_reset()
-                    return
-
-                matched_user = result.get('matched_user')
-                if matched_user:
-                    if matched_user['id'] != self.current_edit_id[0]:
-                        ui.notify(lm.t('error_face_exists', name=matched_user['name']), type='negative')
+        async with f.loading_state():
+            if self.edit_capture_state['frame'] is not None:
+                try:
+                    result = await f.verify_enrollment_logic(self.edit_capture_state['frame'])
+                    
+                    if not result['success']:
+                        ui.notify(result['message'], type='negative')
                         self.edit_reset()
                         return
-                
-                emb = result['embedding']
-                db_config._config = db_config.load_config()
-                check_similarity = db_config.config.get('face_tech', {}).get('check_similarity', False)
-                AppLogger.log(f"DEBUG: [EditDialog] Similarity Check Enabled: {check_similarity}")
 
-                if check_similarity:
-                    existing_embeddings = f.get_user_embeddings(self.current_edit_id[0]) 
+                    matched_user = result.get('matched_user')
+                    if matched_user:
+                        if matched_user['id'] != self.current_edit_id[0]:
+                            ui.notify(lm.t('error_face_exists', name=matched_user['name']), type='negative')
+                            self.edit_reset()
+                            return
                     
-                    if existing_embeddings:
-                         AppLogger.log(f"DEBUG: Found {len(existing_embeddings)} existing embeddings.")
-                         new_emb = np.array(emb)
-                         min_distance = float('inf')
+                    emb = result['embedding']
+                    db_config._config = db_config.load_config()
+                    check_similarity = db_config.config.get('face_tech', {}).get('check_similarity', False)
+                    AppLogger.log(f"DEBUG: [EditDialog] Similarity Check Enabled: {check_similarity}")
 
-                         for old_emb in existing_embeddings:
-                            old_emb_np = np.array(old_emb)
-                            dot_product = np.dot(new_emb, old_emb_np)
-                            norm_new = np.linalg.norm(new_emb)
-                            norm_old = np.linalg.norm(old_emb_np)
-                            cosine_similarity = dot_product / (norm_new * norm_old)
-                            distance = 1.0 - cosine_similarity
-                            if distance < min_distance:
-                                min_distance = distance
-                         
-                         update_safety_threshold = 0.30
-                         AppLogger.log(f"DEBUG: Min Dist: {min_distance:.4f}, Update Safety Threshold: {update_safety_threshold}")
+                    if check_similarity:
+                        existing_embeddings = f.get_user_embeddings(self.current_edit_id[0]) 
+                        
+                        if existing_embeddings:
+                             AppLogger.log(f"DEBUG: Found {len(existing_embeddings)} existing embeddings.")
+                             new_emb = np.array(emb)
+                             min_distance = float('inf')
 
-                         if min_distance > update_safety_threshold:
-                             ui.notify(lm.t('similarity_error') + f" (Dist: {min_distance:.2f})", type='negative', multi_line=True)
-                             AppLogger.log("DEBUG: Similarity Check FAILED. Blocked.")
-                             self.edit_reset()
-                             return
+                             for old_emb in existing_embeddings:
+                                old_emb_np = np.array(old_emb)
+                                dot_product = np.dot(new_emb, old_emb_np)
+                                norm_new = np.linalg.norm(new_emb)
+                                norm_old = np.linalg.norm(old_emb_np)
+                                cosine_similarity = dot_product / (norm_new * norm_old)
+                                distance = 1.0 - cosine_similarity
+                                if distance < min_distance:
+                                    min_distance = distance
+                             
+                             update_safety_threshold = 0.30
+                             AppLogger.log(f"DEBUG: Min Dist: {min_distance:.4f}, Update Safety Threshold: {update_safety_threshold}")
+
+                             if min_distance > update_safety_threshold:
+                                 ui.notify(lm.t('similarity_error') + f" (Dist: {min_distance:.2f})", type='negative', multi_line=True)
+                                 AppLogger.log("DEBUG: Similarity Check FAILED. Blocked.")
+                                 self.edit_reset()
+                                 return
+                        else:
+                            AppLogger.log("DEBUG: No existing embeddings. Allowing first photo.")
+
+                    success, _ = f.add_user_photo_db(self.current_edit_id[0], self.edit_capture_state['frame'], emb)
+                    
+                    if success: 
+                        ui.notify(lm.t('photo_validated'), type='positive')
+                        self.refresh_edit_gallery(self.current_edit_id[0])
+                        self.capture_dialog.close()
+                        await f.reload_model_logic()
                     else:
-                        AppLogger.log("DEBUG: No existing embeddings. Allowing first photo.")
-
-                success, _ = f.add_user_photo_db(self.current_edit_id[0], self.edit_capture_state['frame'], emb)
-                
-                if success: 
-                    ui.notify(lm.t('photo_validated'), type='positive')
-                    self.refresh_edit_gallery(self.current_edit_id[0])
-                    self.capture_dialog.close()
-                    await f.reload_model_logic()
-                else:
-                    ui.notify(lm.t('error_saving_photo'), type='negative')
-                    
-            except Exception as e:
-                ui.notify(lm.t('internal_error', error=str(e)), type='negative')
+                        ui.notify(lm.t('error_saving_photo'), type='negative')
+                        
+                except Exception as e:
+                    ui.notify(lm.t('internal_error', error=str(e)), type='negative')
 
     async def save_edit_info(self):
         if not self.edit_name.value or not self.edit_pin.value:
             ui.notify(lm.t('fill_name_pin'), type='negative'); return
-        updates = {
-            'name': self.edit_name.value,
-            'pin': self.edit_pin.value,
-            'access_level': self.edit_access.value
-        }
-        success, msg = f.update_user_db(self.current_edit_id[0], updates)
-        if success:
-             ui.notify(lm.t('data_updated'))
-             await f.reload_model_logic() 
-             self.dialog.close()
-             self.on_user_updated()
-        else:
-             ui.notify(f'Erro: {msg}')
+        async with f.loading_state():
+            updates = {
+                'name': self.edit_name.value,
+                'pin': self.edit_pin.value,
+                'access_level': self.edit_access.value
+            }
+            success, msg = f.update_user_db(self.current_edit_id[0], updates)
+            if success:
+                ui.notify(lm.t('data_updated'))
+                await f.reload_model_logic() 
+                self.dialog.close()
+                self.on_user_updated()
+            else:
+                ui.notify(f'Erro: {msg}')

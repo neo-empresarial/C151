@@ -43,6 +43,7 @@ def login_page():
             ui.notify(lm.t('admin_identified'), type='positive')
         else:
             ui.notify(lm.t('access_granted'), type='positive')
+            ui.notify(f"{user.get('name')}", type='positive')
             ui.timer(3.0, lambda: reset_state(), once=True)
 
     def trigger_access(user):
