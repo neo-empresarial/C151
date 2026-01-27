@@ -7,9 +7,10 @@ import cv2
 from contextlib import contextmanager
 import sys
 
-from src.common.config import db_config
+from src.common.config import db_config, DATA_DIR
 from src.common.security import encrypt_data, decrypt_data, encrypt_bytes, decrypt_bytes
 from src.common.models import Base, User, FaceEmbedding
+import os
 
 class DatabaseManager:
     def __init__(self):
@@ -39,19 +40,20 @@ class DatabaseManager:
         except:
             self.active_db_type = 'unknown'
             
-        print(f"DEBUG: Database reloaded. Active type: {self.active_db_type}")
 
     def _create_engine(self):
         config = db_config.config
         try:
             db_type = config.get("type", "sqlite")
-            print(f"DEBUG: Creating engine for type: {db_type}")
             
             if db_type == "sqlite":
                 db_file = config.get("host", "users.db")
-                print(f"DEBUG: SQLite Host: {db_file}")
+                if not os.path.isabs(db_file):
+                    db_file = os.path.join(DATA_DIR, db_file)
+                os.makedirs(os.path.dirname(db_file), exist_ok=True)
+                
                 self.active_db_type = "sqlite"
-                return create_engine(f"sqlite:///{db_file}", echo=True, connect_args={"check_same_thread": False})
+                return create_engine(f"sqlite:///{db_file}", echo=False, connect_args={"check_same_thread": False})
             
             elif db_type == "postgres":
                 user = config.get("user")
@@ -59,19 +61,20 @@ class DatabaseManager:
                 host = config.get("host")
                 port = config.get("port")
                 db_name = config.get("database")
-                print(f"DEBUG: Postgres Host: {host}, DB: {db_name}, User: {user}")
                 self.active_db_type = "postgres"
                 return create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db_name}", 
-                                     echo=True,
+                                     echo=False,
                                      poolclass=QueuePool,
                                      connect_args={'connect_timeout': 5, 'sslmode': 'require'})
             else:
                  raise ValueError(f"Unsupported database type: {db_type}")
             
         except Exception as e:
-            print(f"CRITICAL: DB Engine Creation Error: {e}")
-            print("Falling back to local SQLite due to config error.")
-            return create_engine("sqlite:///fallback_users.db", echo=True, connect_args={"check_same_thread": False})
+            print(f"DB Engine Error: {e}")
+            
+            fallback_path = os.path.join(DATA_DIR, "fallback_users.db")
+            os.makedirs(os.path.dirname(fallback_path), exist_ok=True)
+            return create_engine(f"sqlite:///{fallback_path}", echo=False, connect_args={"check_same_thread": False})
 
     @staticmethod
     def test_connection(config):
@@ -147,7 +150,8 @@ class DatabaseManager:
             print("Falling back to local SQLite 'fallback_users.db' to allow application startup.")
             
             self.active_db_type = "sqlite_fallback"
-            self.engine = create_engine("sqlite:///fallback_users.db", echo=True, connect_args={"check_same_thread": False})
+            fallback_path = os.path.join(DATA_DIR, "fallback_users.db")
+            self.engine = create_engine(f"sqlite:///{fallback_path}", echo=True, connect_args={"check_same_thread": False})
             self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
             
             Base.metadata.create_all(bind=self.engine)

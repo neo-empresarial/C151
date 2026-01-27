@@ -18,6 +18,7 @@ if (Test-Path "FaceRecon-V0.spec") { Remove-Item -Force "FaceRecon-V0.spec" }
     --specpath "build" `
     --add-data "$PWD\src;src" `
     --add-data "$env:USERPROFILE\.deepface\weights;.deepface\weights" `
+    --add-binary "C:\Windows\System32\msvcp140_1.dll;." `
     --hidden-import "deepface" `
     --hidden-import "nicegui" `
     --hidden-import "scipy" `
@@ -43,3 +44,26 @@ if (Test-Path "FaceRecon-V0.spec") { Remove-Item -Force "FaceRecon-V0.spec" }
 Write-Host "Build complete. Output folder is at dist/FaceRecon-V0"
 Copy-Item "build_scripts\windows\create_shortcut.ps1" -Destination "dist\FaceRecon-V0\create_shortcut.ps1"
 Write-Host "Shortcut script copied to dist/FaceRecon-V0"
+
+$isccPath = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+$issFile = "build_scripts\windows\setup.iss"
+
+if (Test-Path $isccPath) {
+    if (Test-Path $issFile) {
+        Write-Host "Inno Setup found. Compiling installer..."
+        $ProjectRoot = $PWD.Path
+        & $isccPath "/DProjectRoot=$ProjectRoot" $issFile
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Installer created successfully at dist/FaceRecon_Setup.exe" -ForegroundColor Green
+        } else {
+            Write-Host "Installer compilation failed." -ForegroundColor Red
+        }
+    } else {
+        Write-Host "Setup script not found at $issFile" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "Inno Setup Compiler (ISCC.exe) not found at default location." -ForegroundColor Yellow
+    Write-Host "Please install Inno Setup to generate the installer setup.exe automatically."
+    Write-Host "Download: https://jrsoftware.org/isdl.php"
+}
+
