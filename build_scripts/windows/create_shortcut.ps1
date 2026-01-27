@@ -2,7 +2,6 @@ $ErrorActionPreference = "Stop"
 $TargetFile = "$PSScriptRoot\FaceRecon-V0.exe"
 
 if (-not (Test-Path $TargetFile)) {
-    # Fallback for dev mode
     $TargetFile = "$PSScriptRoot\..\..\dist\FaceRecon-V0\FaceRecon-V0.exe"
 }
 
