@@ -92,7 +92,7 @@ class DatabaseManager:
                 port = config.get("port")
                 db_name = config.get("database")
                 engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db_name}", 
-                                       echo=True, # Enable logging for connection test
+                                       echo=True, 
                                        connect_args={'connect_timeout': 3, 'sslmode': 'require'})
                 with engine.connect() as conn:
                     conn.execute(text("SELECT 1"))
@@ -224,7 +224,6 @@ class DatabaseManager:
             return results
 
     def get_user_embeddings(self, user_id):
-        """Retrieves all face embeddings for a specific user ID."""
         with self.get_session() as session:
             embeddings_records = session.query(FaceEmbedding).filter(FaceEmbedding.user_id == user_id).all()
             

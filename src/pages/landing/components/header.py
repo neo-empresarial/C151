@@ -14,7 +14,6 @@ def render():
         img.source = 'src/public/images/certi/logo-certi-2.png' if is_dark else 'src/public/images/certi/logo-certi.png'
         img.update()
 
-    # Register listener
     theme_state.add_listener(update_logo)
 
 
