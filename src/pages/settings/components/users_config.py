@@ -9,7 +9,6 @@ def render():
         
         def save_settings():
             new_config = config.copy()
-            # Reuse existing face_tech dict to preserve other values but update similarity
             current_tech = new_config.get('face_tech', {})
             current_tech['check_similarity'] = switch_similarity.value
             

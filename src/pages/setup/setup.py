@@ -19,7 +19,6 @@ def setup_page():
                 'paused': False
             }
 
-            # Loading Dialog (Full Screen Feel)
             with ui.dialog().props('persistent maximized transition-show=slide-up transition-hide=slide-down') as loading_dialog:
                 with ui.card().classes('w-full h-full items-center justify-center bg-gray-900/90 text-white'):
                     with ui.column().classes('items-center gap-6'):
@@ -28,7 +27,6 @@ def setup_page():
                             ui.label('Configurando seu Sistema').classes('text-3xl font-bold tracking-wide animate-pulse')
                             ui.label('Inicializando banco de dados e credenciais...').classes('text-lg text-gray-400')
 
-            # Success Dialog
             with ui.dialog().props('persistent maximized transition-show=scale transition-hide=scale') as success_dialog:
                 with ui.card().classes('w-full h-full items-center justify-center bg-gradient-to-br from-green-900 to-emerald-900 text-white'):
                     with ui.column().classes('items-center gap-6 animate-bounce'):

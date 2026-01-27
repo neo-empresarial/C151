@@ -1,4 +1,12 @@
 $ErrorActionPreference = "Stop"
+
+$processName = "DeepFaceRec_Unified"
+$processes = Get-Process $processName -ErrorAction SilentlyContinue
+if ($processes) {
+    Write-Host "Killing running instances of $processName..."
+    $processes | Stop-Process -Force
+    Start-Sleep -Seconds 2
+}
 if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
 if (Test-Path "dist\DeepFaceRec_Unified") { Remove-Item -Recurse -Force "dist\DeepFaceRec_Unified" }
 if (Test-Path "DeepFaceRec_Unified.spec") { Remove-Item -Force "DeepFaceRec_Unified.spec" }

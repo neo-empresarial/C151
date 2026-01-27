@@ -23,7 +23,6 @@ class CameraManager:
                 if not self.cap.isOpened():
                      self.cap = cv2.VideoCapture(self.index)
                 
-                # Set Resolution to HD (1280x720) to prevent blur
                 if self.cap.isOpened():
                     self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
                     self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -44,7 +43,6 @@ class CameraManager:
                 if not self.cap.isOpened():
                     self.cap = cv2.VideoCapture(self.index)
                 
-                # Set Resolution
                 if self.cap.isOpened():
                     self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
                     self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -56,7 +54,6 @@ class CameraManager:
                 self.index = 0
                 self.cap = cv2.VideoCapture(0)
                 
-                # Set Resolution
                 if self.cap.isOpened():
                     self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
                     self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)

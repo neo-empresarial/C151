@@ -10,16 +10,14 @@ def set_lang(lang):
 
 def render():
     languages = []
-    base_flag_path = 'src/public/images/country flags'
+    # Use /public mount point which maps to src/public
+    base_flag_path = '/public/images/country_flags'
     
     for code, data in lm.languages.items():
-        # Check for png
         flag_path = f'{base_flag_path}/{code}.png'
         if not os.path.exists(flag_path):
-             # Check for svg
              flag_path = f'{base_flag_path}/{code}.svg'
              if not os.path.exists(flag_path):
-                 # Fallback to default
                  flag_path = f'{base_flag_path}/default.png'
         
         languages.append({
@@ -27,9 +25,6 @@ def render():
             'name': data.get('language', code.upper()),
             'flag': flag_path
         })
-
-    # Sort if needed, or keep json order.
-    # Ensure current state language is valid or fallback
     current_lang_obj = next((l for l in languages if l['code'] == state.language), None)
     if current_lang_obj:
         current_flag = current_lang_obj['flag']
