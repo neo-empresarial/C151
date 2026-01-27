@@ -18,6 +18,7 @@ if (Test-Path "FaceRecon-V0.spec") { Remove-Item -Force "FaceRecon-V0.spec" }
     --specpath "build" `
     --add-data "$PWD\src;src" `
     --add-data "$env:USERPROFILE\.deepface\weights;.deepface\weights" `
+    --add-binary "C:\Windows\System32\msvcp140_1.dll;." `
     --hidden-import "deepface" `
     --hidden-import "nicegui" `
     --hidden-import "scipy" `
