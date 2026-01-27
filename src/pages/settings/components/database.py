@@ -129,14 +129,12 @@ def render():
                 new_config['password'] = pg_password.value
 
 
-            # Save Secret Key
             from src.common.security import save_secret_key
             if secret_key_input.value:
                  if not save_secret_key(secret_key_input.value):
                      ui.notify(lm.t('secret_key_invalid'), type='negative')
                      return
                  
-                 # Force reload of inference engine (clears stale memory)
                  from src.services.services import engine
                  ui.notify('Recarregando Motor de IA...', type='info')
                  engine.load_model()

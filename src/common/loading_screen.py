@@ -80,7 +80,6 @@ class LoadingScreen:
                 pass
     
     def close(self):
-        """Close loading screen"""
         if self.root and self.running:
             try:
                 self.root.quit()
