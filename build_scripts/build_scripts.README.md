@@ -1,26 +1,54 @@
 # Scripts de Build (Windows)
 
-Scripts PowerShell para empacotamento e distribuicao da aplicacao.
+Scripts PowerShell para empacotamento, distribuição e criação de instaladores da aplicação.
 
-## Scripts Disponiveis
+## Pré-requisitos
+-   **Python 3.10+** com ambiente virtual configurado.
+-   **Inno Setup 6** (Necessário para gerar o instalador .exe).
+    -   Download: [jrsoftware.org](https://jrsoftware.org/isdl.php)
 
-### build_folder.ps1 (Recomendado)
--   **Comando**: PyInstaller com `--onedir`.
--   **Saida**: Pasta `dist/DeepFaceRec_Unified/`.
--   **Vantagem**: Inicializacao instantanea. Arquivos ja descompactados.
--   **Uso**: Desenvolvimento e implantacao fixa.
+## Como Gerar o Instalador
 
-### build_unified.ps1
--   **Comando**: PyInstaller com `--onefile`.
--   **Saida**: Arquivo `dist/DeepFaceRec_Unified.exe`.
--   **Vantagem**: Portabilidade (um unico arquivo).
--   **Desvantagem**: Lento para iniciar (extrai arquivos para `%TEMP%` a cada execucao).
+Para gerar o instalador completo (recomendado para distribuição):
+
+1.  Abra o terminal na raiz do projeto.
+2.  Execute o script unificado:
+    ```powershell
+    .\build_scripts\windows\build_unified.ps1
+    ```
+
+Este script irá:
+1.  Limpar builds anteriores.
+2.  Compilar a aplicação usando **PyInstaller** (modo pasta/onedir).
+3.  Copiar assets e atalhos necessários.
+4.  **Automaticamente compilar o instalador** usando o Inno Setup.
+
+**Saída**:
+-   O instalador estará em: `dist/FaceRecon_Setup.exe`
+-   A pasta da aplicação (portátil) estará em: `dist/FaceRecon-V0/`
+
+---
+
+## Detalhes dos Scripts
+
+### build_unified.ps1 (Principal)
+-   **Função**: Script completo de build e packaging.
+-   **Processo**:
+    -   Gera a aplicação contida em pasta (`dist/FaceRecon-V0`).
+    -   Verifica se o Inno Setup está instalado.
+    -   Se sim, gera o arquivo de instalação `FaceRecon_Setup.exe`.
+-   **Uso**: Para criar a versão final para entrega ao cliente.
+
+### build_folder.ps1
+-   **Função**: Apenas compila a aplicação para uma pasta local.
+-   **Saída**: `dist/FaceRecon-V0/`.
+-   **Uso**: Testes rápidos de build sem gerar o instalador.
 
 ### build_debug.ps1
--   **Comando**: PyInstaller com `--console`.
--   **Saida**: `dist/DeepFaceRec_Debug.exe`.
--   **Uso**: Debugging. Mantem uma janela de terminal aberta para visualizar erros e prints.
+-   **Função**: Compila com console visível.
+-   **Saída**: `dist/FaceRecon_Debug.exe` (ou pasta debug).
+-   **Uso**: Debugging em ambiente de produção (mostra erros no terminal).
 
 ### create_shortcut.ps1
--   Auxiliar para o modo pasta.
--   Cria um atalho na Area de Trabalho apontando para o executavel dentro da pasta `dist`.
+-   **Função**: Script auxiliar copiado para a pasta de distribuição.
+-   **Uso**: Cria atalho na área de trabalho se executado manualmente pelo usuário (caso não use o instalador).
