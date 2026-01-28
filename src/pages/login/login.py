@@ -30,7 +30,7 @@ def login_page():
     state.current_user = None
     state.is_admin = False
 
-    logic_state = {'consecutive_hits': 0, 'last_user_id': None, 'in_cooldown': False, 'last_timestamp': 0}
+    logic_state = {'consecutive_hits': 0, 'last_user_id': None, 'in_cooldown': False, 'last_timestamp': 0, 'matched_user_name': ''}
 
     def reset_state():
         state.current_user = None
@@ -48,6 +48,7 @@ def login_page():
 
     def trigger_access(user):
         logic_state['in_cooldown'] = True
+        logic_state['matched_user_name'] = user.get('name', '')
         def on_timeout():
             finalize_access(user)
             logic_state['in_cooldown'] = False
@@ -92,7 +93,8 @@ def login_page():
         video_image.set_source(f'data:image/jpeg;base64,{base64.b64encode(buffer).decode("utf-8")}')
         
         if logic_state['in_cooldown']:
-             face_overlay.set_state(lm.t('access_granted'), Colors.SUCCESS)
+             user_name = logic_state.get('matched_user_name', '')
+             face_overlay.set_state(lm.t('access_granted'), Colors.SUCCESS, subtext=user_name)
              return
 
         f.update_engine_frame(frame)
