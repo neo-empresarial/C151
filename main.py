@@ -127,9 +127,13 @@ def find_free_port(start_port=8080, max_tries=100):
                 continue
     raise OSError("No free ports found")
 
-def run_app(start_mode='default'):
+def run_app(start_mode='default', check_access=False, close_after=False):
     global START_MODE
     START_MODE = start_mode
+    
+    from src.common.state import state
+    state.check_access = check_access
+    state.close_after = close_after
 
     port = find_free_port()
     print(f"Starting UI on port {port} with mode {start_mode}")

@@ -31,23 +31,13 @@ Este script irá:
 
 ## Detalhes dos Scripts
 
-### build_unified.ps1 (Principal)
+### build_unified.ps1 
 -   **Função**: Script completo de build e packaging.
 -   **Processo**:
     -   Gera a aplicação contida em pasta (`dist/FaceRecon-V0`).
     -   Verifica se o Inno Setup está instalado.
     -   Se sim, gera o arquivo de instalação `FaceRecon_Setup.exe`.
 -   **Uso**: Para criar a versão final para entrega ao cliente.
-
-### build_folder.ps1
--   **Função**: Apenas compila a aplicação para uma pasta local.
--   **Saída**: `dist/FaceRecon-V0/`.
--   **Uso**: Testes rápidos de build sem gerar o instalador.
-
-### build_debug.ps1
--   **Função**: Compila com console visível.
--   **Saída**: `dist/FaceRecon_Debug.exe` (ou pasta debug).
--   **Uso**: Debugging em ambiente de produção (mostra erros no terminal).
 
 ### create_shortcut.ps1
 -   **Função**: Script auxiliar copiado para a pasta de distribuição.

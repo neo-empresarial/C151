@@ -14,7 +14,8 @@ if (Test-Path "dist/FaceRecon-V0") { Remove-Item -Recurse -Force "dist/FaceRecon
 if (Test-Path "FaceRecon-V0.spec") { Remove-Item -Force "FaceRecon-V0.spec" }
 
 
-.\venv\Scripts\pyinstaller --noconfirm --onedir --noconsole --icon "$PWD\src\public\icons\certi-icon.ico" --name "FaceRecon-V0" `
+.\venv\Scripts\pyinstaller --noconfirm --onedir --icon "$PWD\src\public\icons\certi-icon.ico" --name "FaceRecon-V0" `
+    --splash "$PWD\src\public\images\certi\splash-screen.png" `
     --specpath "build" `
     --add-data "$PWD\src;src" `
     --add-data "$env:USERPROFILE\.deepface\weights;.deepface\weights" `

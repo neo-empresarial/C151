@@ -167,30 +167,46 @@ No modo `--HiddenCam`:
 - Se uma pessoa **não autorizada** (ou desconhecida) for detectada **3 vezes consecutivas**, a tela de ALERTA VERMELHO ("ACESSO NEGADO") abre em **Tela Cheia**.
 - Se um **Administrador** for detectado, o contador zera e a tela se esconde novamente.
 
+### 5. Modo CLI (Command Line Interface)
+O aplicativo suporta execução via terminal para integração com outros sistemas (ex: LabVIEW).
+
+**Argumentos:**
+-   `--CheckAccess`: Inicia em modo de verificação de acesso, imprimindo o status no terminal.
+-   `--CloseAfter`: Fecha o aplicativo automaticamente após um acesso permitido.
+-   `--timeout <segundos>`: Define um tempo limite para fechar o aplicativo.
+
+**Saída no Terminal:**
+-   **Acesso Permitido**: `{access allowed, Nome do Usuário, Nível de Acesso}`
+-   **Acesso Negado**: `{access denied}`
+
+**Exemplo de uso (LabVIEW):**
+```powershell
+.\FaceRecon-V0.exe --CheckAccess --CloseAfter
+```
+
 ---
 
 ## Gerando Executáveis (Build)
 
-O projeto possui scripts automatizados em `build_scripts/windows` para criar o distribuível.
 
-### 1. Modo Pasta (Recomendado para Performance)
-Cria uma pasta com o executável e dependências descompactadas. Inicialização instantânea.
-```powershell
-.\build_scripts\windows\build_folder.ps1
-```
-*Gera: `dist/DeepFaceRec_Unified/`*
+## Pré-requisitos
+-   **Python 3.10+** com ambiente virtual configurado.
+-   **Inno Setup 6** (Necessário para gerar o instalador .exe).
+    -   Download: [jrsoftware.org](https://jrsoftware.org/isdl.php)
 
-**Atalho na Área de Trabalho**:
-```powershell
-.\build_scripts\windows\create_shortcut.ps1
-```
+## Como Gerar o Instalador
 
-### 2. Modo Arquivo Único
-Cria um único arquivo `.exe`. Mais fácil de compartilhar, mas demora ~20s para iniciar (descompactação temporária).
-```powershell
-.\build_scripts\windows\build_unified.ps1
-```
-*Gera: `dist/DeepFaceRec_Unified.exe`*
+Para gerar o instalador completo (recomendado para distribuição):
+
+1.  Abra o terminal na raiz do projeto.
+2.  Execute o script unificado:
+    ```powershell
+    .\build_scripts\windows\build_unified.ps1
+    ```
+
+**Saída**:
+-   O instalador estará em: `dist/FaceRecon_Setup.exe`
+-   A pasta da aplicação (portátil) estará em: `dist/FaceRecon-V0/`
 
 ---
 
