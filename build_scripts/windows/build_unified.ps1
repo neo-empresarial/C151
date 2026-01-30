@@ -14,7 +14,7 @@ if (Test-Path "dist/FaceRecon-V0") { Remove-Item -Recurse -Force "dist/FaceRecon
 if (Test-Path "FaceRecon-V0.spec") { Remove-Item -Force "FaceRecon-V0.spec" }
 
 
-.\venv\Scripts\pyinstaller --noconfirm --onedir --icon "$PWD\src\public\icons\certi-icon.ico" --name "FaceRecon-V0" `
+.\venv\Scripts\pyinstaller --noconfirm --onedir --noconsole --clean --icon "$PWD\src\public\icons\certi-icon.ico" --name "FaceRecon-V0" `
     --splash "$PWD\src\public\images\certi\splash-screen.png" `
     --specpath "build" `
     --add-data "$PWD\src;src" `
@@ -41,6 +41,16 @@ if (Test-Path "FaceRecon-V0.spec") { Remove-Item -Force "FaceRecon-V0.spec" }
     --collect-all "webview" `
     --collect-all "mtcnn" `
     entry_point.py
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "PyInstaller failed with exit code $LASTEXITCODE" -ForegroundColor Red
+    exit $LASTEXITCODE
+}
+
+# Move the spec file to build/ if it was generated in root
+if (Test-Path "FaceRecon-V0.spec") {
+    Move-Item -Path "FaceRecon-V0.spec" -Destination "build\FaceRecon-V0.spec" -Force
+}
 
 Write-Host "Build complete. Output folder is at dist/FaceRecon-V0"
 Copy-Item "build_scripts\windows\create_shortcut.ps1" -Destination "dist\FaceRecon-V0\create_shortcut.ps1"

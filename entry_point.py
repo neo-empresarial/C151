@@ -25,6 +25,24 @@ def main():
     
     args = parser.parse_args()
 
+
+
+    if args.CheckAccess:
+        import ctypes
+        import sys
+        import os
+        
+        ATTACH_PARENT_PROCESS = -1
+        if ctypes.windll.kernel32.AttachConsole(ATTACH_PARENT_PROCESS):
+            sys.stdout = open('CONOUT$', 'w')
+            sys.stderr = open('CONOUT$', 'w')
+        
+        import logging
+        logging.disable(logging.CRITICAL)
+        import warnings
+        warnings.filterwarnings('ignore')
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
     if args.HiddenCam:
         print("Starting Background Service (HiddenCam)...")
         from background_service import main as run_service
