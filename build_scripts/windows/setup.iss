@@ -9,6 +9,11 @@ SolidCompression=yes
 OutputDir={#ProjectRoot}\dist
 OutputBaseFilename=FaceRecon_Setup
 SetupIconFile={#ProjectRoot}\src\public\icons\certi-icon.ico
+WizardImageFile={#ProjectRoot}\src\public\images\certi\splash-screen.png
+ChangesEnvironment=yes
+
+[Registry]
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"; Flags: preservestringtype
 
 [Files]
 Source: "{#ProjectRoot}\dist\FaceRecon-V0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

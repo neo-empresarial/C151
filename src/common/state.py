@@ -8,6 +8,8 @@ class AppState:
             cls._instance.current_user = None
             cls._instance.is_admin = False
             cls._instance.language = 'pt'
+            cls._instance.check_access = False
+            cls._instance.close_after = False
         return cls._instance
 
     def reset(self):

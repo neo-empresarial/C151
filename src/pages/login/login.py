@@ -38,12 +38,17 @@ def login_page():
 
     def finalize_access(user):
         state.current_user = user
+        if state.check_access:
+            print(f"{{access allowed, {user.get('name')}, {user.get('access_level')}}}")
+            if state.close_after:
+                app.shutdown()
+                return
+
         if user.get('access_level') == 'Admin':
             state.is_admin = True
             ui.notify(lm.t('admin_identified'), type='positive')
         else:
-            ui.notify(lm.t('access_granted'), type='positive')
-            ui.notify(f"{user.get('name')}", type='positive')
+            ui.notify(lm.t('access_granted', name=user.get('name', 'User')), type='positive')
             ui.timer(3.0, lambda: reset_state(), once=True)
 
     def trigger_access(user):
@@ -166,6 +171,13 @@ def login_page():
                          if res.get('in_roi', False):
                              final_text = lm.t('not_recognized')
                              final_color = Colors.ERROR
+                             
+                             if state.check_access:
+                                 current_ts = res.get('result_timestamp', 0)
+                                 if current_ts - logic_state.get('last_denied_ts', 0) > 2.0:
+                                     print("{access denied}")
+                                     logic_state['last_denied_ts'] = current_ts
+
                          else:
                              final_text = lm.t('position_face_center')
                              final_color = Colors.WARNING

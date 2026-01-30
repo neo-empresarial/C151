@@ -19,9 +19,29 @@ def main():
     group.add_argument('--ManageUsers', action='store_true', help='Open directly to the Dashboard')
     group.add_argument('--FaceRecognition', action='store_true', help='Open directly to the Face Recognition page')
     group.add_argument('--HiddenCam', action='store_true', help='Run the background service (hidden camera)')
+    parser.add_argument('--CheckAccess', action='store_true', help='Run in access check mode (output via terminal)')
+    parser.add_argument('--CloseAfter', action='store_true', help='Close application after successful access check')
     parser.add_argument('--timeout', type=int, help='Timeout in seconds to automatically close the application', default=None)
     
     args = parser.parse_args()
+
+
+
+    if args.CheckAccess:
+        import ctypes
+        import sys
+        import os
+        
+        ATTACH_PARENT_PROCESS = -1
+        if ctypes.windll.kernel32.AttachConsole(ATTACH_PARENT_PROCESS):
+            sys.stdout = open('CONOUT$', 'w')
+            sys.stderr = open('CONOUT$', 'w')
+        
+        import logging
+        logging.disable(logging.CRITICAL)
+        import warnings
+        warnings.filterwarnings('ignore')
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
     if args.HiddenCam:
         print("Starting Background Service (HiddenCam)...")
@@ -38,10 +58,15 @@ def main():
         from main import run_app
         run_app(start_mode='recognition')
         
+    elif args.CheckAccess:
+        print("Starting Application (CheckAccess)...")
+        from main import run_app
+        run_app(start_mode='recognition', check_access=True, close_after=args.CloseAfter)
+        
     else:
         print("Starting Application (Default)...")
         from main import run_app
-        run_app(start_mode='default')
+        run_app(start_mode='default', check_access=args.CheckAccess, close_after=args.CloseAfter)
 
 if __name__ == '__main__':
     main()
