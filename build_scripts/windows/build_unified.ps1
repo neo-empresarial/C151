@@ -47,7 +47,6 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-# Move the spec file to build/ if it was generated in root
 if (Test-Path "FaceRecon-V0.spec") {
     Move-Item -Path "FaceRecon-V0.spec" -Destination "build\FaceRecon-V0.spec" -Force
 }
@@ -77,4 +76,3 @@ if (Test-Path $isccPath) {
     Write-Host "Please install Inno Setup to generate the installer setup.exe automatically."
     Write-Host "Download: https://jrsoftware.org/isdl.php"
 }
-

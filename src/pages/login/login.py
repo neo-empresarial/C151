@@ -41,7 +41,23 @@ def login_page():
         if state.check_access:
             print(f"{{access allowed, {user.get('name')}, {user.get('access_level')}}}")
             if state.close_after:
-                app.shutdown()
+                print("Closing after success (CLI mode)...")
+                import sys
+                import os
+                import asyncio
+                sys.stdout.flush()
+                
+                async def close_app():
+                    await asyncio.sleep(1.0)
+                    try:
+                        from nicegui import app
+                        app.shutdown()
+                    except Exception as e:
+                        print(f"Error during shutdown: {e}")
+                    await asyncio.sleep(0.5)
+                    os._exit(0)
+                
+                asyncio.create_task(close_app())
                 return
 
         if user.get('access_level') == 'Admin':

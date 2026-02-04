@@ -20,8 +20,12 @@ class LivenessDetector:
     def _load_model(self):
         try:
             model_path = LIVENESS_MODEL_PATH
-            if hasattr(sys, '_MEIPASS'):
-                model_path = os.path.join(sys._MEIPASS, LIVENESS_MODEL_PATH)
+            if getattr(sys, 'frozen', False):
+                if hasattr(sys, '_MEIPASS'):
+                    base_path = sys._MEIPASS
+                else:
+                    base_path = os.path.dirname(os.path.abspath(sys.executable))
+                model_path = os.path.join(base_path, LIVENESS_MODEL_PATH)
 
             if not os.path.exists(model_path):
                 logging.warning(f"Liveness model not found at {model_path}. Liveness check will be disabled.")

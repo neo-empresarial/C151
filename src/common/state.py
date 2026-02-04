@@ -10,6 +10,7 @@ class AppState:
             cls._instance.language = 'pt'
             cls._instance.check_access = False
             cls._instance.close_after = False
+            cls._instance.timeout = None
         return cls._instance
 
     def reset(self):
