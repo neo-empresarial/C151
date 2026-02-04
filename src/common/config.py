@@ -1,6 +1,6 @@
 CAMERA_INDEX = 0
 MODEL_NAME = 'ArcFace'
-DETECTOR_BACKEND = 'mtcnn'
+DETECTOR_BACKEND = 'yunet'
 DISTANCE_METRIC = 'cosine'
 VERIFICATION_THRESHOLD = 0.28
 LIVENESS_THRESHOLD = 0.70 
@@ -44,6 +44,9 @@ DEFAULT_DB_CONFIG = {
 
 DEFAULT_SETTINGS = {
 
+
+
+
     "face_tech": {
         "required_hits": 1,
         "min_face_width": 0.15,
@@ -51,7 +54,7 @@ DEFAULT_SETTINGS = {
         "threshold": 0.28,
         "metric": "cosine",
         "model_name": "ArcFace",
-        "detector_backend": "mediapipe", 
+        "detector_backend": "yunet", 
         "check_similarity": False
     },
     "access_levels": ["Admin", "Funcionário", "Visitante"],

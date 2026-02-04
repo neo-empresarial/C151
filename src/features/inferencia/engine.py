@@ -24,8 +24,8 @@ class InferenceEngine:
             logging.info(f"GPU Detected: {gpus}")
         else:
             logging.warning("No GPU detected. Running in CPU mode.")
-            if self.detector_backend != 'opencv':
-                 logging.warning(f"Performance Warning: Using '{self.detector_backend}' on CPU might be slow. Consider switching to 'opencv'.")
+            if self.detector_backend not in ['opencv', 'yunet', 'mediapipe']:
+                 logging.warning(f"Performance Warning: Using '{self.detector_backend}' on CPU might be slow. Consider switching to 'opencv', 'yunet', or 'mediapipe'.")
 
         self.running = False
         self._paused = True
