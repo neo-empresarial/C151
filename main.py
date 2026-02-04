@@ -21,6 +21,22 @@ if getattr(sys, 'frozen', False):
 else:
     static_src_path = 'src'
 
+try:
+    from wsproto.connection import Connection
+    from wsproto.utilities import LocalProtocolError
+    
+    original_send = Connection.send
+
+    def patched_send(self, event):
+        try:
+            return original_send(self, event)
+        except LocalProtocolError:
+            pass
+    
+    Connection.send = patched_send
+except ImportError:
+    pass
+
 sys.path.append(".") 
 
 from src.common.theme import load_theme, loading_overlay
@@ -171,9 +187,6 @@ def run_app(start_mode='default', check_access=False, close_after=False, timeout
     
     favicon_path = os.path.join(static_src_path, 'public', 'icons', 'certi-icon.ico')
 
-
-
-    # Filter out noisy shutdown errors from uvicorn/wsproto
     class ShutdownFilter(logging.Filter):
         def filter(self, record):
             msg = str(record.msg)
@@ -194,7 +207,6 @@ def run_app(start_mode='default', check_access=False, close_after=False, timeout
                 window_size=(1280, 800), 
                 storage_secret='deepface_secret')
     except Exception:
-        # Suppress known asyncio/wsproto shutdown noise
         print("Application closed.")
 
 if __name__ in {"__main__", "__mp_main__"}:
