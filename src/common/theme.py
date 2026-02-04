@@ -1,12 +1,16 @@
+
 from nicegui import ui, app
+import asyncio
 from src.common.styles import Colors, DarkColors, Fonts, Shapes, ANTIGRAVITY_THEME
+from src.common.config import settings_manager
 
 def load_theme():
     ui.add_head_html(ANTIGRAVITY_THEME, shared=True)
 
 class ThemeState:
     def __init__(self):
-        self._is_dark = False
+        style_config = settings_manager.config.get('style', {})
+        self._is_dark = style_config.get('theme_mode') == 'dark'
         self._listeners = []
 
     @property
@@ -17,6 +21,13 @@ class ThemeState:
     def is_dark(self, value):
         if self._is_dark != value:
             self._is_dark = value
+            # Save to settings
+            config = settings_manager.config
+            if 'style' not in config:
+                config['style'] = {}
+            config['style']['theme_mode'] = 'dark' if value else 'light'
+            settings_manager.save_config(config)
+            
             for listener in list(self._listeners):
                 try:
                     listener(value)
@@ -107,15 +118,29 @@ def loading_overlay():
             
         theme_state.add_listener(update_logo_overlay)
         
-    def fade_out():
-        overlay.style('opacity: 0;')
-        def safe_delete():
-            try:
-                theme_state.remove_listener(update_logo_overlay)
-                overlay.delete()
-            except Exception:
-                pass
-        ui.timer(0.7, safe_delete)
+
+
+
+    async def fade_out():
+        try:
+            # First check
+            if not ui.context.client.connected:
+                 return
+
+            overlay.style('opacity: 0;')
+            
+            # Use asyncio sleep instead of ui.timer to avoid binding to checking client existence continuously
+            await asyncio.sleep(0.7)
+            
+            # Second check before deletion
+            if not ui.context.client.connected:
+                 return
+
+            theme_state.remove_listener(update_logo_overlay)
+            overlay.delete()
+        except Exception:
+            # Fail silently if anything goes wrong during cleanup
+            pass
 
     ui.timer(2.0, fade_out)
 

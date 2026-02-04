@@ -28,16 +28,22 @@ def get_app_data_dir():
         print(f"Error creating data dir: {e}")
         return "."
 
-DATA_DIR = get_app_data_dir()
-CONFIG_FILE = os.path.join(DATA_DIR, "db_config.json")
 
-DEFAULT_CONFIG = {
+DATA_DIR = get_app_data_dir()
+DB_CONFIG_FILE = os.path.join(DATA_DIR, "db_config.json")
+SETTINGS_FILE = os.path.join(DATA_DIR, "settings.json")
+
+DEFAULT_DB_CONFIG = {
     "type": "sqlite",  
     "host": os.path.join(DATA_DIR, "users.db"),
     "port": 5432,
     "user": "postgres",
     "password": "",
-    "database": "face_recognition_db",
+    "database": "face_recognition_db"
+}
+
+DEFAULT_SETTINGS = {
+
     "face_tech": {
         "required_hits": 1,
         "min_face_width": 0.15,
@@ -45,6 +51,7 @@ DEFAULT_CONFIG = {
         "threshold": 0.28,
         "metric": "cosine",
         "model_name": "ArcFace",
+        "detector_backend": "mediapipe", 
         "check_similarity": False
     },
     "access_levels": ["Admin", "Funcionário", "Visitante"],
@@ -54,32 +61,75 @@ DEFAULT_CONFIG = {
     }
 }
 
-class ConfigManager:
+class DatabaseConfigManager:
     def __init__(self):
         self._config = self.load_config()
 
     def load_config(self) -> Dict[str, Any]:
-        if not os.path.exists(CONFIG_FILE):
-            self.save_config(DEFAULT_CONFIG)
-            return DEFAULT_CONFIG.copy()
+        if not os.path.exists(DB_CONFIG_FILE):
+            self.save_config(DEFAULT_DB_CONFIG)
+            return DEFAULT_DB_CONFIG.copy()
         
         try:
-            with open(CONFIG_FILE, 'r') as f:
+            with open(DB_CONFIG_FILE, 'r') as f:
                 return json.load(f)
         except Exception as e:
-            print(f"Error loading config: {e}")
-            return DEFAULT_CONFIG.copy()
+            print(f"Error loading db config: {e}")
+            return DEFAULT_DB_CONFIG.copy()
 
     def save_config(self, config: Dict[str, Any]):
         try:
-            with open(CONFIG_FILE, 'w') as f:
+            with open(DB_CONFIG_FILE, 'w') as f:
                 json.dump(config, f, indent=4)
             self._config = config
         except Exception as e:
-            print(f"Error saving config: {e}")
+            print(f"Error saving db config: {e}")
 
     @property
     def config(self) -> Dict[str, Any]:
         return self._config
 
-db_config = ConfigManager()
+class SettingsManager:
+    def __init__(self):
+        self._config = self.load_config()
+
+    def load_config(self) -> Dict[str, Any]:
+        if not os.path.exists(SETTINGS_FILE):
+            self.save_config(DEFAULT_SETTINGS)
+            return DEFAULT_SETTINGS.copy()
+        
+        try:
+            with open(SETTINGS_FILE, 'r') as f:
+                config = json.load(f)
+                # Ensure structure integrity by merging with default
+                # This handles cases where we add new keys (like detector_backend)
+                # and the user has an old config file
+                merged = DEFAULT_SETTINGS.copy()
+                
+                # Deep merge for dictionary fields
+                for key, value in config.items():
+                    if isinstance(value, dict) and key in merged and isinstance(merged[key], dict):
+                        merged[key].update(value)
+                    else:
+                        merged[key] = value
+                
+                return merged
+        except Exception as e:
+            print(f"Error loading settings: {e}")
+            return DEFAULT_SETTINGS.copy()
+
+    def save_config(self, config: Dict[str, Any]):
+        try:
+            with open(SETTINGS_FILE, 'w') as f:
+                json.dump(config, f, indent=4)
+            self._config = config
+        except Exception as e:
+            print(f"Error saving settings: {e}")
+
+    @property
+    def config(self) -> Dict[str, Any]:
+        return self._config
+
+# Renaming to support backward compatibility where possible, or just new usage
+db_config = DatabaseConfigManager()
+settings_manager = SettingsManager()

@@ -1,10 +1,11 @@
+
 from nicegui import ui
-from src.common.config import db_config
+from src.common.config import settings_manager
 from src.language.manager import language_manager as lm
 
 def render():
     with ui.column().classes('w-full p-2 pb-24'):
-        config = db_config.config
+        config = settings_manager.config
         face_tech = config.get('face_tech', {})
         
         def save_settings():
@@ -13,7 +14,7 @@ def render():
             current_tech['check_similarity'] = switch_similarity.value
             
             new_config['face_tech'] = current_tech
-            db_config.save_config(new_config)
+            settings_manager.save_config(new_config)
             ui.notify(lm.t('data_updated'), type='positive')
             
         with ui.row().classes('w-full flex justify-between items-center mb-6'):

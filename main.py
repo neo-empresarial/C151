@@ -1,5 +1,6 @@
 import sys
 import os
+import logging
 from nicegui import ui, app
 import socket
 from src.common.logger import AppLogger
@@ -170,14 +171,31 @@ def run_app(start_mode='default', check_access=False, close_after=False, timeout
     
     favicon_path = os.path.join(static_src_path, 'public', 'icons', 'certi-icon.ico')
 
-    ui.run(title='DeepFace Access Control', 
-            favicon=favicon_path, 
-            port=port, 
-            reload=False, 
-            native=True, 
-            fullscreen=True, 
-            window_size=(1280, 800), 
-            storage_secret='deepface_secret')
+
+
+    # Filter out noisy shutdown errors from uvicorn/wsproto
+    class ShutdownFilter(logging.Filter):
+        def filter(self, record):
+            msg = str(record.msg)
+            if "CloseConnection" in msg or "ConnectionState.CLOSED" in msg:
+                return False
+            return True
+
+    logging.getLogger("uvicorn.error").addFilter(ShutdownFilter())
+    logging.getLogger("asyncio").setLevel(logging.CRITICAL)
+
+    try:
+        ui.run(title='DeepFace Access Control', 
+                favicon=favicon_path, 
+                port=port, 
+                reload=False, 
+                native=True, 
+                fullscreen=True, 
+                window_size=(1280, 800), 
+                storage_secret='deepface_secret')
+    except Exception:
+        # Suppress known asyncio/wsproto shutdown noise
+        print("Application closed.")
 
 if __name__ in {"__main__", "__mp_main__"}:
     run_app()

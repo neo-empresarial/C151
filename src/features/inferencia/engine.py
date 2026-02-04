@@ -1,15 +1,32 @@
+
 import cv2
 import threading
 import time
 import numpy as np
 import faiss
 import logging
-from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD, db_config
+from src.common.config import MODEL_NAME, DETECTOR_BACKEND, VERIFICATION_THRESHOLD, settings_manager
+
 class InferenceEngine:
     def __init__(self, db_manager):
         self.db_manager = db_manager
         self.model_name = MODEL_NAME
-        self.detector_backend = DETECTOR_BACKEND
+        
+        # Performance Fix: Default to 'opencv' if not specified
+        self.detector_backend = settings_manager.config.get('face_tech', {}).get('detector_backend', 'opencv')
+        
+        logging.info(f"InferenceEngine initialized. Backend: {self.detector_backend}")
+        
+        # GPU Diagnosis
+        import tensorflow as tf
+        gpus = tf.config.list_physical_devices('GPU')
+        if gpus:
+            logging.info(f"GPU Detected: {gpus}")
+        else:
+            logging.warning("No GPU detected. Running in CPU mode.")
+            if self.detector_backend != 'opencv':
+                 logging.warning(f"Performance Warning: Using '{self.detector_backend}' on CPU might be slow. Consider switching to 'opencv'.")
+
         self.running = False
         self._paused = True
         self.last_recognition_time = 0
@@ -31,7 +48,7 @@ class InferenceEngine:
 
     @property
     def threshold(self):
-        return db_config.config.get('face_tech', {}).get('threshold', VERIFICATION_THRESHOLD)
+        return settings_manager.config.get('face_tech', {}).get('threshold', VERIFICATION_THRESHOLD)
 
     @paused.setter
     def paused(self, value):
@@ -244,7 +261,11 @@ class InferenceEngine:
                             new_h = int(h_orig * scale_factor)
                             process_frame = cv2.resize(frame, (target_w, new_h))
                         
+
                         from deepface import DeepFace
+                        # Verify backend just once per loop for sanity
+                        # logging.info(f"Running detection with: {self.detector_backend}") 
+                        
                         face_objs = DeepFace.represent(
                             img_path=process_frame,
                             model_name=self.model_name,
@@ -257,11 +278,16 @@ class InferenceEngine:
                         if face_objs:
                             face_objs.sort(key=lambda x: x['facial_area']['w'] * x['facial_area']['h'], reverse=True)
                             face_objs = [face_objs[0]]
-                            logging.debug(f"Processing largest face with area: {face_objs[0]['facial_area']['w'] * face_objs[0]['facial_area']['h']}")
+                            logging.info(f"Face detected! Area: {face_objs[0]['facial_area']['w'] * face_objs[0]['facial_area']['h']}")
+                        else:
+                            logging.info("No faces detected.")
 
                         self.last_recognition_time = time.time()
-                except Exception:
-                    pass 
+                except ValueError as e: 
+                    # DeepFace raises ValueError if enforce_detection=True and no face is found
+                    logging.info(f"No face detected by {self.detector_backend}.")
+                except Exception as e:
+                    logging.error(f"DeepFace error: {e}")
 
                 results = []
                 for face in face_objs:
